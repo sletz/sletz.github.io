@@ -6,10 +6,10 @@
     "library_list": [
         "/usr/share/faust/stdfaust.lib",
         "/usr/share/faust/oscillators.lib",
-        "/usr/share/faust/platform.lib",
+        "/usr/share/faust/signals.lib",
         "/usr/share/faust/maths.lib",
-        "/usr/share/faust/basics.lib",
-        "/usr/share/faust/signals.lib"
+        "/usr/share/faust/platform.lib",
+        "/usr/share/faust/basics.lib"
     ],
     "include_pathnames": [
         "/share/faust",
@@ -17,7 +17,7 @@
         "/usr/share/faust",
         "."
     ],
-    "size": 262212,
+    "size": 262220,
     "code": "5AEf",
     "inputs": 0,
     "outputs": 1,
@@ -105,6 +105,9 @@
                     "address": "/Oscillator/volume",
                     "index": 262156,
                     "meta": [
+                        {
+                            "acc": "1 1 -10 0 10"
+                        },
                         {
                             "unit": "dB"
                         }
