@@ -715,8 +715,6 @@ export declare class FaustBaseWebAudioDsp implements IFaustBaseWebAudioDsp {
 	static parseItem(item: FaustUIItem, callback: (item: FaustUIItem) => any): void;
 	/** Split the soundfile names and return an array of names */
 	static splitSoundfileNames(input: string): string[];
-	setAccelerometerHandler(): void;
-	setGyroscopeHandler(): void;
 	propagateAcc(event: DeviceMotionEvent): void;
 	propagateGyr(event: DeviceOrientationEvent): void;
 	private setupAccHandler;

@@ -1969,7 +1969,6 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
     this.fSoundfileBuffers = soundfiles;
     this.fAcc = { x: [], y: [], z: [] };
     this.fGyr = { x: [], y: [], z: [] };
-    this.setAccelerometerHandler();
   }
   // Tools
   static remap(v, mn0, mx0, mn1, mx1) {
@@ -1998,24 +1997,6 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
   static splitSoundfileNames(input) {
     let trimmed = input.replace(/^\{|\}$/g, "");
     return trimmed.split(";").map((str) => str.length <= 2 ? "" : str.substring(1, str.length - 1));
-  }
-  setAccelerometerHandler() {
-    if (window.DeviceMotionEvent) {
-      window.addEventListener("devicemotion", (event) => {
-        this.propagateAcc(event);
-      }, true);
-    } else {
-      console.log("Cannot set accelerometer handler");
-    }
-  }
-  setGyroscopeHandler() {
-    if (window.DeviceMotionEvent) {
-      window.addEventListener("deviceorientation", (event) => {
-        this.propagateGyr(event);
-      }, true);
-    } else {
-      console.log("Cannot set gyroscope handler");
-    }
   }
   // Accelerometer and gyroscope handling
   propagateAcc(event) {
@@ -3850,6 +3831,20 @@ var _FaustMonoDspGenerator = class _FaustMonoDspGenerator {
     if (sp) {
       const instance = await FaustWasmInstantiator_default.createAsyncMonoDSPInstance(factory);
       const monoDsp = new FaustMonoWebAudioDsp(instance, context.sampleRate, sampleSize, bufferSize, factory.soundfiles);
+      if (window.DeviceMotionEvent) {
+        window.addEventListener("devicemotion", (event) => {
+          monoDsp.propagateAcc(event);
+        }, true);
+      } else {
+        console.log("Cannot set accelerometer handler");
+      }
+      if (window.DeviceMotionEvent) {
+        window.addEventListener("deviceorientation", (event) => {
+          monoDsp.propagateGyr(event);
+        }, true);
+      } else {
+        console.log("Cannot set gyroscope handler");
+      }
       const sp2 = context.createScriptProcessor(bufferSize, monoDsp.getNumInputs(), monoDsp.getNumOutputs());
       Object.setPrototypeOf(sp2, FaustMonoScriptProcessorNode.prototype);
       sp2.init(monoDsp);
@@ -4126,6 +4121,20 @@ process = adaptorIns(dsp_code.process) : dsp_code.effect : adaptorOuts;
       const instance = await FaustWasmInstantiator_default.createAsyncPolyDSPInstance(voiceFactory, mixerModule, voices, effectFactory || void 0);
       const soundfiles = { ...effectFactory == null ? void 0 : effectFactory.soundfiles, ...voiceFactory.soundfiles };
       const polyDsp = new FaustPolyWebAudioDsp(instance, context.sampleRate, sampleSize, bufferSize, soundfiles);
+      if (window.DeviceMotionEvent) {
+        window.addEventListener("devicemotion", (event) => {
+          polyDsp.propagateAcc(event);
+        }, true);
+      } else {
+        console.log("Cannot set accelerometer handler");
+      }
+      if (window.DeviceMotionEvent) {
+        window.addEventListener("deviceorientation", (event) => {
+          polyDsp.propagateGyr(event);
+        }, true);
+      } else {
+        console.log("Cannot set gyroscope handler");
+      }
       const sp2 = context.createScriptProcessor(bufferSize, polyDsp.getNumInputs(), polyDsp.getNumOutputs());
       Object.setPrototypeOf(sp2, FaustPolyScriptProcessorNode.prototype);
       sp2.init(polyDsp);
