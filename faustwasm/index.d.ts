@@ -632,6 +632,14 @@ export interface IFaustBaseWebAudioDsp {
 	 * Destroy the DSP.
 	 */
 	destroy(): void;
+	/** Indicating if the DSP handles the accelerometer */
+	readonly hasAccInput: boolean;
+	/** Accelerometer handling */
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	/** Indicating if the DSP handles the gyroscope */
+	readonly hasGyrInput: boolean;
+	/** Gyroscope handling */
+	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 }
 export interface IFaustMonoWebAudioDsp extends IFaustBaseWebAudioDsp {
 }
@@ -715,9 +723,13 @@ export declare class FaustBaseWebAudioDsp implements IFaustBaseWebAudioDsp {
 	static parseItem(item: FaustUIItem, callback: (item: FaustUIItem) => any): void;
 	/** Split the soundfile names and return an array of names */
 	static splitSoundfileNames(input: string): string[];
-	propagateAcc(event: DeviceMotionEvent): void;
-	propagateGyr(event: DeviceOrientationEvent): void;
+	get hasAccInput(): boolean;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	get hasGyrInput(): boolean;
+	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
+	/** Build the accelerometer handler */
 	private setupAccHandler;
+	/** Build the gyroscope handler */
 	private setupGyrHandler;
 	static extractUrlsFromMeta(dspMeta: FaustDspMeta): string[];
 	/**
@@ -1110,6 +1122,10 @@ export declare class FaustOfflineProcessor<Poly extends boolean = false> {
 	start(): void;
 	stop(): void;
 	destroy(): void;
+	get hasAccInput(): boolean;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	get hasGyrInput(): boolean;
+	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 	/**
 	 * Render frames in an array.
 	 *
@@ -1251,6 +1267,7 @@ declare const FaustAudioWorkletNode_base: {
  * Base class for Monophonic and Polyphonic AudioWorkletNode
  */
 export declare class FaustAudioWorkletNode<Poly extends boolean = false> extends FaustAudioWorkletNode_base {
+	#private;
 	protected fJSONDsp: FaustDspMeta;
 	protected fJSON: string;
 	protected fInputsItems: string[];
@@ -1260,6 +1277,8 @@ export declare class FaustAudioWorkletNode<Poly extends boolean = false> extends
 	protected fUICallback: UIHandler;
 	protected fDescriptor: FaustUIInputItem[];
 	constructor(context: BaseAudioContext, name: string, factory: LooseFaustDspFactory, options: FaustAudioWorkletNodeOptions<Poly>["processorOptions"], nodeOptions?: Partial<FaustAudioWorkletNodeOptions>);
+	/** Setup accelerometer and gyroscope handlers */
+	listenMotion(): Promise<void>;
 	setOutputParamHandler(handler: OutputParamHandler | null): void;
 	getOutputParamHandler(): OutputParamHandler | null;
 	setComputeHandler(handler: ComputeHandler | null): void;
@@ -1273,6 +1292,10 @@ export declare class FaustAudioWorkletNode<Poly extends boolean = false> extends
 	midiMessage(data: number[] | Uint8Array): void;
 	ctrlChange(channel: number, ctrl: number, value: number): void;
 	pitchWheel(channel: number, wheel: number): void;
+	get hasAccInput(): boolean;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	get hasGyrInput(): boolean;
+	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 	setParamValue(path: string, value: number): void;
 	getParamValue(path: string): number;
 	getParams(): string[];
@@ -1317,6 +1340,8 @@ export declare class FaustScriptProcessorNode<Poly extends boolean = false> exte
 	protected fInputs: Float32Array[];
 	protected fOutputs: Float32Array[];
 	init(instance: Poly extends true ? FaustPolyWebAudioDsp : FaustMonoWebAudioDsp): void;
+	/** Setup accelerometer and gyroscope handlers */
+	listenMotion(): Promise<void>;
 	compute(input: Float32Array[], output: Float32Array[]): boolean;
 	setOutputParamHandler(handler: OutputParamHandler): void;
 	getOutputParamHandler(): OutputParamHandler | null;
@@ -1340,6 +1365,10 @@ export declare class FaustScriptProcessorNode<Poly extends boolean = false> exte
 	start(): void;
 	stop(): void;
 	destroy(): void;
+	get hasAccInput(): boolean;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	get hasGyrInput(): boolean;
+	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 }
 export declare class FaustMonoScriptProcessorNode extends FaustScriptProcessorNode<false> implements IFaustMonoWebAudioDsp {
 }

@@ -1,3 +1,22 @@
+var __accessCheck = (obj, member, msg) => {
+  if (!member.has(obj))
+    throw TypeError("Cannot " + msg);
+};
+var __privateGet = (obj, member, getter) => {
+  __accessCheck(obj, member, "read from private field");
+  return getter ? getter.call(obj) : member.get(obj);
+};
+var __privateAdd = (obj, member, value) => {
+  if (member.has(obj))
+    throw TypeError("Cannot add the same private member more than once");
+  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+};
+var __privateSet = (obj, member, value, setter) => {
+  __accessCheck(obj, member, "write to private field");
+  setter ? setter.call(obj, value) : member.set(obj, value);
+  return value;
+};
+
 // src/instantiateFaustModuleFromFile.ts
 var instantiateFaustModuleFromFile = async (jsFile, dataFile = jsFile.replace(/c?js$/, "data"), wasmFile = jsFile.replace(/c?js$/, "wasm")) => {
   var _a, _b;
@@ -118,18 +137,30 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
     handleMessageAux(e) {
       const msg = e.data;
       switch (msg.type) {
-        case "midi":
+        case "acc": {
+          this.propagateAcc(msg.data);
+          break;
+        }
+        case "gyr": {
+          this.propagateGyr(msg.data);
+          break;
+        }
+        case "midi": {
           this.midiMessage(msg.data);
           break;
-        case "ctrlChange":
+        }
+        case "ctrlChange": {
           this.ctrlChange(msg.data[0], msg.data[1], msg.data[2]);
           break;
-        case "pitchWheel":
+        }
+        case "pitchWheel": {
           this.pitchWheel(msg.data[0], msg.data[1]);
           break;
-        case "param":
+        }
+        case "param": {
           this.setParamValue(msg.data.path, msg.data.value);
           break;
+        }
         case "setPlotHandler": {
           if (msg.data) {
             this.fDSPCode.setPlotHandler((output, index, events) => this.port.postMessage({ type: "plot", value: output, index, events }));
@@ -167,6 +198,12 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
     }
     pitchWheel(channel, wheel) {
       this.fDSPCode.pitchWheel(channel, wheel);
+    }
+    propagateAcc(accelerationIncludingGravity) {
+      this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+    }
+    propagateGyr(event) {
+      this.fDSPCode.propagateGyr(event);
     }
   }
   class FaustMonoAudioWorkletProcessor extends FaustAudioWorkletProcessor {
@@ -1484,201 +1521,268 @@ var FaustWasmInstantiator = class {
 var FaustWasmInstantiator_default = FaustWasmInstantiator;
 
 // src/FaustSensors.ts
-function convertToAxis(value) {
-  switch (value) {
-    case 0:
-      return 0 /* x */;
-    case 1:
-      return 1 /* y */;
-    case 2:
-      return 2 /* z */;
-    default:
-      console.error("Error: Axis not found value: " + value);
-      return 0 /* x */;
+var FaustSensors = class _FaustSensors {
+  /**
+   * Function to convert a number to an axis type
+   * 
+   * @param value number
+   * @returns axis type
+   */
+  static convertToAxis(value) {
+    switch (value) {
+      case 0:
+        return 0 /* x */;
+      case 1:
+        return 1 /* y */;
+      case 2:
+        return 2 /* z */;
+      default:
+        console.error("Error: Axis not found value: " + value);
+        return 0 /* x */;
+    }
   }
-}
-function convertToCurve(value) {
-  switch (value) {
-    case 0:
-      return 0 /* Up */;
-    case 1:
-      return 1 /* Down */;
-    case 2:
-      return 2 /* UpDown */;
-    case 3:
-      return 3 /* DownUp */;
-    default:
-      console.error("Error: Curve not found value: " + value);
-      return 0 /* Up */;
+  /**
+   * Function to convert a number to a curve type
+   * 
+   * @param value number
+   * @returns curve type
+   */
+  static convertToCurve(value) {
+    switch (value) {
+      case 0:
+        return 0 /* Up */;
+      case 1:
+        return 1 /* Down */;
+      case 2:
+        return 2 /* UpDown */;
+      case 3:
+        return 3 /* DownUp */;
+      default:
+        console.error("Error: Curve not found value: " + value);
+        return 0 /* Up */;
+    }
   }
-}
-var Range = class {
-  constructor(x, y) {
-    this.fLo = Math.min(x, y);
-    this.fHi = Math.max(x, y);
+  static get Range() {
+    if (!this._Range) {
+      this._Range = class {
+        constructor(x, y) {
+          this.fLo = Math.min(x, y);
+          this.fHi = Math.max(x, y);
+        }
+        clip(x) {
+          if (x < this.fLo)
+            return this.fLo;
+          if (x > this.fHi)
+            return this.fHi;
+          return x;
+        }
+      };
+    }
+    return this._Range;
   }
-  clip(x) {
-    if (x < this.fLo) {
-      return this.fLo;
-    } else if (x > this.fHi) {
-      return this.fHi;
-    } else {
-      return x;
+  /**
+   * Interpolator class
+   */
+  static get Interpolator() {
+    if (!this._Interpolator) {
+      this._Interpolator = class {
+        constructor(lo, hi, v1, v2) {
+          this.fRange = new _FaustSensors.Range(lo, hi);
+          if (hi !== lo) {
+            this.fCoef = (v2 - v1) / (hi - lo);
+            this.fOffset = v1 - lo * this.fCoef;
+          } else {
+            this.fCoef = 0;
+            this.fOffset = (v1 + v2) / 2;
+          }
+        }
+        returnMappedValue(v) {
+          var x = this.fRange.clip(v);
+          return this.fOffset + x * this.fCoef;
+        }
+        getLowHigh(amin, amax) {
+          return { amin: this.fRange.fLo, amax: this.fRange.fHi };
+        }
+      };
+    }
+    return this._Interpolator;
+  }
+  /**
+   * Interpolator3pt class, combine two interpolators
+   */
+  static get Interpolator3pt() {
+    if (!this._Interpolator3pt) {
+      this._Interpolator3pt = class {
+        constructor(lo, mid, hi, v1, vMid, v2) {
+          this.fSegment1 = new _FaustSensors.Interpolator(lo, mid, v1, vMid);
+          this.fSegment2 = new _FaustSensors.Interpolator(mid, hi, vMid, v2);
+          this.fMid = mid;
+        }
+        returnMappedValue(x) {
+          return x < this.fMid ? this.fSegment1.returnMappedValue(x) : this.fSegment2.returnMappedValue(x);
+        }
+        getMappingValues(amin, amid, amax) {
+          var lowHighSegment1 = this.fSegment1.getLowHigh(amin, amid);
+          var lowHighSegment2 = this.fSegment2.getLowHigh(amid, amax);
+          return { amin: lowHighSegment1.amin, amid: lowHighSegment2.amin, amax: lowHighSegment2.amax };
+        }
+      };
+    }
+    return this._Interpolator3pt;
+  }
+  /**
+   * UpConverter class, convert accelerometer value to Faust value
+   */
+  static get UpConverter() {
+    if (!this._UpConverter) {
+      this._UpConverter = class {
+        constructor(amin, amid, amax, fmin, fmid, fmax) {
+          this.fActive = true;
+          this.fA2F = new _FaustSensors.Interpolator3pt(amin, amid, amax, fmin, fmid, fmax);
+          this.fF2A = new _FaustSensors.Interpolator3pt(fmin, fmid, fmax, amin, amid, amax);
+        }
+        uiToFaust(x) {
+          return this.fA2F.returnMappedValue(x);
+        }
+        faustToUi(x) {
+          return this.fF2A.returnMappedValue(x);
+        }
+        setMappingValues(amin, amid, amax, min, init, max) {
+          this.fA2F = new _FaustSensors.Interpolator3pt(amin, amid, amax, min, init, max);
+          this.fF2A = new _FaustSensors.Interpolator3pt(min, init, max, amin, amid, amax);
+        }
+        getMappingValues(amin, amid, amax) {
+          return this.fA2F.getMappingValues(amin, amid, amax);
+        }
+        setActive(onOff) {
+          this.fActive = onOff;
+        }
+        getActive() {
+          return this.fActive;
+        }
+      };
+    }
+    return this._UpConverter;
+  }
+  /**
+   * DownConverter class, convert accelerometer value to Faust value
+   */
+  static get DownConverter() {
+    if (!this._DownConverter) {
+      this._DownConverter = class {
+        constructor(amin, amid, amax, fmin, fmid, fmax) {
+          this.fActive = true;
+          this.fA2F = new _FaustSensors.Interpolator3pt(amin, amid, amax, fmax, fmid, fmin);
+          this.fF2A = new _FaustSensors.Interpolator3pt(fmin, fmid, fmax, amax, amid, amin);
+        }
+        uiToFaust(x) {
+          return this.fA2F.returnMappedValue(x);
+        }
+        faustToUi(x) {
+          return this.fF2A.returnMappedValue(x);
+        }
+        setMappingValues(amin, amid, amax, min, init, max) {
+          this.fA2F = new _FaustSensors.Interpolator3pt(amin, amid, amax, max, init, min);
+          this.fF2A = new _FaustSensors.Interpolator3pt(min, init, max, amax, amid, amin);
+        }
+        getMappingValues(amin, amid, amax) {
+          return this.fA2F.getMappingValues(amin, amid, amax);
+        }
+        setActive(onOff) {
+          this.fActive = onOff;
+        }
+        getActive() {
+          return this.fActive;
+        }
+      };
+    }
+    return this._DownConverter;
+  }
+  /**
+   * UpDownConverter class, convert accelerometer value to Faust value
+   */
+  static get UpDownConverter() {
+    if (!this._UpDownConverter) {
+      this._UpDownConverter = class {
+        constructor(amin, amid, amax, fmin, fmid, fmax) {
+          this.fActive = true;
+          this.fA2F = new _FaustSensors.Interpolator3pt(amin, amid, amax, fmin, fmax, fmin);
+          this.fF2A = new _FaustSensors.Interpolator(fmin, fmax, amin, amax);
+        }
+        uiToFaust(x) {
+          return this.fA2F.returnMappedValue(x);
+        }
+        faustToUi(x) {
+          return this.fF2A.returnMappedValue(x);
+        }
+        setMappingValues(amin, amid, amax, min, init, max) {
+          this.fA2F = new _FaustSensors.Interpolator3pt(amin, amid, amax, min, max, min);
+          this.fF2A = new _FaustSensors.Interpolator(min, max, amin, amax);
+        }
+        getMappingValues(amin, amid, amax) {
+          return this.fA2F.getMappingValues(amin, amid, amax);
+        }
+        setActive(onOff) {
+          this.fActive = onOff;
+        }
+        getActive() {
+          return this.fActive;
+        }
+      };
+    }
+    return this._UpDownConverter;
+  }
+  static get DownUpConverter() {
+    if (!this._DownUpConverter) {
+      this._DownUpConverter = class {
+        constructor(amin, amid, amax, fmin, fmid, fmax) {
+          this.fActive = true;
+          this.fA2F = new _FaustSensors.Interpolator3pt(amin, amid, amax, fmax, fmin, fmax);
+          this.fF2A = new _FaustSensors.Interpolator(fmin, fmax, amin, amax);
+        }
+        uiToFaust(x) {
+          return this.fA2F.returnMappedValue(x);
+        }
+        faustToUi(x) {
+          return this.fF2A.returnMappedValue(x);
+        }
+        setMappingValues(amin, amid, amax, min, init, max) {
+          this.fA2F = new _FaustSensors.Interpolator3pt(amin, amid, amax, max, min, max);
+          this.fF2A = new _FaustSensors.Interpolator(min, max, amin, amax);
+        }
+        getMappingValues(amin, amid, amax) {
+          return this.fA2F.getMappingValues(amin, amid, amax);
+        }
+        setActive(onOff) {
+          this.fActive = onOff;
+        }
+        getActive() {
+          return this.fActive;
+        }
+      };
+    }
+    return this._DownUpConverter;
+  }
+  /**
+   * Public function to build the accelerometer handler
+   *
+   * @returns `UpdatableValueConverter` built for the given curve
+   */
+  static buildHandler(curve, amin, amid, amax, min, init, max) {
+    switch (curve) {
+      case 0 /* Up */:
+        return new _FaustSensors.UpConverter(amin, amid, amax, min, init, max);
+      case 1 /* Down */:
+        return new _FaustSensors.DownConverter(amin, amid, amax, min, init, max);
+      case 2 /* UpDown */:
+        return new _FaustSensors.UpDownConverter(amin, amid, amax, min, init, max);
+      case 3 /* DownUp */:
+        return new _FaustSensors.DownUpConverter(amin, amid, amax, min, init, max);
+      default:
+        return new _FaustSensors.UpConverter(amin, amid, amax, min, init, max);
     }
   }
 };
-var Interpolator = class {
-  constructor(lo, hi, v1, v2) {
-    this.fRange = new Range(lo, hi);
-    if (hi != lo) {
-      this.fCoef = (v2 - v1) / (hi - lo);
-      this.fOffset = v1 - lo * this.fCoef;
-    } else {
-      this.fCoef = 0;
-      this.fOffset = (v1 + v2) / 2;
-    }
-  }
-  returnMappedValue(v) {
-    var x = this.fRange.clip(v);
-    return this.fOffset + x * this.fCoef;
-  }
-  getLowHigh(amin, amax) {
-    return { amin: this.fRange.fLo, amax: this.fRange.fHi };
-  }
-};
-var Interpolator3pt = class {
-  constructor(lo, mid, hi, v1, vMid, v2) {
-    this.fSegment1 = new Interpolator(lo, mid, v1, vMid);
-    this.fSegment2 = new Interpolator(mid, hi, vMid, v2);
-    this.fMid = mid;
-  }
-  returnMappedValue(x) {
-    return x < this.fMid ? this.fSegment1.returnMappedValue(x) : this.fSegment2.returnMappedValue(x);
-  }
-  getMappingValues(amin, amid, amax) {
-    var lowHighSegment1 = this.fSegment1.getLowHigh(amin, amid);
-    var lowHighSegment2 = this.fSegment2.getLowHigh(amid, amax);
-    return { amin: lowHighSegment1.amin, amid: lowHighSegment2.amin, amax: lowHighSegment2.amax };
-  }
-};
-var UpConverter = class {
-  constructor(amin, amid, amax, fmin, fmid, fmax) {
-    this.fActive = true;
-    this.fA2F = new Interpolator3pt(amin, amid, amax, fmin, fmid, fmax);
-    this.fF2A = new Interpolator3pt(fmin, fmid, fmax, amin, amid, amax);
-  }
-  uiToFaust(x) {
-    return this.fA2F.returnMappedValue(x);
-  }
-  faustToUi(x) {
-    return this.fF2A.returnMappedValue(x);
-  }
-  setMappingValues(amin, amid, amax, min, init, max) {
-    this.fA2F = new Interpolator3pt(amin, amid, amax, min, init, max);
-    this.fF2A = new Interpolator3pt(min, init, max, amin, amid, amax);
-  }
-  getMappingValues(amin, amid, amax) {
-    return this.fA2F.getMappingValues(amin, amid, amax);
-  }
-  setActive(onOff) {
-    this.fActive = onOff;
-  }
-  getActive() {
-    return this.fActive;
-  }
-};
-var DownConverter = class {
-  constructor(amin, amid, amax, fmin, fmid, fmax) {
-    this.fActive = true;
-    this.fA2F = new Interpolator3pt(amin, amid, amax, fmax, fmid, fmin);
-    this.fF2A = new Interpolator3pt(fmin, fmid, fmax, amax, amid, amin);
-  }
-  uiToFaust(x) {
-    return this.fA2F.returnMappedValue(x);
-  }
-  faustToUi(x) {
-    return this.fF2A.returnMappedValue(x);
-  }
-  setMappingValues(amin, amid, amax, min, init, max) {
-    this.fA2F = new Interpolator3pt(amin, amid, amax, max, init, min);
-    this.fF2A = new Interpolator3pt(min, init, max, amax, amid, amin);
-  }
-  getMappingValues(amin, amid, amax) {
-    return this.fA2F.getMappingValues(amin, amid, amax);
-  }
-  setActive(onOff) {
-    this.fActive = onOff;
-  }
-  getActive() {
-    return this.fActive;
-  }
-};
-var UpDownConverter = class {
-  constructor(amin, amid, amax, fmin, fmid, fmax) {
-    this.fActive = true;
-    this.fA2F = new Interpolator3pt(amin, amid, amax, fmin, fmax, fmin);
-    this.fF2A = new Interpolator(fmin, fmax, amin, amax);
-  }
-  uiToFaust(x) {
-    return this.fA2F.returnMappedValue(x);
-  }
-  faustToUi(x) {
-    return this.fF2A.returnMappedValue(x);
-  }
-  setMappingValues(amin, amid, amax, min, init, max) {
-    this.fA2F = new Interpolator3pt(amin, amid, amax, min, max, min);
-    this.fF2A = new Interpolator(min, max, amin, amax);
-  }
-  getMappingValues(amin, amid, amax) {
-    return this.fA2F.getMappingValues(amin, amid, amax);
-  }
-  setActive(onOff) {
-    this.fActive = onOff;
-  }
-  getActive() {
-    return this.fActive;
-  }
-};
-var DownUpConverter = class {
-  constructor(amin, amid, amax, fmin, fmid, fmax) {
-    this.fActive = true;
-    this.fA2F = new Interpolator3pt(amin, amid, amax, fmax, fmin, fmax);
-    this.fF2A = new Interpolator(fmin, fmax, amin, amax);
-  }
-  uiToFaust(x) {
-    return this.fA2F.returnMappedValue(x);
-  }
-  faustToUi(x) {
-    return this.fF2A.returnMappedValue(x);
-  }
-  setMappingValues(amin, amid, amax, min, init, max) {
-    this.fA2F = new Interpolator3pt(amin, amid, amax, max, min, max);
-    this.fF2A = new Interpolator(min, max, amin, amax);
-  }
-  getMappingValues(amin, amid, amax) {
-    return this.fA2F.getMappingValues(amin, amid, amax);
-  }
-  setActive(onOff) {
-    this.fActive = onOff;
-  }
-  getActive() {
-    return this.fActive;
-  }
-};
-function buildHandler(curve, amin, amid, amax, min, init, max) {
-  switch (curve) {
-    case 0 /* Up */:
-      return new UpConverter(amin, amid, amax, min, init, max);
-    case 1 /* Down */:
-      return new DownConverter(amin, amid, amax, min, init, max);
-    case 2 /* UpDown */:
-      return new UpDownConverter(amin, amid, amax, min, init, max);
-    case 3 /* DownUp */:
-      return new DownUpConverter(amin, amid, amax, min, init, max);
-    default:
-      return new UpConverter(amin, amid, amax, min, init, max);
-  }
-}
 
 // src/FaustWebAudioDsp.ts
 var WasmAllocator = class {
@@ -1932,7 +2036,7 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
         if (!item.meta)
           return;
         item.meta.forEach((meta) => {
-          const { midi } = meta;
+          const { midi, acc, gyr } = meta;
           if (midi) {
             const strMidi = midi.trim();
             if (strMidi === "pitchwheel") {
@@ -1944,15 +2048,13 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
               }
             }
           }
-          const { acc } = meta;
           if (acc) {
             const numAcc = acc.trim().split(" ").map(Number);
-            this.setupAccHandler(item.address, convertToAxis(numAcc[0]), convertToCurve(numAcc[1]), numAcc[2], numAcc[3], numAcc[4], item.min, item.init, item.max);
+            this.setupAccHandler(item.address, FaustSensors.convertToAxis(numAcc[0]), FaustSensors.convertToCurve(numAcc[1]), numAcc[2], numAcc[3], numAcc[4], item.min, item.init, item.max);
           }
-          const { gyr } = meta;
           if (gyr) {
             const numAcc = gyr.trim().split(" ").map(Number);
-            this.setupGyrHandler(item.address, convertToAxis(numAcc[0]), convertToCurve(numAcc[1]), numAcc[2], numAcc[3], numAcc[4], item.min, item.init, item.max);
+            this.setupGyrHandler(item.address, FaustSensors.convertToAxis(numAcc[0]), FaustSensors.convertToCurve(numAcc[1]), numAcc[2], numAcc[3], numAcc[4], item.min, item.init, item.max);
           }
         });
       } else if (item.type === "soundfile") {
@@ -1998,11 +2100,11 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
     let trimmed = input.replace(/^\{|\}$/g, "");
     return trimmed.split(";").map((str) => str.length <= 2 ? "" : str.substring(1, str.length - 1));
   }
-  // Accelerometer and gyroscope handling
-  propagateAcc(event) {
-    const x = event.accelerationIncludingGravity.x;
-    const y = event.accelerationIncludingGravity.y;
-    const z = event.accelerationIncludingGravity.z;
+  get hasAccInput() {
+    return this.fAcc.x.length + this.fAcc.y.length + this.fAcc.z.length > 0;
+  }
+  propagateAcc(accelerationIncludingGravity) {
+    const { x, y, z } = accelerationIncludingGravity;
     if (x !== null)
       this.fAcc.x.forEach((handler) => handler(x));
     if (y !== null)
@@ -2010,11 +2112,11 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
     if (z !== null)
       this.fAcc.z.forEach((handler) => handler(z));
   }
-  // Accelerometer and gyroscope handling
+  get hasGyrInput() {
+    return this.fGyr.x.length + this.fGyr.y.length + this.fGyr.z.length > 0;
+  }
   propagateGyr(event) {
-    const alpha = event.alpha;
-    const beta = event.beta;
-    const gamma = event.gamma;
+    const { alpha, beta, gamma } = event;
     if (alpha !== null)
       this.fGyr.x.forEach((handler) => handler(alpha));
     if (beta !== null)
@@ -2022,9 +2124,9 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
     if (gamma !== null)
       this.fGyr.z.forEach((handler) => handler(gamma));
   }
-  // Build the accelerometer handler
+  /** Build the accelerometer handler */
   setupAccHandler(path, axis, curve, amin, amid, amax, min, init, max) {
-    const handler = buildHandler(curve, amin, amid, amax, min, init, max);
+    const handler = FaustSensors.buildHandler(curve, amin, amid, amax, min, init, max);
     switch (axis) {
       case 0 /* x */:
         this.fAcc.x.push((val) => this.setParamValue(path, handler.uiToFaust(val)));
@@ -2037,9 +2139,9 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
         break;
     }
   }
-  // Build the gyroscope handler
+  /** Build the gyroscope handler */
   setupGyrHandler(path, axis, curve, amin, amid, amax, min, init, max) {
-    const handler = buildHandler(curve, amin, amid, amax, min, init, max);
+    const handler = FaustSensors.buildHandler(curve, amin, amid, amax, min, init, max);
     switch (axis) {
       case 0 /* x */:
         this.fGyr.x.push((val) => this.setParamValue(path, handler.uiToFaust(val)));
@@ -2865,6 +2967,18 @@ var FaustOfflineProcessor = class {
   destroy() {
     this.fDSPCode.destroy();
   }
+  get hasAccInput() {
+    return this.fDSPCode.hasAccInput;
+  }
+  propagateAcc(accelerationIncludingGravity) {
+    this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+  }
+  get hasGyrInput() {
+    return this.fDSPCode.hasGyrInput;
+  }
+  propagateGyr(event) {
+    this.fDSPCode.propagateGyr(event);
+  }
   /**
    * Render frames in an array.
    *
@@ -3484,6 +3598,7 @@ var SoundfileReader = class {
 var SoundfileReader_default = SoundfileReader;
 
 // src/FaustAudioWorkletNode.ts
+var _hasAccInput, _hasGyrInput;
 var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) {
   constructor(context, name, factory, options, nodeOptions = {}) {
     const JSONObj = JSON.parse(factory.json);
@@ -3497,6 +3612,8 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
       processorOptions: options,
       ...nodeOptions
     });
+    __privateAdd(this, _hasAccInput, false);
+    __privateAdd(this, _hasGyrInput, false);
     this.fJSONDsp = JSONObj;
     this.fJSON = factory.json;
     this.fOutputHandler = null;
@@ -3508,6 +3625,15 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
       if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
         this.fInputsItems.push(item.address);
         this.fDescriptor.push(item);
+        if (!item.meta)
+          return;
+        item.meta.forEach((meta) => {
+          const { midi, acc, gyr } = meta;
+          if (acc)
+            __privateSet(this, _hasAccInput, true);
+          if (gyr)
+            __privateSet(this, _hasGyrInput, true);
+        });
       }
     };
     FaustBaseWebAudioDsp.parseUI(this.fJSONDsp.ui, this.fUICallback);
@@ -3520,6 +3646,54 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     };
   }
   // Public API
+  /** Setup accelerometer and gyroscope handlers */
+  async listenMotion() {
+    if (this.hasAccInput) {
+      const handleDeviceMotion = ({ accelerationIncludingGravity }) => {
+        if (!accelerationIncludingGravity)
+          return;
+        const { x, y, z } = accelerationIncludingGravity;
+        this.propagateAcc({ x, y, z });
+      };
+      if (window.DeviceMotionEvent) {
+        if (typeof window.DeviceMotionEvent.requestPermission === "function") {
+          try {
+            const response = await window.DeviceMotionEvent.requestPermission();
+            if (response !== "granted")
+              throw new Error("Unable to access the accelerometer.");
+            window.addEventListener("devicemotion", handleDeviceMotion, true);
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          window.addEventListener("devicemotion", handleDeviceMotion, true);
+        }
+      } else {
+        console.log("Cannot set the accelerometer handler.");
+      }
+    }
+    if (this.hasGyrInput) {
+      const handleDeviceOrientation = ({ alpha, beta, gamma }) => {
+        this.propagateGyr({ alpha, beta, gamma });
+      };
+      if (window.DeviceMotionEvent) {
+        if (typeof window.DeviceOrientationEvent.requestPermission === "function") {
+          try {
+            const response = await window.DeviceOrientationEvent.requestPermission();
+            if (response !== "granted")
+              throw new Error("Unable to access the gyroscope.");
+            window.addEventListener("deviceorientation", handleDeviceOrientation, true);
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          window.addEventListener("deviceorientation", handleDeviceOrientation, true);
+        }
+      } else {
+        console.log("Cannot set the gyroscope handler.");
+      }
+    }
+  }
   setOutputParamHandler(handler) {
     this.fOutputHandler = handler;
   }
@@ -3578,6 +3752,24 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     const e = { type: "pitchWheel", data: [channel, wheel] };
     this.port.postMessage(e);
   }
+  get hasAccInput() {
+    return __privateGet(this, _hasAccInput);
+  }
+  propagateAcc(accelerationIncludingGravity) {
+    if (!accelerationIncludingGravity)
+      return;
+    const e = { type: "acc", data: accelerationIncludingGravity };
+    this.port.postMessage(e);
+  }
+  get hasGyrInput() {
+    return __privateGet(this, _hasGyrInput);
+  }
+  propagateGyr(event) {
+    if (!event)
+      return;
+    const e = { type: "gyr", data: event };
+    this.port.postMessage(e);
+  }
   setParamValue(path, value) {
     const e = { type: "param", data: { path, value } };
     this.port.postMessage(e);
@@ -3615,6 +3807,8 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     this.port.close();
   }
 };
+_hasAccInput = new WeakMap();
+_hasGyrInput = new WeakMap();
 var FaustMonoAudioWorkletNode = class extends FaustAudioWorkletNode {
   constructor(context, name, factory, sampleSize, nodeOptions = {}) {
     super(context, name, factory, { name, factory, sampleSize }, nodeOptions);
@@ -3710,6 +3904,54 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     this.start();
   }
   // Public API
+  /** Setup accelerometer and gyroscope handlers */
+  async listenMotion() {
+    if (this.hasAccInput) {
+      const handleDeviceMotion = ({ accelerationIncludingGravity }) => {
+        if (!accelerationIncludingGravity)
+          return;
+        const { x, y, z } = accelerationIncludingGravity;
+        this.propagateAcc({ x, y, z });
+      };
+      if (window.DeviceMotionEvent) {
+        if (typeof window.DeviceMotionEvent.requestPermission === "function") {
+          try {
+            const response = await window.DeviceMotionEvent.requestPermission();
+            if (response !== "granted")
+              throw new Error("Unable to access the accelerometer.");
+            window.addEventListener("devicemotion", handleDeviceMotion, true);
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          window.addEventListener("devicemotion", handleDeviceMotion, true);
+        }
+      } else {
+        console.log("Cannot set the accelerometer handler.");
+      }
+    }
+    if (this.hasGyrInput) {
+      const handleDeviceOrientation = ({ alpha, beta, gamma }) => {
+        this.propagateGyr({ alpha, beta, gamma });
+      };
+      if (window.DeviceMotionEvent) {
+        if (typeof window.DeviceOrientationEvent.requestPermission === "function") {
+          try {
+            const response = await window.DeviceOrientationEvent.requestPermission();
+            if (response !== "granted")
+              throw new Error("Unable to access the gyroscope.");
+            window.addEventListener("deviceorientation", handleDeviceOrientation, true);
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          window.addEventListener("deviceorientation", handleDeviceOrientation, true);
+        }
+      } else {
+        console.log("Cannot set the gyroscope handler.");
+      }
+    }
+  }
   compute(input, output) {
     return this.fDSPCode.compute(input, output);
   }
@@ -3778,6 +4020,18 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
   destroy() {
     this.fDSPCode.destroy();
   }
+  get hasAccInput() {
+    return this.fDSPCode.hasAccInput;
+  }
+  propagateAcc(accelerationIncludingGravity) {
+    this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+  }
+  get hasGyrInput() {
+    return this.fDSPCode.hasGyrInput;
+  }
+  propagateGyr(event) {
+    this.fDSPCode.propagateGyr(event);
+  }
 };
 var FaustMonoScriptProcessorNode = class extends FaustScriptProcessorNode {
 };
@@ -3831,20 +4085,6 @@ var _FaustMonoDspGenerator = class _FaustMonoDspGenerator {
     if (sp) {
       const instance = await FaustWasmInstantiator_default.createAsyncMonoDSPInstance(factory);
       const monoDsp = new FaustMonoWebAudioDsp(instance, context.sampleRate, sampleSize, bufferSize, factory.soundfiles);
-      if (window.DeviceMotionEvent) {
-        window.addEventListener("devicemotion", (event) => {
-          monoDsp.propagateAcc(event);
-        }, true);
-      } else {
-        console.log("Cannot set accelerometer handler");
-      }
-      if (window.DeviceMotionEvent) {
-        window.addEventListener("deviceorientation", (event) => {
-          monoDsp.propagateGyr(event);
-        }, true);
-      } else {
-        console.log("Cannot set gyroscope handler");
-      }
       const sp2 = context.createScriptProcessor(bufferSize, monoDsp.getNumInputs(), monoDsp.getNumOutputs());
       Object.setPrototypeOf(sp2, FaustMonoScriptProcessorNode.prototype);
       sp2.init(monoDsp);
@@ -3875,6 +4115,8 @@ var ${Soundfile.name} = ${Soundfile.toString()}
 var Soundfile = ${Soundfile.name};
 var ${WasmAllocator.name} = ${WasmAllocator.toString()}
 var WasmAllocator = ${WasmAllocator.name};
+var ${FaustSensors.name} = ${FaustSensors.toString()}
+var FaustSensors = ${FaustSensors.name};
 // Put them in dependencies
 const dependencies = {
     FaustBaseWebAudioDsp,
@@ -3927,6 +4169,8 @@ var ${Soundfile.name} = ${Soundfile.toString()}
 var Soundfile = ${Soundfile.name};
 var ${WasmAllocator.name} = ${WasmAllocator.toString()}
 var WasmAllocator = ${WasmAllocator.name};
+var ${FaustSensors.name} = ${FaustSensors.toString()}
+var FaustSensors = ${FaustSensors.name};
 var FFTUtils = ${fftUtils.toString()}
 // Put them in dependencies
 const dependencies = {
@@ -4121,20 +4365,6 @@ process = adaptorIns(dsp_code.process) : dsp_code.effect : adaptorOuts;
       const instance = await FaustWasmInstantiator_default.createAsyncPolyDSPInstance(voiceFactory, mixerModule, voices, effectFactory || void 0);
       const soundfiles = { ...effectFactory == null ? void 0 : effectFactory.soundfiles, ...voiceFactory.soundfiles };
       const polyDsp = new FaustPolyWebAudioDsp(instance, context.sampleRate, sampleSize, bufferSize, soundfiles);
-      if (window.DeviceMotionEvent) {
-        window.addEventListener("devicemotion", (event) => {
-          polyDsp.propagateAcc(event);
-        }, true);
-      } else {
-        console.log("Cannot set accelerometer handler");
-      }
-      if (window.DeviceMotionEvent) {
-        window.addEventListener("deviceorientation", (event) => {
-          polyDsp.propagateGyr(event);
-        }, true);
-      } else {
-        console.log("Cannot set gyroscope handler");
-      }
       const sp2 = context.createScriptProcessor(bufferSize, polyDsp.getNumInputs(), polyDsp.getNumOutputs());
       Object.setPrototypeOf(sp2, FaustPolyScriptProcessorNode.prototype);
       sp2.init(polyDsp);
@@ -4168,6 +4398,8 @@ var ${Soundfile.name} = ${Soundfile.toString()}
 var Soundfile = ${Soundfile.name};
 var ${WasmAllocator.name} = ${WasmAllocator.toString()}
 var WasmAllocator = ${WasmAllocator.name};
+var ${FaustSensors.name} = ${FaustSensors.toString()}
+var FaustSensors = ${FaustSensors.name};
 // Put them in dependencies
 const dependencies = {
     FaustBaseWebAudioDsp,
