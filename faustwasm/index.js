@@ -2103,8 +2103,8 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
   get hasAccInput() {
     return this.fAcc.x.length + this.fAcc.y.length + this.fAcc.z.length > 0;
   }
-  propagateAcc(accelerationIncludingGravity) {
-    const { x, y, z } = accelerationIncludingGravity;
+  propagateAcc(acceleration) {
+    const { x, y, z } = acceleration;
     if (x !== null)
       this.fAcc.x.forEach((handler) => handler(x));
     if (y !== null)
@@ -3649,10 +3649,10 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   /** Setup accelerometer and gyroscope handlers */
   async listenMotion() {
     if (this.hasAccInput) {
-      const handleDeviceMotion = ({ accelerationIncludingGravity }) => {
-        if (!accelerationIncludingGravity)
+      const handleDeviceMotion = ({ acceleration }) => {
+        if (!acceleration)
           return;
-        const { x, y, z } = accelerationIncludingGravity;
+        const { x, y, z } = acceleration;
         this.propagateAcc({ x, y, z });
       };
       if (window.DeviceMotionEvent) {
@@ -3755,10 +3755,10 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   get hasAccInput() {
     return __privateGet(this, _hasAccInput);
   }
-  propagateAcc(accelerationIncludingGravity) {
-    if (!accelerationIncludingGravity)
+  propagateAcc(acceleration) {
+    if (!acceleration)
       return;
-    const e = { type: "acc", data: accelerationIncludingGravity };
+    const e = { type: "acc", data: acceleration };
     this.port.postMessage(e);
   }
   get hasGyrInput() {
@@ -3907,10 +3907,10 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
   /** Setup accelerometer and gyroscope handlers */
   async listenMotion() {
     if (this.hasAccInput) {
-      const handleDeviceMotion = ({ accelerationIncludingGravity }) => {
-        if (!accelerationIncludingGravity)
+      const handleDeviceMotion = ({ acceleration }) => {
+        if (!acceleration)
           return;
-        const { x, y, z } = accelerationIncludingGravity;
+        const { x, y, z } = acceleration;
         this.propagateAcc({ x, y, z });
       };
       if (window.DeviceMotionEvent) {
@@ -4023,8 +4023,8 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
   get hasAccInput() {
     return this.fDSPCode.hasAccInput;
   }
-  propagateAcc(accelerationIncludingGravity) {
-    this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+  propagateAcc(acceleration) {
+    this.fDSPCode.propagateAcc(acceleration);
   }
   get hasGyrInput() {
     return this.fDSPCode.hasGyrInput;
