@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLAN as Faust Web applications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+        }
+        .qr-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .qr-item {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .qr-item img {
+            max-width: 150px;
+            height: auto;
+        }
+        .qr-item p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code List</h1>
+    <div class="qr-list">
+        <div class="qr-item">
+            <img src="Atomicro.png" alt="Atomicro">
+            <p>Atomicro</p>
+        </div>
+        <div class="qr-item">
+            <img src="https://example.com/qrcode2.png" alt="QR Code 2">
+            <p>QR Code 2</p>
+        </div>
+        <div class="qr-item">
+            <img src="https://example.com/qrcode3.png" alt="QR Code 3">
+            <p>QR Code 3</p>
+        </div>
+        <!-- Add more QR codes as needed -->
+    </div>
+</body>
+</html>
+
