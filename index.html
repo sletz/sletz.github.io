@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,26 +11,32 @@
             margin: 20px;
             background-color: #f0f0f0;
         }
+
         h1 {
             text-align: center;
         }
+
         .qr-list {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             gap: 20px;
         }
+
         .qr-item {
             background-color: #fff;
             padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 200px;
         }
+
         .qr-item img {
-            max-width: 150px;
+            max-width: 100%;
             height: auto;
         }
+
         .qr-item p {
             margin-top: 10px;
             font-size: 14px;
@@ -37,23 +44,39 @@
         }
     </style>
 </head>
+
 <body>
-    <h1>QR Code List</h1>
+    <h1>GameLAN as Faust Web applications</h1>
     <div class="qr-list">
         <div class="qr-item">
             <img src="Atomicro.png" alt="Atomicro">
             <p>Atomicro</p>
         </div>
         <div class="qr-item">
-            <img src="https://example.com/qrcode2.png" alt="QR Code 2">
-            <p>QR Code 2</p>
+            <img src="AttacKey.png" alt="AttacKey">
+            <p>AttacKey</p>
         </div>
         <div class="qr-item">
-            <img src="https://example.com/qrcode3.png" alt="QR Code 3">
-            <p>QR Code 3</p>
+            <img src="Baliphone.png" alt="Baliphone">
+            <p>Baliphone</p>
         </div>
-        <!-- Add more QR codes as needed -->
+        <div class="qr-item">
+            <img src="DroneLAN.png" alt="DroneLAN">
+            <p>DroneLAN</p>
+        </div>
+        <div class="qr-item">
+            <img src="Sequenceur.png" alt="Sequenceur">
+            <p>Sequenceur</p>
+        </div>
+        <div class="qr-item">
+            <img src="ShakerXY.png" alt="ShakerXY">
+            <p>ShakerXY</p>
+        </div>
+        <div class="qr-item">
+            <img src="Sinusoide.png" alt="Sinusoide">
+            <p>Sinusoide</p>
+        </div>
     </div>
 </body>
-</html>
 
+</html>
