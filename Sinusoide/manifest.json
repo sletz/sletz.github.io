@@ -1,11 +1,11 @@
 {
   "name": "Faust Sinusoide",
   "short_name": "Sinusoide",
-  "start_url": "./index.html",
+  "start_url": "/Sinusoide/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "scope": "/",
+  "scope": "/Sinusoide/",
   "orientation": "any",
   "icons": [
     {

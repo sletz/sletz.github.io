@@ -1,11 +1,11 @@
 {
   "name": "Faust Atomicro",
   "short_name": "Atomicro",
-  "start_url": "./index.html",
+  "start_url": "/Atomicro/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "scope": "/",
+  "scope": "/Atomicro/",
   "orientation": "any",
   "icons": [
     {

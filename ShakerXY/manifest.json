@@ -1,11 +1,11 @@
 {
   "name": "Faust ShakerXY",
   "short_name": "ShakerXY",
-  "start_url": "./index.html",
+  "start_url": "/ShakerXY/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "scope": "/",
+  "scope": "/ShakerXY/",
   "orientation": "any",
   "icons": [
     {

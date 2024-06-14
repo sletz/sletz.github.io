@@ -1,11 +1,11 @@
 {
   "name": "Faust Sequenceur",
   "short_name": "Sequenceur",
-  "start_url": "./index.html",
+  "start_url": "/Sequenceur/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "scope": "/",
+  "scope": "/Sequenceur/",
   "orientation": "any",
   "icons": [
     {

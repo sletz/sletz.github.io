@@ -1,11 +1,11 @@
 {
   "name": "Faust AttacKey",
   "short_name": "AttacKey",
-  "start_url": "./index.html",
+  "start_url": "/AttacKey/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "scope": "/",
+  "scope": "/AttacKey/",
   "orientation": "any",
   "icons": [
     {
