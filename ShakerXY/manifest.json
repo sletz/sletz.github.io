@@ -7,7 +7,7 @@
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "scope": "/ShakerXY/",
-  "orientation": "any",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.png",
