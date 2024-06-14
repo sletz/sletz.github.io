@@ -1,0 +1,17 @@
+{
+  "name": "Faust DroneLAN",
+  "short_name": "DroneLAN",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "scope": "/",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "390x390",
+      "type": "image/png"
+    }
+  ]
+}
