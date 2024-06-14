@@ -7,14 +7,14 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             console.log("Caching datas");
             return cache.addAll([
-                'Atomicro/',
-                'Atomicro/faust-ui/index.js',
-                'Atomicro/faust-ui/index.css',
-                'Atomicro/faustwasm/index.js',
-                'Atomicro/index.html',
-                'Atomicro/Atomicro.js',
-                'Atomicro/Atomicro.wasm',
-                'Atomicro/Atomicro.json',
+                './',
+                './faust-ui/index.js',
+                './faust-ui/index.css',
+                './faustwasm/index.js',
+                './index.html',
+                './Atomicro.js',
+                './Atomicro.wasm',
+                './Atomicro.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

@@ -7,14 +7,14 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             console.log("Caching datas");
             return cache.addAll([
-                'DroneLAN/',
-                'DroneLAN/faust-ui/index.js',
-                'DroneLAN/faust-ui/index.css',
-                'DroneLAN/faustwasm/index.js',
-                'DroneLAN/index.html',
-                'DroneLAN/DroneLAN.js',
-                'DroneLAN/DroneLAN.wasm',
-                'DroneLAN/DroneLAN.json',
+                './',
+                './faust-ui/index.js',
+                './faust-ui/index.css',
+                './faustwasm/index.js',
+                './index.html',
+                './DroneLAN.js',
+                './DroneLAN.wasm',
+                './DroneLAN.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);
