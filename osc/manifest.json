@@ -1,7 +1,7 @@
 {
   "name": "Faust osc",
   "short_name": "osc",
-  "start_url": "https://sletz.github.io/foo",
+  "start_url": "https://sletz.github.io/osc",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",

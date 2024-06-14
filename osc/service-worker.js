@@ -29,7 +29,7 @@ self.addEventListener('fetch', event => {
             // Return the cached response if found, else fetch from network
             return response || fetch(event.request).catch(() => {
                 // Fallback content or page for failed network requests
-                return caches.match('/offline.html');
+                return caches.match('./offline.html');
             });
         })
     );
