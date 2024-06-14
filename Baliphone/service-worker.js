@@ -7,14 +7,14 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             console.log("Caching datas");
             return cache.addAll([
-                './',
-                './faust-ui/index.js',
-                './faust-ui/index.css',
-                './faustwasm/index.js',
-                './index.html',
-                './Baliphone.js',
-                './Baliphone.wasm',
-                './Baliphone.json',
+                'Baliphone/',
+                'Baliphone/faust-ui/index.js',
+                'Baliphone/faust-ui/index.css',
+                'Baliphone/faustwasm/index.js',
+                'Baliphone/index.html',
+                'Baliphone/Baliphone.js',
+                'Baliphone/Baliphone.wasm',
+                'Baliphone/Baliphone.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

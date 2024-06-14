@@ -7,14 +7,14 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             console.log("Caching datas");
             return cache.addAll([
-                './',
-                './faust-ui/index.js',
-                './faust-ui/index.css',
-                './faustwasm/index.js',
-                './index.html',
-                './AttacKey.js',
-                './AttacKey.wasm',
-                './AttacKey.json',
+                'AttacKey/',
+                'AttacKey/faust-ui/index.js',
+                'AttacKey/faust-ui/index.css',
+                'AttacKey/faustwasm/index.js',
+                'AttacKey/index.html',
+                'AttacKey/AttacKey.js',
+                'AttacKey/AttacKey.wasm',
+                'AttacKey/AttacKey.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

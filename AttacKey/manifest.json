@@ -2,6 +2,7 @@
   "name": "Faust AttacKey",
   "short_name": "AttacKey",
   "start_url": "/AttacKey/index.html",
+  "description": "Progressive Web App for AttacKey",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",

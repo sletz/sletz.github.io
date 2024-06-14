@@ -2,6 +2,7 @@
   "name": "Faust Baliphone",
   "short_name": "Baliphone",
   "start_url": "/Baliphone/index.html",
+  "description": "Progressive Web App for Baliphone",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",

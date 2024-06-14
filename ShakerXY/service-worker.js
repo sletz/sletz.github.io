@@ -7,14 +7,14 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             console.log("Caching datas");
             return cache.addAll([
-                './',
-                './faust-ui/index.js',
-                './faust-ui/index.css',
-                './faustwasm/index.js',
-                './index.html',
-                './ShakerXY.js',
-                './ShakerXY.wasm',
-                './ShakerXY.json',
+                'ShakerXY/',
+                'ShakerXY/faust-ui/index.js',
+                'ShakerXY/faust-ui/index.css',
+                'ShakerXY/faustwasm/index.js',
+                'ShakerXY/index.html',
+                'ShakerXY/ShakerXY.js',
+                'ShakerXY/ShakerXY.wasm',
+                'ShakerXY/ShakerXY.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

@@ -2,6 +2,7 @@
   "name": "Faust Atomicro",
   "short_name": "Atomicro",
   "start_url": "/Atomicro/index.html",
+  "description": "Progressive Web App for Atomicro",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
