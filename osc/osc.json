@@ -1,0 +1,123 @@
+{
+    "name": "osc",
+    "filename": "osc",
+    "version": "2.74.5.",
+    "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
+    "library_list": [
+        "/usr/share/faust/stdfaust.lib",
+        "/usr/share/faust/oscillators.lib",
+        "/usr/share/faust/signals.lib",
+        "/usr/share/faust/maths.lib",
+        "/usr/share/faust/platform.lib",
+        "/usr/share/faust/basics.lib"
+    ],
+    "include_pathnames": [
+        "/share/faust",
+        "/usr/local/share/faust",
+        "/usr/share/faust",
+        "."
+    ],
+    "size": 262220,
+    "code": "5AEf",
+    "inputs": 0,
+    "outputs": 1,
+    "meta": [
+        {
+            "basics.lib/name": "Faust Basic Element Library"
+        },
+        {
+            "basics.lib/tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
+        },
+        {
+            "basics.lib/version": "1.17.1"
+        },
+        {
+            "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2"
+        },
+        {
+            "filename": "osc"
+        },
+        {
+            "maths.lib/author": "GRAME"
+        },
+        {
+            "maths.lib/copyright": "GRAME"
+        },
+        {
+            "maths.lib/license": "LGPL with exception"
+        },
+        {
+            "maths.lib/name": "Faust Math Library"
+        },
+        {
+            "maths.lib/version": "2.8.0"
+        },
+        {
+            "name": "osc"
+        },
+        {
+            "oscillators.lib/name": "Faust Oscillator Library"
+        },
+        {
+            "oscillators.lib/version": "1.5.1"
+        },
+        {
+            "platform.lib/name": "Generic Platform Library"
+        },
+        {
+            "platform.lib/version": "1.3.0"
+        },
+        {
+            "signals.lib/name": "Faust Signal Routing Library"
+        },
+        {
+            "signals.lib/version": "1.5.0"
+        }
+    ],
+    "ui": [
+        {
+            "type": "vgroup",
+            "label": "Oscillator",
+            "items": [
+                {
+                    "type": "hslider",
+                    "label": "freq",
+                    "shortname": "freq",
+                    "address": "/Oscillator/freq",
+                    "index": 262184,
+                    "meta": [
+                        {
+                            "acc": "0 1 -10 0 10"
+                        },
+                        {
+                            "unit": "Hz"
+                        }
+                    ],
+                    "init": 500,
+                    "min": 20,
+                    "max": 2500,
+                    "step": 1
+                },
+                {
+                    "type": "hslider",
+                    "label": "volume",
+                    "shortname": "volume",
+                    "address": "/Oscillator/volume",
+                    "index": 262156,
+                    "meta": [
+                        {
+                            "acc": "1 1 -10 0 10"
+                        },
+                        {
+                            "unit": "dB"
+                        }
+                    ],
+                    "init": 0,
+                    "min": -96,
+                    "max": 0,
+                    "step": 0.1
+                }
+            ]
+        }
+    ]
+}
