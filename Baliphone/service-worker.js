@@ -2,6 +2,44 @@
 
 const CACHE_NAME = 'Baliphone-static'; // Cache name without versioning
 
+// Function to request persistent storage
+async function requestPersistentStorage() {
+    if (navigator.storage && navigator.storage.persist) {
+        const isPersisted = await navigator.storage.persist();
+        console.log(`Persistent storage granted: ${isPersisted}`);
+    } else {
+        console.log('Persistent storage is not supported by this browser');
+    }
+}
+
+self.addEventListener('install', event => {
+    event.waitUntil(
+        (async () => {
+            // Request persistent storage
+            await requestPersistentStorage();
+            // Open the cache and add all required resources
+            const cache = await caches.open(CACHE_NAME);
+            console.log("Caching data");
+            try {
+                await cache.addAll([
+                    './',
+                    './faust-ui/index.js',
+                    './faust-ui/index.css',
+                    './faustwasm/index.js',
+                    './index.html',
+                    './Baliphone.js',
+                    './Baliphone.wasm',
+                    './Baliphone.json',
+                ]);
+            } catch (error) {
+                // Catch and log any errors during the caching process
+                console.error('Failed to cache resources during install:', error);
+            }
+        })()
+    );
+});
+
+/*
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
@@ -22,6 +60,7 @@ self.addEventListener('install', event => {
         })
     );
 });
+*/
 
 self.addEventListener('activate', event => {
     event.waitUntil(
