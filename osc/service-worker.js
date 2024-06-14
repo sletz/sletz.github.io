@@ -3,13 +3,13 @@ self.addEventListener('install', event => {
         caches.open('osc-static-v1').then(cache => {
             console.log("Caching datas");
             return cache.addAll([
-                '/faust-ui/index.js',
-                '/faustwasm/index.js',
-                '/faustwasm/styles.css',
-                '/index.html',
-                '/osc.js',
-                '/osc.wasm',
-                '/osc.json',
+                './faust-ui/index.js',
+                './faustwasm/index.js',
+                './faustwasm/styles.css',
+                './index.html',
+                './osc.js',
+                './osc.wasm',
+                './osc.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);
