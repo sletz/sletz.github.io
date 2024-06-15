@@ -13,14 +13,6 @@ self.addEventListener('install', event => {
                 '/DroneLAN/DroneLAN.js',
                 '/DroneLAN/DroneLAN.wasm',
                 '/DroneLAN/DroneLAN.json',
-                '/DroneLAN/Alonepad_reverb_stereo_instru1.flac',
-                '/DroneLAN/Drone_C_filter_stereo_instru2.flac',
-                '/DroneLAN/Dronepad_test_stereo_instru1.flac',
-                '/DroneLAN/Gouttes_eau_mono_instru1.flac',
-                '/DroneLAN/Pad_C_tremolo_stereo_instru2.flac',
-                '/DroneLAN/Pedale_C_filter_stereo_instru2.flac',
-                '/DroneLAN/Rain_full_stereo_instru1.flac',
-                '/DroneLAN/String_freeze_stereo_instru2.flac',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);
@@ -44,6 +36,21 @@ self.addEventListener('activate', event => {
         })
     );
 });
+
+/*
+self.addEventListener('fetch', event => {
+    console.log("event.request", event.request);
+    event.respondWith(
+        caches.match(event.request).then(response => {
+            // Return the cached response if found, else fetch from network
+            return response || fetch(event.request).catch(() => {
+                // Fallback content or page for failed network requests
+                return caches.match('./offline.html');
+            });
+        })
+    );
+});
+*/
 
 /*
 self.addEventListener('fetch', event => {

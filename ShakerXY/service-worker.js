@@ -39,6 +39,21 @@ self.addEventListener('activate', event => {
 
 /*
 self.addEventListener('fetch', event => {
+    console.log("event.request", event.request);
+    event.respondWith(
+        caches.match(event.request).then(response => {
+            // Return the cached response if found, else fetch from network
+            return response || fetch(event.request).catch(() => {
+                // Fallback content or page for failed network requests
+                return caches.match('./offline.html');
+            });
+        })
+    );
+});
+*/
+
+/*
+self.addEventListener('fetch', event => {
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
         // Get the resource from the cache
