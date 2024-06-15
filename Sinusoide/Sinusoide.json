@@ -22,7 +22,7 @@
         "."
     ],
     "size": 1106788,
-    "code": "+CKBAeQBHw==",
+    "code": "aB6BAeQBHw==",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -163,6 +163,9 @@
                     "index": 262216,
                     "meta": [
                         {
+                            "acc": "0 0 -10 0 10"
+                        },
+                        {
                             "hidden": "1"
                         },
                         {
@@ -182,6 +185,9 @@
                     "index": 262204,
                     "meta": [
                         {
+                            "acc": "0 0 -10 0 10"
+                        },
+                        {
                             "hidden": "1"
                         },
                         {
@@ -200,6 +206,9 @@
                     "address": "/Sinusoide/Volume",
                     "index": 262148,
                     "meta": [
+                        {
+                            "acc": "1 0 -9 0 10"
+                        },
                         {
                             "hidden": "1"
                         }
