@@ -45,6 +45,7 @@ self.addEventListener('activate', event => {
     );
 });
 
+/*
 self.addEventListener('fetch', event => {
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
@@ -60,7 +61,35 @@ self.addEventListener('fetch', event => {
                 cache.put(event.request, fetchResponse.clone());
                 return fetchResponse;
             } catch (e) {
-                // The network faile
+                // Network access failure
+                console.log('Network access error', CACHE_NAME);
+            }
+        }
+    })());
+});
+*/
+
+self.addEventListener('fetch', event => {
+    event.respondWith((async () => {
+        if (event.request.method !== 'GET') {
+            // Only handle GET requests
+            return fetch(event.request);
+        }
+        const cache = await caches.open(CACHE_NAME);
+        const cachedResponse = await cache.match(event.request);
+        if (cachedResponse) {
+            return cachedResponse;
+        } else {
+            try {
+                const fetchResponse = await fetch(event.request);
+                // Ensure the response is valid before caching it
+                if (fetchResponse && fetchResponse.status === 200 && fetchResponse.type === 'basic') {
+                    cache.put(event.request, fetchResponse.clone());
+                }
+                return fetchResponse;
+            } catch (e) {
+                console.log('Network access error', e);
+                // Network access failure
                 console.log('Network access error', CACHE_NAME);
             }
         }
