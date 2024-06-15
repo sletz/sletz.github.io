@@ -2,6 +2,7 @@
 
 const CACHE_NAME = 'ShakerXY-static'; // Cache name without versioning
 
+/*
 // Function to request persistent storage
 async function requestPersistentStorage() {
     if (navigator.storage && navigator.storage.persist) {
@@ -11,7 +12,9 @@ async function requestPersistentStorage() {
         console.log('Persistent storage is not supported by this browser');
     }
 }
+*/
 
+/*
 self.addEventListener('install', event => {
     event.waitUntil(
         (async () => {
@@ -38,21 +41,21 @@ self.addEventListener('install', event => {
         })()
     );
 });
+*/
 
-/*
+
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log("Caching datas");
             return cache.addAll([
-                './',
-                './faust-ui/index.js',
-                './faust-ui/index.css',
-                './faustwasm/index.js',
-                './index.html',
-                './ShakerXY.js',
-                './ShakerXY.wasm',
-                './ShakerXY.json',
+                '/ShakerXY/',
+                '/ShakerXY/faust-ui/index.js',
+                '/ShakerXY/faust-ui/index.css',
+                '/ShakerXY/faustwasm/index.js',
+                '/ShakerXY/ShakerXY.js',
+                '/ShakerXY/ShakerXY.wasm',
+                '/ShakerXY/ShakerXY.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);
@@ -60,7 +63,7 @@ self.addEventListener('install', event => {
         })
     );
 });
-*/
+
 
 self.addEventListener('activate', event => {
     event.waitUntil(
@@ -78,6 +81,7 @@ self.addEventListener('activate', event => {
     );
 });
 
+/*
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request).then(response => {
@@ -88,4 +92,31 @@ self.addEventListener('fetch', event => {
             });
         })
     );
+});
+*/
+
+self.addEventListener('fetch', event => {
+    event.respondWith((async () => {
+        const cache = await caches.open(CACHE_NAME);
+        console.log(cache);
+        // Get the resource from the cache.
+        console.log(event.request);
+        const cachedResponse = await cache.match(event.request);
+        console.log(cachedResponse);
+
+        if (cachedResponse) {
+            return cachedResponse;
+        } else {
+            try {
+                // If the resource was not in the cache, try the network.
+                const fetchResponse = await fetch(event.request);
+                // Save the resource in the cache and return it.
+                cache.put(event.request, fetchResponse.clone());
+                return fetchResponse;
+            } catch (e) {
+                // The network failed.
+                console.log('Network access error', CACHE_NAME);
+            }
+        }
+    })());
 });
