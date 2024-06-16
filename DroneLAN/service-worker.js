@@ -85,10 +85,12 @@ self.addEventListener('fetch', event => {
 
 self.addEventListener('fetch', event => {
     event.respondWith((async () => {
+        /*
         if (event.request.method !== 'GET') {
             // Only handle GET requests
             return fetch(event.request);
         }
+        */
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
         if (cachedResponse) {
