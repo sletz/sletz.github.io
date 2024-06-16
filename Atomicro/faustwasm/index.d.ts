@@ -1212,7 +1212,7 @@ export declare class WavDecoder {
 export declare class SoundfileReader {
 	static get fallbackPaths(): string[];
 	/**
-	 * Extract the parent URLs from an URL.
+	 * Extract the parent URL from an URL.
 	 * @param url : the URL
 	 * @returns : the parent URL
 	 */

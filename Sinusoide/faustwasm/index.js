@@ -3492,18 +3492,12 @@ var SoundfileReader = class {
     return [location.href, this.getParentUrl(location.href), location.origin];
   }
   /**
-   * Extract the parent URLs from an URL.
+   * Extract the parent URL from an URL.
    * @param url : the URL
    * @returns : the parent URL
    */
   static getParentUrl(url) {
-    let currentUrl = url;
-    let lastSlashIndex = currentUrl.lastIndexOf("/");
-    if (lastSlashIndex < currentUrl.length - 1) {
-      currentUrl = currentUrl.substring(0, lastSlashIndex);
-      lastSlashIndex = currentUrl.lastIndexOf("/");
-    }
-    return currentUrl.substring(0, lastSlashIndex + 1);
+    return url.substring(0, url.lastIndexOf("/") + 1);
   }
   /**
    * Convert an audio buffer to audio data.
