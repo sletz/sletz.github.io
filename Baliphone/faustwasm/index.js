@@ -3578,7 +3578,9 @@ var SoundfileReader = class {
   static async loadSoundfile(filename, metaUrls, soundfiles, audioCtx) {
     if (soundfiles[filename])
       return;
+    console.log("fallbackPaths", this.fallbackPaths);
     const urlsToCheck = [filename, ...[...metaUrls, ...this.fallbackPaths].map((path) => new URL(filename, path.endsWith("/") ? path : `${path}/`).href)];
+    console.log("urlsToCheck", urlsToCheck);
     const checkResults = await Promise.all(urlsToCheck.map((url) => this.checkFileExists(url)));
     const successIndex = checkResults.findIndex((r) => !!r);
     if (successIndex === -1)
