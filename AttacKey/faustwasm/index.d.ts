@@ -1278,7 +1278,7 @@ export declare class FaustAudioWorkletNode<Poly extends boolean = false> extends
 	protected fDescriptor: FaustUIInputItem[];
 	constructor(context: BaseAudioContext, name: string, factory: LooseFaustDspFactory, options: FaustAudioWorkletNodeOptions<Poly>["processorOptions"], nodeOptions?: Partial<FaustAudioWorkletNodeOptions>);
 	/** Setup accelerometer and gyroscope handlers */
-	listenMotion(): Promise<void>;
+	listenSensors(): Promise<void>;
 	setOutputParamHandler(handler: OutputParamHandler | null): void;
 	getOutputParamHandler(): OutputParamHandler | null;
 	setComputeHandler(handler: ComputeHandler | null): void;
@@ -1341,7 +1341,7 @@ export declare class FaustScriptProcessorNode<Poly extends boolean = false> exte
 	protected fOutputs: Float32Array[];
 	init(instance: Poly extends true ? FaustPolyWebAudioDsp : FaustMonoWebAudioDsp): void;
 	/** Setup accelerometer and gyroscope handlers */
-	listenMotion(): Promise<void>;
+	listenSensors(): Promise<void>;
 	compute(input: Float32Array[], output: Float32Array[]): boolean;
 	setOutputParamHandler(handler: OutputParamHandler): void;
 	getOutputParamHandler(): OutputParamHandler | null;

@@ -3647,7 +3647,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   }
   // Public API
   /** Setup accelerometer and gyroscope handlers */
-  async listenMotion() {
+  async listenSensors() {
     if (this.hasAccInput) {
       const handleDeviceMotion = ({ accelerationIncludingGravity }) => {
         if (!accelerationIncludingGravity)
@@ -3905,7 +3905,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
   }
   // Public API
   /** Setup accelerometer and gyroscope handlers */
-  async listenMotion() {
+  async listenSensors() {
     if (this.hasAccInput) {
       const handleDeviceMotion = ({ accelerationIncludingGravity }) => {
         if (!accelerationIncludingGravity)
