@@ -12,14 +12,6 @@ self.addEventListener('install', event => {
                 '/DroneLAN/faustwasm/index.js',
                 '/DroneLAN/DroneLAN.js',
                 '/DroneLAN/DroneLAN.wasm',
-                '/DroneLAN/Alonepad_reverb_stereo_instru1.flac',
-                '/DroneLAN/Pad_C_tremolo_stereo_instru2.flac',
-                '/DroneLAN/String_freeze_stereo_instru2.flac',
-                '/DroneLAN/Dronepad_test_stereo_instru1.flac',
-                '/DroneLAN/Rain_full_stereo_instru1.flac',
-                '/DroneLAN/Drone_C_filter_stereo_instru2.flac',
-                '/DroneLAN/Gouttes_eau_mono_instru1.flac',
-                '/DroneLAN/Pedale_C_filter_stereo_instru2.flac',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);
