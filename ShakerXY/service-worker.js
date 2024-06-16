@@ -78,10 +78,12 @@ self.addEventListener('fetch', event => {
 
 self.addEventListener('fetch', event => {
     event.respondWith((async () => {
+        /*
         if (event.request.method !== 'GET') {
             // Only handle GET requests
             return fetch(event.request);
         }
+        */
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
         if (cachedResponse) {
@@ -90,14 +92,13 @@ self.addEventListener('fetch', event => {
             try {
                 const fetchResponse = await fetch(event.request);
                 // Ensure the response is valid before caching it
-                if (fetchResponse && fetchResponse.status === 200 && fetchResponse.type === 'basic') {
+                if (event.request.method === 'GET' && fetchResponse && fetchResponse.status === 200 && fetchResponse.type === 'basic') {
                     cache.put(event.request, fetchResponse.clone());
                 }
                 return fetchResponse;
             } catch (e) {
-                console.log('Network access error', e);
                 // Network access failure
-                console.log('Network access error', CACHE_NAME);
+                console.log('Network access error', e);
             }
         }
     })());

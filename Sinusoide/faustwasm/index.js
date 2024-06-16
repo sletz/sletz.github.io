@@ -3538,7 +3538,7 @@ var SoundfileReader = class {
   static async checkFileExists(url) {
     try {
       console.log(`"checkFileExists" url: ${url}`);
-      const response = await fetch(url, { method: "HEAD" });
+      const response = await fetch(url);
       console.log(`"checkFileExists" response.ok: ${response.ok}`);
       return response.ok;
     } catch (error) {
