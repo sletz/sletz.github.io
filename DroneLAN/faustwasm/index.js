@@ -3539,6 +3539,7 @@ var SoundfileReader = class {
     try {
       console.log(`"checkFileExists" url: ${url}`);
       const response = await fetch(url, { method: "HEAD" });
+      console.log(`"checkFileExists" response.ok: ${response.ok}`);
       return response.ok;
     } catch (error) {
       console.error("Fetch error:", error);
@@ -3572,11 +3573,10 @@ var SoundfileReader = class {
   static async loadSoundfile(filename, metaUrls, soundfiles, audioCtx) {
     if (soundfiles[filename])
       return;
-    console.log("fallbackPaths", this.fallbackPaths);
     const urlsToCheck = [filename, ...[...metaUrls, ...this.fallbackPaths].map((path) => new URL(filename, path.endsWith("/") ? path : `${path}/`).href)];
-    console.log("urlsToCheck", urlsToCheck);
     const checkResults = await Promise.all(urlsToCheck.map((url) => this.checkFileExists(url)));
     const successIndex = checkResults.findIndex((r) => !!r);
+    console.log(`"loadSoundfile" successIndex: ${successIndex}`);
     if (successIndex === -1)
       throw new Error(`Failed to load sound file ${filename}, all check failed.`);
     soundfiles[filename] = await this.fetchSoundfile(urlsToCheck[successIndex], audioCtx);
