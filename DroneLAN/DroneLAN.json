@@ -19,7 +19,7 @@
         "."
     ],
     "size": 256,
-    "code": "uBo=",
+    "code": "kBc=",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -106,9 +106,6 @@
         },
         {
             "signals.lib/version": "1.5.0"
-        },
-        {
-            "soundfiles": "https://raw.githubusercontent.com/grame-cncm/GameLAN/master/drone"
         },
         {
             "soundfiles.lib/name": "Faust Soundfile Library"
