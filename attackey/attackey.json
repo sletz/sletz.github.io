@@ -1,5 +1,5 @@
 {
-    "name": "Attackey",
+    "name": "attackey",
     "filename": "attackey",
     "version": "2.74.5.",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
@@ -22,7 +22,7 @@
         "."
     ],
     "size": 844636,
-    "code": "KP9/AeQBHw==",
+    "code": "eP5/AeQBHw==",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -132,7 +132,7 @@
             "maths.lib/version": "2.8.0"
         },
         {
-            "name": "Attackey"
+            "name": "attackey"
         },
         {
             "nvoices": "12"

@@ -1,5 +1,5 @@
 {
-    "name": "Sequenceur",
+    "name": "sequenceur",
     "filename": "sequenceur",
     "version": "2.74.5.",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
@@ -17,7 +17,7 @@
         "."
     ],
     "size": 336,
-    "code": "eGvi",
+    "code": "kGri",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -58,7 +58,7 @@
             "maths.lib/version": "2.8.0"
         },
         {
-            "name": "Sequenceur"
+            "name": "sequenceur"
         },
         {
             "platform.lib/name": "Generic Platform Library"
@@ -79,13 +79,13 @@
     "ui": [
         {
             "type": "vgroup",
-            "label": "Sequenceur",
+            "label": "sequenceur",
             "items": [
                 {
                     "type": "hslider",
                     "label": "Decay",
                     "shortname": "Decay",
-                    "address": "/Sequenceur/Decay",
+                    "address": "/sequenceur/Decay",
                     "index": 268,
                     "meta": [
                         {
@@ -104,7 +104,7 @@
                     "type": "hbargraph",
                     "label": "Suivi",
                     "shortname": "Suivi",
-                    "address": "/Sequenceur/Suivi",
+                    "address": "/sequenceur/Suivi",
                     "index": 68,
                     "min": 0,
                     "max": 15
@@ -113,7 +113,7 @@
                     "type": "hslider",
                     "label": "Samples",
                     "shortname": "Samples",
-                    "address": "/Sequenceur/Samples",
+                    "address": "/sequenceur/Samples",
                     "index": 20,
                     "meta": [
                         {
@@ -132,7 +132,7 @@
                     "type": "checkbox",
                     "label": "ON/OFF",
                     "shortname": "OFF",
-                    "address": "/Sequenceur/ON/OFF",
+                    "address": "/sequenceur/ON/OFF",
                     "index": 16,
                     "meta": [
                         {
@@ -144,7 +144,7 @@
                     "type": "vslider",
                     "label": "Tempo",
                     "shortname": "Tempo",
-                    "address": "/Sequenceur/Tempo",
+                    "address": "/sequenceur/Tempo",
                     "index": 48,
                     "meta": [
                         {
@@ -181,14 +181,14 @@
                                     "type": "checkbox",
                                     "label": "01",
                                     "shortname": "01",
-                                    "address": "/Sequenceur/Steps/0x00/01",
+                                    "address": "/sequenceur/Steps/0x00/01",
                                     "index": 32
                                 },
                                 {
                                     "type": "checkbox",
                                     "label": "02",
                                     "shortname": "02",
-                                    "address": "/Sequenceur/Steps/0x00/02",
+                                    "address": "/sequenceur/Steps/0x00/02",
                                     "index": 80
                                 }
                             ]
@@ -206,14 +206,14 @@
                                     "type": "checkbox",
                                     "label": "03",
                                     "shortname": "03",
-                                    "address": "/Sequenceur/Steps/0x00/03",
+                                    "address": "/sequenceur/Steps/0x00/03",
                                     "index": 92
                                 },
                                 {
                                     "type": "checkbox",
                                     "label": "04",
                                     "shortname": "04",
-                                    "address": "/Sequenceur/Steps/0x00/04",
+                                    "address": "/sequenceur/Steps/0x00/04",
                                     "index": 104
                                 }
                             ]
@@ -231,14 +231,14 @@
                                     "type": "checkbox",
                                     "label": "05",
                                     "shortname": "05",
-                                    "address": "/Sequenceur/Steps/0x00/05",
+                                    "address": "/sequenceur/Steps/0x00/05",
                                     "index": 116
                                 },
                                 {
                                     "type": "checkbox",
                                     "label": "06",
                                     "shortname": "06",
-                                    "address": "/Sequenceur/Steps/0x00/06",
+                                    "address": "/sequenceur/Steps/0x00/06",
                                     "index": 128
                                 }
                             ]
@@ -256,14 +256,14 @@
                                     "type": "checkbox",
                                     "label": "07",
                                     "shortname": "07",
-                                    "address": "/Sequenceur/Steps/0x00/07",
+                                    "address": "/sequenceur/Steps/0x00/07",
                                     "index": 140
                                 },
                                 {
                                     "type": "checkbox",
                                     "label": "08",
                                     "shortname": "08",
-                                    "address": "/Sequenceur/Steps/0x00/08",
+                                    "address": "/sequenceur/Steps/0x00/08",
                                     "index": 152
                                 }
                             ]
@@ -281,14 +281,14 @@
                                     "type": "checkbox",
                                     "label": "09",
                                     "shortname": "09",
-                                    "address": "/Sequenceur/Steps/0x00/09",
+                                    "address": "/sequenceur/Steps/0x00/09",
                                     "index": 164
                                 },
                                 {
                                     "type": "checkbox",
                                     "label": "10",
                                     "shortname": "10",
-                                    "address": "/Sequenceur/Steps/0x00/10",
+                                    "address": "/sequenceur/Steps/0x00/10",
                                     "index": 176
                                 }
                             ]
@@ -306,14 +306,14 @@
                                     "type": "checkbox",
                                     "label": "11",
                                     "shortname": "11",
-                                    "address": "/Sequenceur/Steps/0x00/11",
+                                    "address": "/sequenceur/Steps/0x00/11",
                                     "index": 188
                                 },
                                 {
                                     "type": "checkbox",
                                     "label": "12",
                                     "shortname": "12",
-                                    "address": "/Sequenceur/Steps/0x00/12",
+                                    "address": "/sequenceur/Steps/0x00/12",
                                     "index": 200
                                 }
                             ]
@@ -331,14 +331,14 @@
                                     "type": "checkbox",
                                     "label": "13",
                                     "shortname": "13",
-                                    "address": "/Sequenceur/Steps/0x00/13",
+                                    "address": "/sequenceur/Steps/0x00/13",
                                     "index": 212
                                 },
                                 {
                                     "type": "checkbox",
                                     "label": "14",
                                     "shortname": "14",
-                                    "address": "/Sequenceur/Steps/0x00/14",
+                                    "address": "/sequenceur/Steps/0x00/14",
                                     "index": 224
                                 }
                             ]
@@ -356,14 +356,14 @@
                                     "type": "checkbox",
                                     "label": "15",
                                     "shortname": "15",
-                                    "address": "/Sequenceur/Steps/0x00/15",
+                                    "address": "/sequenceur/Steps/0x00/15",
                                     "index": 236
                                 },
                                 {
                                     "type": "checkbox",
                                     "label": "16",
                                     "shortname": "16",
-                                    "address": "/Sequenceur/Steps/0x00/16",
+                                    "address": "/sequenceur/Steps/0x00/16",
                                     "index": 248
                                 }
                             ]
@@ -374,28 +374,28 @@
                     "type": "soundfile",
                     "label": "sample_2",
                     "url": "{-Bipsquare_oneshot.flac-}",
-                    "address": "/Sequenceur/sample_2",
+                    "address": "/sequenceur/sample_2",
                     "index": 0
                 },
                 {
                     "type": "soundfile",
                     "label": "sample_4",
                     "url": "{-Hihat_oneshot_N.flac-}",
-                    "address": "/Sequenceur/sample_4",
+                    "address": "/sequenceur/sample_4",
                     "index": 4
                 },
                 {
                     "type": "soundfile",
                     "label": "sample_6",
                     "url": "{-Kick_oneshot_N.flac-}",
-                    "address": "/Sequenceur/sample_6",
+                    "address": "/sequenceur/sample_6",
                     "index": 8
                 },
                 {
                     "type": "soundfile",
                     "label": "sample_8",
                     "url": "{-Snare_oneshot_N.flac-}",
-                    "address": "/Sequenceur/sample_8",
+                    "address": "/sequenceur/sample_8",
                     "index": 12
                 }
             ]

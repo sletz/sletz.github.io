@@ -1,5 +1,5 @@
 {
-    "name": "Sinusoide",
+    "name": "sinusoide",
     "filename": "sinusoide",
     "version": "2.74.5.",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
@@ -22,7 +22,7 @@
         "."
     ],
     "size": 1106788,
-    "code": "SB+BAeQBHw==",
+    "code": "aB6BAeQBHw==",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -114,7 +114,7 @@
             "maths.lib/version": "2.8.0"
         },
         {
-            "name": "Sinusoide"
+            "name": "sinusoide"
         },
         {
             "oscillators.lib/name": "Faust Oscillator Library"
@@ -153,13 +153,13 @@
     "ui": [
         {
             "type": "vgroup",
-            "label": "Sinusoide",
+            "label": "sinusoide",
             "items": [
                 {
                     "type": "vslider",
                     "label": "Radio",
                     "shortname": "Radio",
-                    "address": "/Sinusoide/Radio",
+                    "address": "/sinusoide/Radio",
                     "index": 262216,
                     "meta": [
                         {
@@ -181,7 +181,7 @@
                     "type": "vslider",
                     "label": "Slide",
                     "shortname": "Slide",
-                    "address": "/Sinusoide/Slide",
+                    "address": "/sinusoide/Slide",
                     "index": 262204,
                     "meta": [
                         {
@@ -203,7 +203,7 @@
                     "type": "hslider",
                     "label": "Volume",
                     "shortname": "Volume",
-                    "address": "/Sinusoide/Volume",
+                    "address": "/sinusoide/Volume",
                     "index": 262148,
                     "meta": [
                         {
@@ -222,7 +222,7 @@
                     "type": "checkbox",
                     "label": "SLIDE / SCALE",
                     "shortname": "_SCALE",
-                    "address": "/Sinusoide/SLIDE_/_SCALE",
+                    "address": "/sinusoide/SLIDE_/_SCALE",
                     "index": 262200,
                     "meta": [
                         {
@@ -234,7 +234,7 @@
                     "type": "vslider",
                     "label": "Dry/Wet Mix",
                     "shortname": "Wet_Mix",
-                    "address": "/Sinusoide/Dry/Wet_Mix",
+                    "address": "/sinusoide/Dry/Wet_Mix",
                     "index": 262180,
                     "meta": [
                         {
@@ -256,7 +256,7 @@
                     "type": "checkbox",
                     "label": "ON / OFF",
                     "shortname": "_OFF",
-                    "address": "/Sinusoide/ON_/_OFF",
+                    "address": "/sinusoide/ON_/_OFF",
                     "index": 262144,
                     "meta": [
                         {

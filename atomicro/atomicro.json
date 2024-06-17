@@ -1,5 +1,5 @@
 {
-    "name": "Atomicro",
+    "name": "atomicro",
     "filename": "atomicro",
     "version": "2.74.5.",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
@@ -18,7 +18,7 @@
         "."
     ],
     "size": 5041144,
-    "code": "uK3Q",
+    "code": "CK3Q",
     "inputs": 1,
     "outputs": 1,
     "meta": [
@@ -62,7 +62,7 @@
             "maths.lib/version": "2.8.0"
         },
         {
-            "name": "Atomicro"
+            "name": "atomicro"
         },
         {
             "platform.lib/name": "Generic Platform Library"
@@ -80,13 +80,13 @@
     "ui": [
         {
             "type": "vgroup",
-            "label": "Atomicro",
+            "label": "atomicro",
             "items": [
                 {
                     "type": "hslider",
                     "label": "Grain size",
                     "shortname": "Grain_size",
-                    "address": "/Atomicro/Grain_size",
+                    "address": "/atomicro/Grain_size",
                     "index": 846768,
                     "meta": [
                         {
@@ -105,7 +105,7 @@
                     "type": "hslider",
                     "label": "Grain start",
                     "shortname": "Grain_start",
-                    "address": "/Atomicro/Grain_start",
+                    "address": "/atomicro/Grain_start",
                     "index": 846772,
                     "meta": [
                         {
@@ -133,14 +133,14 @@
                             "type": "checkbox",
                             "label": "Play",
                             "shortname": "Play",
-                            "address": "/Atomicro/0x00/Play",
+                            "address": "/atomicro/0x00/Play",
                             "index": 846776
                         },
                         {
                             "type": "checkbox",
                             "label": "Record",
                             "shortname": "Record",
-                            "address": "/Atomicro/0x00/Record",
+                            "address": "/atomicro/0x00/Record",
                             "index": 846728
                         }
                     ]
@@ -158,14 +158,14 @@
                             "type": "checkbox",
                             "label": "Granulation",
                             "shortname": "Granulation",
-                            "address": "/Atomicro/0x00/Granulation",
+                            "address": "/atomicro/0x00/Granulation",
                             "index": 846764
                         },
                         {
                             "type": "checkbox",
                             "label": "Reverse",
                             "shortname": "Reverse",
-                            "address": "/Atomicro/0x00/Reverse",
+                            "address": "/atomicro/0x00/Reverse",
                             "index": 846760
                         }
                     ]
@@ -183,7 +183,7 @@
                             "type": "checkbox",
                             "label": "Delay",
                             "shortname": "Delay",
-                            "address": "/Atomicro/0x00/Delay",
+                            "address": "/atomicro/0x00/Delay",
                             "index": 0
                         }
                     ]
