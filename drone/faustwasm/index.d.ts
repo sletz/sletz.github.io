@@ -635,7 +635,7 @@ export interface IFaustBaseWebAudioDsp {
 	/** Indicating if the DSP handles the accelerometer */
 	readonly hasAccInput: boolean;
 	/** Accelerometer handling */
-	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>, invert: boolean): void;
 	/** Indicating if the DSP handles the gyroscope */
 	readonly hasGyrInput: boolean;
 	/** Gyroscope handling */
@@ -724,7 +724,7 @@ export declare class FaustBaseWebAudioDsp implements IFaustBaseWebAudioDsp {
 	/** Split the soundfile names and return an array of names */
 	static splitSoundfileNames(input: string): string[];
 	get hasAccInput(): boolean;
-	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>, invert?: boolean): void;
 	get hasGyrInput(): boolean;
 	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 	/** Build the accelerometer handler */
@@ -1299,7 +1299,7 @@ export declare class FaustAudioWorkletNode<Poly extends boolean = false> extends
 	ctrlChange(channel: number, ctrl: number, value: number): void;
 	pitchWheel(channel: number, wheel: number): void;
 	get hasAccInput(): boolean;
-	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>, invert?: boolean): void;
 	get hasGyrInput(): boolean;
 	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 	setParamValue(path: string, value: number): void;
@@ -1372,7 +1372,7 @@ export declare class FaustScriptProcessorNode<Poly extends boolean = false> exte
 	stop(): void;
 	destroy(): void;
 	get hasAccInput(): boolean;
-	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>, invert?: boolean): void;
 	get hasGyrInput(): boolean;
 	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 }

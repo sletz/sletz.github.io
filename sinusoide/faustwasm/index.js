@@ -2103,10 +2103,9 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
   get hasAccInput() {
     return this.fAcc.x.length + this.fAcc.y.length + this.fAcc.z.length > 0;
   }
-  propagateAcc(accelerationIncludingGravity) {
+  propagateAcc(accelerationIncludingGravity, invert = false) {
     const { x, y, z } = accelerationIncludingGravity;
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    if (isAndroid) {
+    if (invert) {
       if (x !== null)
         this.fAcc.x.forEach((handler) => handler(-x));
       if (y !== null)
@@ -3669,12 +3668,23 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   /** Setup accelerometer and gyroscope handlers */
   async listenSensors() {
     if (this.hasAccInput) {
-      const handleDeviceMotion = ({ accelerationIncludingGravity }) => {
-        if (!accelerationIncludingGravity)
-          return;
-        const { x, y, z } = accelerationIncludingGravity;
-        this.propagateAcc({ x, y, z });
-      };
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      let handleDeviceMotion = null;
+      if (isAndroid) {
+        handleDeviceMotion = ({ accelerationIncludingGravity }) => {
+          if (!accelerationIncludingGravity)
+            return;
+          const { x, y, z } = accelerationIncludingGravity;
+          this.propagateAcc({ x, y, z }, true);
+        };
+      } else {
+        handleDeviceMotion = ({ accelerationIncludingGravity }) => {
+          if (!accelerationIncludingGravity)
+            return;
+          const { x, y, z } = accelerationIncludingGravity;
+          this.propagateAcc({ x, y, z });
+        };
+      }
       if (window.DeviceMotionEvent) {
         if (typeof window.DeviceMotionEvent.requestPermission === "function") {
           try {
@@ -3775,10 +3785,10 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   get hasAccInput() {
     return __privateGet(this, _hasAccInput);
   }
-  propagateAcc(accelerationIncludingGravity) {
+  propagateAcc(accelerationIncludingGravity, invert = false) {
     if (!accelerationIncludingGravity)
       return;
-    const e = { type: "acc", data: accelerationIncludingGravity };
+    const e = { type: "acc", data: accelerationIncludingGravity, invert };
     this.port.postMessage(e);
   }
   get hasGyrInput() {
@@ -3927,12 +3937,23 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
   /** Setup accelerometer and gyroscope handlers */
   async listenSensors() {
     if (this.hasAccInput) {
-      const handleDeviceMotion = ({ accelerationIncludingGravity }) => {
-        if (!accelerationIncludingGravity)
-          return;
-        const { x, y, z } = accelerationIncludingGravity;
-        this.propagateAcc({ x, y, z });
-      };
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      let handleDeviceMotion = null;
+      if (isAndroid) {
+        handleDeviceMotion = ({ accelerationIncludingGravity }) => {
+          if (!accelerationIncludingGravity)
+            return;
+          const { x, y, z } = accelerationIncludingGravity;
+          this.propagateAcc({ x, y, z }, true);
+        };
+      } else {
+        handleDeviceMotion = ({ accelerationIncludingGravity }) => {
+          if (!accelerationIncludingGravity)
+            return;
+          const { x, y, z } = accelerationIncludingGravity;
+          this.propagateAcc({ x, y, z });
+        };
+      }
       if (window.DeviceMotionEvent) {
         if (typeof window.DeviceMotionEvent.requestPermission === "function") {
           try {
@@ -4043,7 +4064,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
   get hasAccInput() {
     return this.fDSPCode.hasAccInput;
   }
-  propagateAcc(accelerationIncludingGravity) {
+  propagateAcc(accelerationIncludingGravity, invert = false) {
     this.fDSPCode.propagateAcc(accelerationIncludingGravity);
   }
   get hasGyrInput() {
