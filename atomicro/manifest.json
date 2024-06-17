@@ -1,12 +1,12 @@
 {
-  "name": "Faust Atomicro",
-  "short_name": "Atomicro",
-  "start_url": "/Atomicro/index.html",
-  "description": "Progressive Web App for Atomicro",
+  "name": "Faust atomicro",
+  "short_name": "atomicro",
+  "start_url": "/atomicro/index.html",
+  "description": "Progressive Web App for atomicro",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "scope": "/Atomicro/",
+  "scope": "/atomicro/",
   "orientation": "portrait",
   "icons": [
     {

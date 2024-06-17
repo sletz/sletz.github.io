@@ -1,18 +1,18 @@
 
-const CACHE_NAME = 'Sinusoide-static'; // Cache name without versioning
+const CACHE_NAME = 'sinusoide-static'; // Cache name without versioning
 
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log("Service worker installed");
             return cache.addAll([
-                '/Sinusoide/',
-                '/Sinusoide/faust-ui/index.js',
-                '/Sinusoide/faust-ui/index.css',
-                '/Sinusoide/faustwasm/index.js',
-                '/Sinusoide/Sinusoide.js',
-                '/Sinusoide/Sinusoide.wasm',
-                '/Sinusoide/Sinusoide.json',
+                '/sinusoide/',
+                '/sinusoide/faust-ui/index.js',
+                '/sinusoide/faust-ui/index.css',
+                '/sinusoide/faustwasm/index.js',
+                '/sinusoide/sinusoide.js',
+                '/sinusoide/sinusoide.wasm',
+                '/sinusoide/sinusoide.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

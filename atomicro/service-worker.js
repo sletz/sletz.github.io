@@ -1,18 +1,18 @@
 
-const CACHE_NAME = 'Atomicro-static'; // Cache name without versioning
+const CACHE_NAME = 'atomicro-static'; // Cache name without versioning
 
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log("Service worker installed");
             return cache.addAll([
-                '/Atomicro/',
-                '/Atomicro/faust-ui/index.js',
-                '/Atomicro/faust-ui/index.css',
-                '/Atomicro/faustwasm/index.js',
-                '/Atomicro/Atomicro.js',
-                '/Atomicro/Atomicro.wasm',
-                '/Atomicro/Atomicro.json',
+                '/atomicro/',
+                '/atomicro/faust-ui/index.js',
+                '/atomicro/faust-ui/index.css',
+                '/atomicro/faustwasm/index.js',
+                '/atomicro/atomicro.js',
+                '/atomicro/atomicro.wasm',
+                '/atomicro/atomicro.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

@@ -1,18 +1,18 @@
 
-const CACHE_NAME = 'AttacKey-static'; // Cache name without versioning
+const CACHE_NAME = 'attackey-static'; // Cache name without versioning
 
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log("Service worker installed");
             return cache.addAll([
-                '/AttacKey/',
-                '/AttacKey/faust-ui/index.js',
-                '/AttacKey/faust-ui/index.css',
-                '/AttacKey/faustwasm/index.js',
-                '/AttacKey/AttacKey.js',
-                '/AttacKey/AttacKey.wasm',
-                '/AttacKey/AttacKey.json',
+                '/attackey/',
+                '/attackey/faust-ui/index.js',
+                '/attackey/faust-ui/index.css',
+                '/attackey/faustwasm/index.js',
+                '/attackey/attackey.js',
+                '/attackey/attackey.wasm',
+                '/attackey/attackey.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

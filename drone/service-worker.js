@@ -1,18 +1,18 @@
 
-const CACHE_NAME = 'DroneLAN-static'; // Cache name without versioning
+const CACHE_NAME = 'drone-static'; // Cache name without versioning
 
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log("Service worker installed");
             return cache.addAll([
-                '/DroneLAN/',
-                '/DroneLAN/faust-ui/index.js',
-                '/DroneLAN/faust-ui/index.css',
-                '/DroneLAN/faustwasm/index.js',
-                '/DroneLAN/DroneLAN.js',
-                '/DroneLAN/DroneLAN.wasm',
-                '/DroneLAN/DroneLAN.json',
+                '/drone/',
+                '/drone/faust-ui/index.js',
+                '/drone/faust-ui/index.css',
+                '/drone/faustwasm/index.js',
+                '/drone/drone.js',
+                '/drone/drone.wasm',
+                '/drone/drone.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

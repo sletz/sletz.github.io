@@ -1,18 +1,18 @@
 
-const CACHE_NAME = 'Baliphone-static'; // Cache name without versioning
+const CACHE_NAME = 'baliphone-static'; // Cache name without versioning
 
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log("Service worker installed");
             return cache.addAll([
-                '/Baliphone/',
-                '/Baliphone/faust-ui/index.js',
-                '/Baliphone/faust-ui/index.css',
-                '/Baliphone/faustwasm/index.js',
-                '/Baliphone/Baliphone.js',
-                '/Baliphone/Baliphone.wasm',
-                '/Baliphone/Baliphone.json',
+                '/baliphone/',
+                '/baliphone/faust-ui/index.js',
+                '/baliphone/faust-ui/index.css',
+                '/baliphone/faustwasm/index.js',
+                '/baliphone/baliphone.js',
+                '/baliphone/baliphone.wasm',
+                '/baliphone/baliphone.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);

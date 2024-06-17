@@ -1,6 +1,6 @@
 {
     "name": "Baliphone",
-    "filename": "Baliphone",
+    "filename": "baliphone",
     "version": "2.74.5.",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "library_list": [
@@ -47,7 +47,7 @@
             "delays.lib/version": "1.1.0"
         },
         {
-            "filename": "Baliphone"
+            "filename": "baliphone"
         },
         {
             "filters.lib/allpass_comb:author": "Julius O. Smith III"

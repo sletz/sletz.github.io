@@ -1,12 +1,12 @@
 {
-  "name": "Faust Sinusoide",
-  "short_name": "Sinusoide",
-  "start_url": "/Sinusoide/index.html",
-  "description": "Progressive Web App for Sinusoide",
+  "name": "Faust sinusoide",
+  "short_name": "sinusoide",
+  "start_url": "/sinusoide/index.html",
+  "description": "Progressive Web App for sinusoide",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "scope": "/Sinusoide/",
+  "scope": "/sinusoide/",
   "orientation": "portrait",
   "icons": [
     {

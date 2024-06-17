@@ -1,18 +1,18 @@
 
-const CACHE_NAME = 'Sequenceur-static'; // Cache name without versioning
+const CACHE_NAME = 'sequenceur-static'; // Cache name without versioning
 
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log("Service worker installed");
             return cache.addAll([
-                '/Sequenceur/',
-                '/Sequenceur/faust-ui/index.js',
-                '/Sequenceur/faust-ui/index.css',
-                '/Sequenceur/faustwasm/index.js',
-                '/Sequenceur/Sequenceur.js',
-                '/Sequenceur/Sequenceur.wasm',
-                '/Sequenceur/Sequenceur.json',
+                '/sequenceur/',
+                '/sequenceur/faust-ui/index.js',
+                '/sequenceur/faust-ui/index.css',
+                '/sequenceur/faustwasm/index.js',
+                '/sequenceur/sequenceur.js',
+                '/sequenceur/sequenceur.wasm',
+                '/sequenceur/sequenceur.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);
