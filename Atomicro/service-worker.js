@@ -4,7 +4,7 @@ const CACHE_NAME = 'Atomicro-static'; // Cache name without versioning
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
-            console.log("Caching datas");
+            console.log("Service worker installed");
             return cache.addAll([
                 '/Atomicro/',
                 '/Atomicro/faust-ui/index.js',
@@ -21,62 +21,9 @@ self.addEventListener('install', event => {
     );
 });
 
-/*
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
-                        // Delete caches that do not match the current cache name
-                        console.log('Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
-    );
+self.addEventListener("activate", event => {
+    console.log("Service worker activated");
 });
-*/
-
-/*
-self.addEventListener('fetch', event => {
-    console.log("event.request", event.request);
-    event.respondWith(
-        caches.match(event.request).then(response => {
-            // Return the cached response if found, else fetch from network
-            return response || fetch(event.request).catch(() => {
-                // Fallback content or page for failed network requests
-                return caches.match('./offline.html');
-            });
-        })
-    );
-});
-*/
-
-/*
-self.addEventListener('fetch', event => {
-    event.respondWith((async () => {
-        const cache = await caches.open(CACHE_NAME);
-        // Get the resource from the cache
-        const cachedResponse = await cache.match(event.request);
-        if (cachedResponse) {
-            return cachedResponse;
-        } else {
-            try {
-                // If the resource was not in the cache, try the network
-                const fetchResponse = await fetch(event.request);
-                // Save the resource in the cache and return it
-                cache.put(event.request, fetchResponse.clone());
-                return fetchResponse;
-            } catch (e) {
-                // Network access failure
-                console.log('Network access error', CACHE_NAME);
-            }
-        }
-    })());
-});
-*/
 
 self.addEventListener('fetch', event => {
     event.respondWith((async () => {
