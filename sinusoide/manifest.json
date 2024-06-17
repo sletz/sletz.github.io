@@ -1,0 +1,18 @@
+{
+  "name": "Faust Sinusoide",
+  "short_name": "Sinusoide",
+  "start_url": "/Sinusoide/index.html",
+  "description": "Progressive Web App for Sinusoide",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "scope": "/Sinusoide/",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "390x390",
+      "type": "image/png"
+    }
+  ]
+}
