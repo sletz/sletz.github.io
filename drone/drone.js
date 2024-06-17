@@ -209,8 +209,8 @@ const createFaustUI = async (faustNode) => {
 
 (async () => {
     // To test the ScriptProcessorNode mode
-    //const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "DroneLAN", 0, true);
-    const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "DroneLAN");
+    //const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "drone", 0, true);
+    const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "drone");
     await createFaustUI(faustNode);
     faustNode.connect(audioContext.destination);
     if (faustNode.numberOfInputs) await buildAudioDeviceMenu(faustNode);
