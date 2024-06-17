@@ -1123,7 +1123,7 @@ export declare class FaustOfflineProcessor<Poly extends boolean = false> {
 	stop(): void;
 	destroy(): void;
 	get hasAccInput(): boolean;
-	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>): void;
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>, invert?: boolean): void;
 	get hasGyrInput(): boolean;
 	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 	/**

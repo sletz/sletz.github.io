@@ -138,7 +138,7 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
       const msg = e.data;
       switch (msg.type) {
         case "acc": {
-          this.propagateAcc(msg.data);
+          this.propagateAcc(msg.data, msg.invert);
           break;
         }
         case "gyr": {
@@ -199,8 +199,8 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
     pitchWheel(channel, wheel) {
       this.fDSPCode.pitchWheel(channel, wheel);
     }
-    propagateAcc(accelerationIncludingGravity) {
-      this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+    propagateAcc(accelerationIncludingGravity, invert = false) {
+      this.fDSPCode.propagateAcc(accelerationIncludingGravity, invert);
     }
     propagateGyr(event) {
       this.fDSPCode.propagateGyr(event);
@@ -2979,8 +2979,8 @@ var FaustOfflineProcessor = class {
   get hasAccInput() {
     return this.fDSPCode.hasAccInput;
   }
-  propagateAcc(accelerationIncludingGravity) {
-    this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+  propagateAcc(accelerationIncludingGravity, invert = false) {
+    this.fDSPCode.propagateAcc(accelerationIncludingGravity, invert);
   }
   get hasGyrInput() {
     return this.fDSPCode.hasGyrInput;
@@ -4067,7 +4067,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     return this.fDSPCode.hasAccInput;
   }
   propagateAcc(accelerationIncludingGravity, invert = false) {
-    this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+    this.fDSPCode.propagateAcc(accelerationIncludingGravity, invert);
   }
   get hasGyrInput() {
     return this.fDSPCode.hasGyrInput;
