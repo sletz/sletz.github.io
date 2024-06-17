@@ -2105,12 +2105,22 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
   }
   propagateAcc(accelerationIncludingGravity) {
     const { x, y, z } = accelerationIncludingGravity;
-    if (x !== null)
-      this.fAcc.x.forEach((handler) => handler(x));
-    if (y !== null)
-      this.fAcc.y.forEach((handler) => handler(y));
-    if (z !== null)
-      this.fAcc.z.forEach((handler) => handler(z));
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (isAndroid) {
+      if (x !== null)
+        this.fAcc.x.forEach((handler) => handler(-x));
+      if (y !== null)
+        this.fAcc.y.forEach((handler) => handler(-y));
+      if (z !== null)
+        this.fAcc.z.forEach((handler) => handler(-z));
+    } else {
+      if (x !== null)
+        this.fAcc.x.forEach((handler) => handler(x));
+      if (y !== null)
+        this.fAcc.y.forEach((handler) => handler(y));
+      if (z !== null)
+        this.fAcc.z.forEach((handler) => handler(z));
+    }
   }
   get hasGyrInput() {
     return this.fGyr.x.length + this.fGyr.y.length + this.fGyr.z.length > 0;
