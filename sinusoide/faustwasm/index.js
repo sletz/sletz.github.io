@@ -2979,8 +2979,8 @@ var FaustOfflineProcessor = class {
   get hasAccInput() {
     return this.fDSPCode.hasAccInput;
   }
-  propagateAcc(accelerationIncludingGravity) {
-    this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+  propagateAcc(accelerationIncludingGravity, invert = false) {
+    this.fDSPCode.propagateAcc(accelerationIncludingGravity, invert);
   }
   get hasGyrInput() {
     return this.fDSPCode.hasGyrInput;
@@ -4067,7 +4067,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     return this.fDSPCode.hasAccInput;
   }
   propagateAcc(accelerationIncludingGravity, invert = false) {
-    this.fDSPCode.propagateAcc(accelerationIncludingGravity);
+    this.fDSPCode.propagateAcc(accelerationIncludingGravity, invert);
   }
   get hasGyrInput() {
     return this.fDSPCode.hasGyrInput;
