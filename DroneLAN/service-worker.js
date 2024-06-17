@@ -12,6 +12,7 @@ self.addEventListener('install', event => {
                 '/DroneLAN/faustwasm/index.js',
                 '/DroneLAN/DroneLAN.js',
                 '/DroneLAN/DroneLAN.wasm',
+                '/DroneLAN/DroneLAN.json',
             ]).catch(error => {
                 // Catch and log any errors during the caching process
                 console.error('Failed to cache resources during install:', error);
@@ -20,6 +21,7 @@ self.addEventListener('install', event => {
     );
 });
 
+/*
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(cacheNames => {
@@ -35,6 +37,7 @@ self.addEventListener('activate', event => {
         })
     );
 });
+*/
 
 /*
 self.addEventListener('fetch', event => {
@@ -77,16 +80,8 @@ self.addEventListener('fetch', event => {
 
 self.addEventListener('fetch', event => {
     event.respondWith((async () => {
-        /*
-        if (event.request.method !== 'GET') {
-            // Only handle GET requests
-            return fetch(event.request);
-        }
-        */
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
-        console.log(event.request);
-        console.log(cachedResponse);
         if (cachedResponse) {
             return cachedResponse;
         } else {
