@@ -3669,8 +3669,6 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   async listenSensors() {
     if (this.hasAccInput) {
       const isAndroid = /Android/i.test(navigator.userAgent);
-      console.log(navigator.userAgent);
-      console.log(isAndroid);
       let handleDeviceMotion = null;
       if (isAndroid) {
         handleDeviceMotion = ({ accelerationIncludingGravity }) => {
