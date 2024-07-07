@@ -1,22 +1,19 @@
 {
-    "name": "sampler",
-    "filename": "sampler",
-    "version": "2.74.5.",
-    "compile_options": "-lang wasm-e -inpl -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
+    "name": "attackey",
+    "filename": "attackey",
+    "version": "2.74.6",
+    "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "library_list": [
         "/usr/share/faust/stdfaust.lib",
-        "/usr/share/faust/soundfiles.lib",
-        "/usr/share/faust/interpolators.lib",
         "/usr/share/faust/signals.lib",
         "/usr/share/faust/maths.lib",
         "/usr/share/faust/platform.lib",
+        "/usr/share/faust/routes.lib",
         "/usr/share/faust/envelopes.lib",
-        "/usr/share/faust/demos.lib",
         "/usr/share/faust/reverbs.lib",
         "/usr/share/faust/delays.lib",
         "/usr/share/faust/filters.lib",
-        "/usr/share/faust/basics.lib",
-        "/usr/share/faust/routes.lib"
+        "/usr/share/faust/basics.lib"
     ],
     "include_pathnames": [
         "/share/faust",
@@ -24,11 +21,14 @@
         "/usr/share/faust",
         "."
     ],
-    "size": 959344,
-    "code": "5AEf",
-    "inputs": 2,
+    "size": 844636,
+    "code": "+BWAAeQBHw==",
+    "inputs": 0,
     "outputs": 2,
     "meta": [
+        {
+            "author": "Developpement Grame - CNCM par Elodie Rabibisoa, Romain Constant et Stéphane Letz."
+        },
         {
             "basics.lib/name": "Faust Basic Element Library"
         },
@@ -36,28 +36,16 @@
             "basics.lib/tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
         },
         {
-            "basics.lib/version": "1.17.1"
+            "basics.lib/version": "1.18.0"
         },
         {
-            "compile_options": "-lang wasm-e -inpl -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2"
+            "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2"
         },
         {
             "delays.lib/name": "Faust Delay Library"
         },
         {
             "delays.lib/version": "1.1.0"
-        },
-        {
-            "demos.lib/name": "Faust Demos Library"
-        },
-        {
-            "demos.lib/version": "1.2.0"
-        },
-        {
-            "demos.lib/zita_light:author": "Julius O. Smith III"
-        },
-        {
-            "demos.lib/zita_light:licence": "MIT"
         },
         {
             "envelopes.lib/adsr:author": "Yann Orlarey and Andrey Bundin"
@@ -78,7 +66,7 @@
             "envelopes.lib/version": "1.3.0"
         },
         {
-            "filename": "sampler"
+            "filename": "attackey"
         },
         {
             "filters.lib/allpass_comb:author": "Julius O. Smith III"
@@ -88,24 +76,6 @@
         },
         {
             "filters.lib/allpass_comb:license": "MIT-style STK-4.3 license"
-        },
-        {
-            "filters.lib/fir:author": "Julius O. Smith III"
-        },
-        {
-            "filters.lib/fir:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
-        },
-        {
-            "filters.lib/fir:license": "MIT-style STK-4.3 license"
-        },
-        {
-            "filters.lib/iir:author": "Julius O. Smith III"
-        },
-        {
-            "filters.lib/iir:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
-        },
-        {
-            "filters.lib/iir:license": "MIT-style STK-4.3 license"
         },
         {
             "filters.lib/lowpass0_highpass1": "MIT-style STK-4.3 license"
@@ -126,15 +96,6 @@
             "filters.lib/name": "Faust Filters Library"
         },
         {
-            "filters.lib/peak_eq_rm:author": "Julius O. Smith III"
-        },
-        {
-            "filters.lib/peak_eq_rm:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
-        },
-        {
-            "filters.lib/peak_eq_rm:license": "MIT-style STK-4.3 license"
-        },
-        {
             "filters.lib/tf1:author": "Julius O. Smith III"
         },
         {
@@ -153,22 +114,7 @@
             "filters.lib/tf1s:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters.lib/tf2:author": "Julius O. Smith III"
-        },
-        {
-            "filters.lib/tf2:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
-        },
-        {
-            "filters.lib/tf2:license": "MIT-style STK-4.3 license"
-        },
-        {
             "filters.lib/version": "1.3.0"
-        },
-        {
-            "interpolators.lib/name": "Faust Interpolator Library"
-        },
-        {
-            "interpolators.lib/version": "1.3.1"
         },
         {
             "maths.lib/author": "GRAME"
@@ -186,10 +132,10 @@
             "maths.lib/version": "2.8.0"
         },
         {
-            "name": "sampler"
+            "name": "attackey"
         },
         {
-            "options": "[midi:on][nvoices:16]"
+            "nvoices": "12"
         },
         {
             "platform.lib/name": "Generic Platform Library"
@@ -219,66 +165,89 @@
             "signals.lib/version": "1.5.0"
         },
         {
-            "soundfiles": "https://raw.githubusercontent.com/sletz/faust-sampler/main"
-        },
-        {
-            "soundfiles.lib/name": "Faust Soundfile Library"
-        },
-        {
-            "soundfiles.lib/version": "1.7.0"
+            "soundfiles": "https://raw.githubusercontent.com/grame-cncm/GameLAN/master/attacKey"
         }
     ],
     "ui": [
         {
-            "type": "hgroup",
-            "label": "Zita Light",
+            "type": "vgroup",
+            "label": "Attackey",
+            "meta": [
+                {
+                    "style": "keyboard"
+                }
+            ],
             "items": [
                 {
-                    "type": "vslider",
-                    "label": "Dry/Wet Mix",
-                    "shortname": "Wet_Mix",
-                    "address": "/Zita_Light/Dry/Wet_Mix",
-                    "index": 131104,
+                    "type": "hslider",
+                    "label": "Instruments",
+                    "shortname": "Instruments",
+                    "address": "/Attackey/Instruments",
+                    "index": 131196,
                     "meta": [
                         {
-                            "1": ""
-                        },
-                        {
-                            "style": "knob"
-                        },
-                        {
-                            "tooltip": "-1 = dry, 1 = wet"
+                            "style": "radio{-1-:0;-2-:1;-3-:2;-4-:3;-5-:4}"
                         }
                     ],
                     "init": 0,
-                    "min": -1,
+                    "min": 0,
+                    "max": 4,
+                    "step": 1
+                },
+                {
+                    "type": "soundfile",
+                    "label": "Instrus",
+                    "url": "{-Piano_F.flac-;-Ether_F.flac-;-Bell_F.flac-;-Saw_F.flac-;-Vibraphone_F.flac-}",
+                    "address": "/Attackey/Instrus",
+                    "index": 0
+                },
+                {
+                    "type": "hslider",
+                    "label": "Volume",
+                    "shortname": "Volume",
+                    "address": "/Attackey/Volume",
+                    "index": 131180,
+                    "meta": [
+                        {
+                            "acc": "0 0 -8 0 0"
+                        },
+                        {
+                            "hidden": "1"
+                        }
+                    ],
+                    "init": 1,
+                    "min": 0,
+                    "max": 1,
+                    "step": 0.001
+                },
+                {
+                    "type": "hslider",
+                    "label": "freq",
+                    "shortname": "freq",
+                    "address": "/Attackey/freq",
+                    "index": 131204,
+                    "init": 349.23,
+                    "min": 261.63,
+                    "max": 783.99,
+                    "step": 0.001
+                },
+                {
+                    "type": "hslider",
+                    "label": "gain",
+                    "shortname": "gain",
+                    "address": "/Attackey/gain",
+                    "index": 131172,
+                    "init": 0.5,
+                    "min": 0,
                     "max": 1,
                     "step": 0.01
                 },
                 {
-                    "type": "vslider",
-                    "label": "Level",
-                    "shortname": "Level",
-                    "address": "/Zita_Light/Level",
-                    "index": 131088,
-                    "meta": [
-                        {
-                            "2": ""
-                        },
-                        {
-                            "style": "knob"
-                        },
-                        {
-                            "tooltip": "Output scale         factor"
-                        },
-                        {
-                            "unit": "dB"
-                        }
-                    ],
-                    "init": -6,
-                    "min": -70,
-                    "max": 40,
-                    "step": 0.1
+                    "type": "button",
+                    "label": "gate",
+                    "shortname": "gate",
+                    "address": "/Attackey/gate",
+                    "index": 131208
                 }
             ]
         }

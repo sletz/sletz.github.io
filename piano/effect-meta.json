@@ -1,7 +1,7 @@
 {
     "name": "piano",
     "filename": "piano",
-    "version": "2.74.5.",
+    "version": "2.74.6",
     "compile_options": "-lang wasm-e -inpl -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "library_list": [
         "/usr/share/faust/stdfaust.lib",
@@ -24,7 +24,7 @@
         "."
     ],
     "size": 586152,
-    "code": "UIllAeQBHw==",
+    "code": "uLtlAeQBHw==",
     "inputs": 2,
     "outputs": 2,
     "meta": [
@@ -35,7 +35,7 @@
             "basics.lib/tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
         },
         {
-            "basics.lib/version": "1.17.1"
+            "basics.lib/version": "1.18.0"
         },
         {
             "compile_options": "-lang wasm-e -inpl -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2"

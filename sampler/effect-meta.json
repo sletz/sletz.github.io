@@ -1,15 +1,19 @@
 {
-    "name": "baliphone",
-    "filename": "baliphone",
-    "version": "2.74.5.",
-    "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
+    "name": "sampler",
+    "filename": "sampler",
+    "version": "2.74.6",
+    "compile_options": "-lang wasm-e -inpl -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "library_list": [
         "/usr/share/faust/stdfaust.lib",
+        "/usr/share/faust/soundfiles.lib",
+        "/usr/share/faust/interpolators.lib",
         "/usr/share/faust/signals.lib",
-        "/usr/share/faust/reverbs.lib",
-        "/usr/share/faust/delays.lib",
         "/usr/share/faust/maths.lib",
         "/usr/share/faust/platform.lib",
+        "/usr/share/faust/envelopes.lib",
+        "/usr/share/faust/demos.lib",
+        "/usr/share/faust/reverbs.lib",
+        "/usr/share/faust/delays.lib",
         "/usr/share/faust/filters.lib",
         "/usr/share/faust/basics.lib",
         "/usr/share/faust/routes.lib"
@@ -20,14 +24,11 @@
         "/usr/share/faust",
         "."
     ],
-    "size": 844728,
+    "size": 959344,
     "code": "5AEf",
-    "inputs": 0,
+    "inputs": 2,
     "outputs": 2,
     "meta": [
-        {
-            "author": "Developpement Grame - CNCM par Elodie Rabibisoa et Romain Constant."
-        },
         {
             "basics.lib/name": "Faust Basic Element Library"
         },
@@ -35,10 +36,10 @@
             "basics.lib/tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
         },
         {
-            "basics.lib/version": "1.17.1"
+            "basics.lib/version": "1.18.0"
         },
         {
-            "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2"
+            "compile_options": "-lang wasm-e -inpl -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2"
         },
         {
             "delays.lib/name": "Faust Delay Library"
@@ -47,7 +48,37 @@
             "delays.lib/version": "1.1.0"
         },
         {
-            "filename": "baliphone"
+            "demos.lib/name": "Faust Demos Library"
+        },
+        {
+            "demos.lib/version": "1.2.0"
+        },
+        {
+            "demos.lib/zita_light:author": "Julius O. Smith III"
+        },
+        {
+            "demos.lib/zita_light:licence": "MIT"
+        },
+        {
+            "envelopes.lib/adsr:author": "Yann Orlarey and Andrey Bundin"
+        },
+        {
+            "envelopes.lib/author": "GRAME"
+        },
+        {
+            "envelopes.lib/copyright": "GRAME"
+        },
+        {
+            "envelopes.lib/license": "LGPL with exception"
+        },
+        {
+            "envelopes.lib/name": "Faust Envelope Library"
+        },
+        {
+            "envelopes.lib/version": "1.3.0"
+        },
+        {
+            "filename": "sampler"
         },
         {
             "filters.lib/allpass_comb:author": "Julius O. Smith III"
@@ -57,6 +88,24 @@
         },
         {
             "filters.lib/allpass_comb:license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters.lib/fir:author": "Julius O. Smith III"
+        },
+        {
+            "filters.lib/fir:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters.lib/fir:license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters.lib/iir:author": "Julius O. Smith III"
+        },
+        {
+            "filters.lib/iir:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters.lib/iir:license": "MIT-style STK-4.3 license"
         },
         {
             "filters.lib/lowpass0_highpass1": "MIT-style STK-4.3 license"
@@ -77,6 +126,15 @@
             "filters.lib/name": "Faust Filters Library"
         },
         {
+            "filters.lib/peak_eq_rm:author": "Julius O. Smith III"
+        },
+        {
+            "filters.lib/peak_eq_rm:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters.lib/peak_eq_rm:license": "MIT-style STK-4.3 license"
+        },
+        {
             "filters.lib/tf1:author": "Julius O. Smith III"
         },
         {
@@ -95,7 +153,22 @@
             "filters.lib/tf1s:license": "MIT-style STK-4.3 license"
         },
         {
+            "filters.lib/tf2:author": "Julius O. Smith III"
+        },
+        {
+            "filters.lib/tf2:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters.lib/tf2:license": "MIT-style STK-4.3 license"
+        },
+        {
             "filters.lib/version": "1.3.0"
+        },
+        {
+            "interpolators.lib/name": "Faust Interpolator Library"
+        },
+        {
+            "interpolators.lib/version": "1.3.1"
         },
         {
             "maths.lib/author": "GRAME"
@@ -113,7 +186,10 @@
             "maths.lib/version": "2.8.0"
         },
         {
-            "name": "baliphone"
+            "name": "sampler"
+        },
+        {
+            "options": "[midi:on][nvoices:16]"
         },
         {
             "platform.lib/name": "Generic Platform Library"
@@ -143,116 +219,66 @@
             "signals.lib/version": "1.5.0"
         },
         {
-            "soundfiles": "https://raw.githubusercontent.com/grame-cncm/GameLAN/master/baliphone"
+            "soundfiles": "https://raw.githubusercontent.com/sletz/faust-sampler/main"
+        },
+        {
+            "soundfiles.lib/name": "Faust Soundfile Library"
+        },
+        {
+            "soundfiles.lib/version": "1.7.0"
         }
     ],
     "ui": [
         {
-            "type": "vgroup",
-            "label": "baliphone",
+            "type": "hgroup",
+            "label": "Zita Light",
             "items": [
                 {
-                    "type": "soundfile",
-                    "label": "Gamelan_1",
-                    "url": "{-Gamelan_1_1_C_gauche.flac-;-Gamelan_3_2_Eb_gauche.flac-}",
-                    "address": "/baliphone/Gamelan_1",
-                    "index": 0
-                },
-                {
-                    "type": "soundfile",
-                    "label": "Gamelan_2",
-                    "url": "{-Gamelan_2_1_D_center.flac-;-Gamelan_4_1_G_droite.flac-}",
-                    "address": "/baliphone/Gamelan_2",
-                    "index": 4
-                },
-                {
-                    "type": "soundfile",
-                    "label": "Gamelan_3",
-                    "url": "{-Gamelan_5_2_Ab_center.flac-;-Gamelan_7_2_D_droite.flac-}",
-                    "address": "/baliphone/Gamelan_3",
-                    "index": 8
-                },
-                {
-                    "type": "soundfile",
-                    "label": "Gamelan_4",
-                    "url": "{-Gamelan_6_3_C_gauche.flac-;-Gamelan_8_3_Eb_center.flac-}",
-                    "address": "/baliphone/Gamelan_4",
-                    "index": 12
-                },
-                {
-                    "type": "checkbox",
-                    "label": "ON / OFF",
-                    "shortname": "_OFF",
-                    "address": "/baliphone/ON_/_OFF",
-                    "index": 16,
-                    "meta": [
-                        {
-                            "0": ""
-                        }
-                    ]
-                },
-                {
-                    "type": "hslider",
-                    "label": "Gamelans",
-                    "shortname": "Gamelans",
-                    "address": "/baliphone/Gamelans",
-                    "index": 131188,
+                    "type": "vslider",
+                    "label": "Dry/Wet Mix",
+                    "shortname": "Wet_Mix",
+                    "address": "/Zita_Light/Dry/Wet_Mix",
+                    "index": 131104,
                     "meta": [
                         {
                             "1": ""
                         },
                         {
-                            "style": "radio{-1-:0;-2-:1;-3-:2;-4-:3}"
+                            "style": "knob"
+                        },
+                        {
+                            "tooltip": "-1 = dry, 1 = wet"
                         }
                     ],
                     "init": 0,
-                    "min": 0,
-                    "max": 3,
-                    "step": 1
+                    "min": -1,
+                    "max": 1,
+                    "step": 0.01
                 },
                 {
-                    "type": "hslider",
-                    "label": "Trigger",
-                    "shortname": "Trigger",
-                    "address": "/baliphone/Trigger",
-                    "index": 131192,
+                    "type": "vslider",
+                    "label": "Level",
+                    "shortname": "Level",
+                    "address": "/Zita_Light/Level",
+                    "index": 131088,
                     "meta": [
                         {
                             "2": ""
                         },
                         {
-                            "acc": "1 0 -10 0 10"
+                            "style": "knob"
                         },
                         {
-                            "hidden": "1"
+                            "tooltip": "Output scale         factor"
+                        },
+                        {
+                            "unit": "dB"
                         }
                     ],
-                    "init": 0.5,
-                    "min": 0,
-                    "max": 1,
+                    "init": -6,
+                    "min": -70,
+                    "max": 40,
                     "step": 0.1
-                },
-                {
-                    "type": "hslider",
-                    "label": "Note",
-                    "shortname": "Note",
-                    "address": "/baliphone/Note",
-                    "index": 131196,
-                    "meta": [
-                        {
-                            "3": ""
-                        },
-                        {
-                            "acc": "0 0 -10 0 10"
-                        },
-                        {
-                            "hidden": "1"
-                        }
-                    ],
-                    "init": 1,
-                    "min": 0,
-                    "max": 2,
-                    "step": 0.01
                 }
             ]
         }
