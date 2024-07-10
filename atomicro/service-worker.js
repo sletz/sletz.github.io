@@ -1,6 +1,6 @@
 /// <reference lib="webworker" /> 
 
-// Set to > 0 is the DSP is polyphonic
+// Set to > 0 if the DSP is polyphonic
 const FAUST_DSP_VOICES = 0;
 // Set to true if the DSP has an effect
 const FAUST_DSP_HAS_EFFECT = false;
@@ -9,10 +9,11 @@ const CACHE_NAME = "atomicro-static"; // Cache name without versioning
 
 const MONO_RESOURCES = [
     "./index.html",
+    "./index.js",
+    "./create-node.js",
     "./faust-ui/index.js",
     "./faust-ui/index.css",
     "./faustwasm/index.js",
-    "./index.js",
     "./dsp-module.wasm",
     "./dsp-meta.json"
 ];
