@@ -20,16 +20,6 @@ if ("serviceWorker" in navigator) {
     });
 }
 
-/** @type {HTMLSpanElement} */
-const $spanAudioInput = document.getElementById("audio-input");
-/** @type {HTMLSpanElement} */
-const $spanMidiInput = document.getElementById("midi-input");
-/** @type {HTMLSelectElement} */
-const $selectAudioInput = document.getElementById("select-audio-input");
-/** @type {HTMLSelectElement} */
-const $selectMidiInput = document.getElementById("select-midi-input");
-/** @type {HTMLSelectElement} */
-const $buttonDsp = document.getElementById("button-dsp");
 /** @type {HTMLDivElement} */
 const $divFaustUI = document.getElementById("div-faust-ui");
 
@@ -38,88 +28,6 @@ const AudioCtx = window.AudioContext || window.webkitAudioContext;
 const audioContext = new AudioCtx({ latencyHint: 0.00001 });
 audioContext.destination.channelInterpretation = "discrete";
 audioContext.suspend();
-$buttonDsp.disabled = true;
-
-/**
- * @param {FaustAudioWorkletNode} faustNode 
- */
-const buildAudioDeviceMenu = async (faustNode) => {
-    /** @type {MediaStreamAudioSourceNode} */
-    let inputStreamNode;
-    const handleDeviceChange = async () => {
-        const devicesInfo = await navigator.mediaDevices.enumerateDevices();
-        $selectAudioInput.innerHTML = "";
-        devicesInfo.forEach((deviceInfo, i) => {
-            const { kind, deviceId, label } = deviceInfo;
-            if (kind === "audioinput") {
-                const option = new Option(label || `microphone ${i + 1}`, deviceId);
-                $selectAudioInput.add(option);
-            }
-        });
-    }
-    await handleDeviceChange();
-    navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange)
-    $selectAudioInput.onchange = async () => {
-        const id = $selectAudioInput.value;
-        const constraints = {
-            audio: {
-                echoCancellation: false,
-                noiseSuppression: false,
-                autoGainControl: false,
-                deviceId: id ? { exact: id } : undefined,
-            },
-        };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        if (inputStreamNode) inputStreamNode.disconnect();
-        inputStreamNode = audioContext.createMediaStreamSource(stream);
-        inputStreamNode.connect(faustNode);
-    };
-
-    const defaultConstraints = {
-        audio: {
-            echoCancellation: false,
-            mozNoiseSuppression: false,
-            mozAutoGainControl: false
-        }
-    };
-    const defaultStream = await navigator.mediaDevices.getUserMedia(defaultConstraints);
-    if (defaultStream) {
-        inputStreamNode = audioContext.createMediaStreamSource(defaultStream);
-        inputStreamNode.connect(faustNode);
-    }
-};
-
-/**
- * @param {FaustAudioWorkletNode} faustNode 
- */
-const buildMidiDeviceMenu = async (faustNode) => {
-    const midiAccess = await navigator.requestMIDIAccess();
-    /** @type {WebMidi.MIDIInput} */
-    let currentInput;
-    /**
-     * @param {WebMidi.MIDIMessageEvent} e
-     */
-    const handleMidiMessage = e => faustNode.midiMessage(e.data);
-    const handleStateChange = () => {
-        const { inputs } = midiAccess;
-        if ($selectMidiInput.options.length === inputs.size + 1) return;
-        if (currentInput) currentInput.removeEventListener("midimessage", handleMidiMessage);
-        $selectMidiInput.innerHTML = '<option value="-1" disabled selected>Select...</option>';
-        inputs.forEach((midiInput) => {
-            const { name, id } = midiInput;
-            const option = new Option(name, id);
-            $selectMidiInput.add(option);
-        });
-    };
-    handleStateChange();
-    midiAccess.addEventListener("statechange", handleStateChange);
-    $selectMidiInput.onchange = () => {
-        if (currentInput) currentInput.removeEventListener("midimessage", handleMidiMessage);
-        const id = $selectMidiInput.value;
-        currentInput = midiAccess.inputs.get(id);
-        currentInput.addEventListener("midimessage", handleMidiMessage);
-    };
-};
 
 /**
  * @param {FaustAudioWorkletNode} faustNode 
@@ -149,31 +57,71 @@ const createFaustUI = async (faustNode) => {
 };
 
 (async () => {
+
     const { default: createFaustNode } = await import("./create-node.js");
+
     // To test the ScriptProcessorNode mode
-    // const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "sfCapture", FAUST_DSP_VOICES, true);
-    const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "sfCapture", FAUST_DSP_VOICES);
+    // const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true);
+    const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
+
     if (!faustNode) throw new Error("Faust DSP not compiled");
     await createFaustUI(faustNode);
     faustNode.connect(audioContext.destination);
-    if (faustNode.numberOfInputs) await buildAudioDeviceMenu(faustNode);
-    else $spanAudioInput.hidden = true;
-    if (navigator.requestMIDIAccess) await buildMidiDeviceMenu(faustNode);
-    else $spanMidiInput.hidden = true;
-    $buttonDsp.disabled = false;
-    document.title = name;
-    let motionHandlersBound = false;
-    $buttonDsp.onclick = async () => {
-        if (!motionHandlersBound) {
-            await faustNode.listenSensors();
-            motionHandlersBound = true;
-        }
-        if (audioContext.state === "running") {
-            $buttonDsp.textContent = "Suspended";
-            audioContext.suspend();
-        } else if (audioContext.state === "suspended") {
-            $buttonDsp.textContent = "Running";
-            audioContext.resume();
+
+    // Function to initialize MIDI
+    function initMIDI() {
+        // Check if the browser supports the Web MIDI API
+        if (navigator.requestMIDIAccess) {
+            navigator.requestMIDIAccess()
+                .then(onMIDISuccess, onMIDIFailure);
+        } else {
+            console.log("Web MIDI API is not supported in this browser.");
         }
     }
+
+    // Success callback for requesting MIDI access
+    function onMIDISuccess(midiAccess) {
+        console.log("MIDI Access obtained.");
+        // Iterate through all available MIDI inputs
+        for (let input of midiAccess.inputs.values()) {
+            // Attach the event listener to each input
+            input.onmidimessage = handleMIDIMessage;
+            console.log(`Connected to input: ${input.name}`);
+        }
+    }
+
+    // Failure callback for requesting MIDI access
+    function onMIDIFailure() {
+        console.error("Failed to access MIDI devices.");
+    }
+
+    // Dummy event handler for MIDI messages
+    function handleMIDIMessage(event) {
+        faustNode.midiMessage(event.data);
+    }
+
+    // Initialize the MIDI setup
+    if (FAUST_DSP_VOICES > 0) {
+        initMIDI();
+    }
+
 })();
+
+// Function to resume AudioContext on user interaction
+function resumeAudioContext() {
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+}
+
+// Add event listeners for user interactions
+window.addEventListener('click', resumeAudioContext);
+window.addEventListener('touchstart', resumeAudioContext);
+
+// Optional: Remove event listeners once the context is resumed
+audioContext.onstatechange = function () {
+    if (audioContext.state === 'running') {
+        window.removeEventListener('click', resumeAudioContext);
+        window.removeEventListener('touchstart', resumeAudioContext);
+    }
+};
