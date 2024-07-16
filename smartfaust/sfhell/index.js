@@ -63,10 +63,16 @@ const createFaustUI = async (faustNode) => {
     // To test the ScriptProcessorNode mode
     // const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true);
     const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
-
     if (!faustNode) throw new Error("Faust DSP not compiled");
+
+    // Create the Faust UI
     await createFaustUI(faustNode);
+
+    // Connect the Faust node to the audio context
     faustNode.connect(audioContext.destination);
+
+    // Activate sensor listeners
+    await faustNode.listenSensors();
 
     // Function to initialize MIDI
     function initMIDI() {
