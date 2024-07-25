@@ -10,7 +10,7 @@
         "."
     ],
     "size": 132,
-    "code": "iK25",
+    "code": "MK25",
     "inputs": 1,
     "outputs": 1,
     "meta": [
@@ -123,7 +123,7 @@
             "signals_lib_version": "1.5.0"
         },
         {
-            "version": "2.74.9"
+            "version": "2.75.0"
         }
     ],
     "ui": [

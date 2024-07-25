@@ -10,7 +10,7 @@
         "."
     ],
     "size": 549524,
-    "code": "2ClgAfQBHw==",
+    "code": "mCpgAfQBHw==",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -105,7 +105,7 @@
             "filters_lib_iir_license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_lowpass0_highpass1": "MIT-style STK-4.3 license"
+            "filters_lib_lowpass0_highpass1": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
             "filters_lib_lowpass0_highpass1_author": "Julius O. Smith III"
@@ -303,7 +303,7 @@
             "signals_lib_version": "1.5.0"
         },
         {
-            "version": "2.74.9"
+            "version": "2.75.0"
         }
     ],
     "ui": [

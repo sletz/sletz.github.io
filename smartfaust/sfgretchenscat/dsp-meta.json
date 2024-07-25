@@ -10,7 +10,7 @@
         "."
     ],
     "size": 262708,
-    "code": "SCfF",
+    "code": "8CbF",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -135,7 +135,7 @@
             "signals_lib_version": "1.5.0"
         },
         {
-            "version": "2.74.9"
+            "version": "2.75.0"
         }
     ],
     "ui": [
