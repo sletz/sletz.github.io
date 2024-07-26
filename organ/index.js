@@ -91,7 +91,7 @@ audioContext.suspend();
     // Optional: Remove event listeners once the context is resumed
     audioContext.onstatechange = function () {
         if (audioContext.state === 'running') {
-            window.addEventListener('pointerdown', resumeAudioContext);
+            window.removeEventListener('pointerdown', resumeAudioContext);
             window.removeEventListener('touchstart', resumeAudioContext);
         }
     };
