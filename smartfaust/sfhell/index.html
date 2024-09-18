@@ -21,20 +21,6 @@
             position: absolute;
         }
 
-        #overlay {
-            background-color: rgba(0, 0, 0, 0.9);
-            display: flex;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 100;
-        }
-
-        #overlay>span {
-            margin: auto;
-            font-weight: bold;
-        }
-
         main {
             margin: 20px;
             display: flex;
@@ -80,26 +66,6 @@
 </head>
 
 <body>
-    <div id="overlay"><span>
-            <h2 id="resumeMessage">Touch/Click to resume audio and start...</h2>
-        </span></div>
-
-    <script>
-        // Function to detect the language
-        function getLanguage() {
-            return navigator.language || navigator.userLanguage;
-        }
-        // Function to set the message
-        function setMessage() {
-            var lang = getLanguage();
-            var messageElement = document.getElementById('resumeMessage');
-            if (lang.startsWith('fr')) {
-                messageElement.innerHTML = "Touchez/Cliquez pour activer l'audio et démarrer...";
-            }
-        }
-        // Set the message on page load
-        window.onload = setMessage;
-    </script>
     <main>
         <div id="div-faust-ui">
         </div>

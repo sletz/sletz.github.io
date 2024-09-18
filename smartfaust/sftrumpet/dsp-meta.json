@@ -1,7 +1,7 @@
 {
     "name": "sfTrumpet",
     "filename": "sfTrumpet.dsp",
-    "version": "2.74.8",
+    "version": "2.75.3",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 549524,
-    "code": "mCpgAfQBHw==",
+    "code": "yFpgAWQjHw==",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -24,7 +24,7 @@
             "basics_lib_tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
         },
         {
-            "basics_lib_version": "1.18.0"
+            "basics_lib_version": "1.19.1"
         },
         {
             "compile_options": "-single -scal -e ../sfTrumpet.dsp -o sfTrumpet.dsp"
@@ -300,10 +300,10 @@
             "signals_lib_name": "Faust Signal Routing Library"
         },
         {
-            "signals_lib_version": "1.5.0"
+            "signals_lib_version": "1.6.0"
         },
         {
-            "version": "2.75.0"
+            "version": "2.75.6"
         }
     ],
     "ui": [
@@ -355,7 +355,7 @@
                             "label": "HF Damping",
                             "shortname": "HF_Damping",
                             "address": "/sfTrumpet/sfTrumpet_parameter_s_/HF_Damping",
-                            "index": 98572,
+                            "index": 98552,
                             "meta": [
                                 {
                                     "hidden": "1"
@@ -399,7 +399,7 @@
                             "label": "Low RT60",
                             "shortname": "Low_RT60",
                             "address": "/sfTrumpet/sfTrumpet_parameter_s_/Low_RT60",
-                            "index": 98632,
+                            "index": 98612,
                             "meta": [
                                 {
                                     "acc": "1 1 -10 0 10"
@@ -421,7 +421,7 @@
                             "label": "Mid RT60",
                             "shortname": "Mid_RT60",
                             "address": "/sfTrumpet/sfTrumpet_parameter_s_/Mid_RT60",
-                            "index": 98588,
+                            "index": 98568,
                             "meta": [
                                 {
                                     "acc": "1 1 -10 0 10"
