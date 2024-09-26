@@ -71,6 +71,7 @@ audioContext.suspend();
 
     // Function to resume AudioContext, activate MIDI and Sensors on user interaction
     function activateAudioMIDISensors() {
+
         // Resume the AudioContext
         if (audioContext.state === 'suspended') {
             audioContext.resume();
@@ -88,15 +89,5 @@ audioContext.suspend();
     // Add event listeners for user interactions
     window.addEventListener('click', activateAudioMIDISensors);
     window.addEventListener('touchstart', activateAudioMIDISensors);
-
-    // Remove event listeners once the activation is done
-    /*
-    audioContext.onstatechange = function () {
-        if (audioContext.state === 'running') {
-            window.removeEventListener('click', activateAudioMIDISensors);
-            window.removeEventListener('touchstart', activateAudioMIDISensors);
-        }
-    };
-    */
 
 })();
