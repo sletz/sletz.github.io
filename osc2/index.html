@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<link rel="manifest" href="/osc2/manifest.json">
+<link rel="manifest" href="./manifest.json">
 
 <head>
     <meta charset="UTF-8">
@@ -59,28 +59,18 @@
             display: flex;
             position: relative;
             flex-direction: column;
+            color: black;
         }
     </style>
-    <link rel="stylesheet" href="/osc2/faust-ui/index.css">
+    <link rel="stylesheet" href="./faust-ui/index.css">
 </head>
 
 <body>
     <main>
-        <span id="audio-input">
-            <span>Select Audio Input Device</span>
-            <select id="select-audio-input"></select>
-        </span>
-        <span id="midi-input">
-            <span>Select MIDI Input Device</span>
-            <select id="select-midi-input"></select>
-        </span>
-        <span id="dsp-switch">
-            <button id="button-dsp">Activate DSP</button>
-        </span>
         <div id="div-faust-ui">
         </div>
     </main>
-    <script src="/osc2/osc2.js"></script>
+    <script src="./index.js"></script>
 </body>
 
 </html>

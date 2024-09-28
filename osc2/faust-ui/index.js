@@ -129,6 +129,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _layout_Layout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./layout/Layout */ "./src/layout/Layout.ts");
 /* harmony import */ var _components_Group__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Group */ "./src/components/Group.ts");
 /* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index.scss */ "./src/index.scss");
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 
 
 
@@ -239,11 +258,28 @@ class FaustUI {
     this.calcGrid();
     this.faustUIRoot.setState({ style: { grid: this.grid } });
   }
+  /** Filter out items with `hidden` metadata and `soundfile` items */
+  filter(ui) {
+    const callback = (items, item) => {
+      var _a;
+      if (item.type === "soundfile")
+        return items;
+      if (item.type === "hgroup" || item.type === "vgroup" || item.type === "tgroup") {
+        items.push(__spreadProps(__spreadValues({}, item), { items: item.items.reduce(callback, []) }));
+        return items;
+      }
+      if ((_a = item.meta) == null ? void 0 : _a.find((m) => m.hidden && m.hidden === "1"))
+        return items;
+      items.push(item);
+      return items;
+    };
+    return ui.reduce(callback, []);
+  }
   get ui() {
     return this._ui;
   }
   set ui(uiIn) {
-    this._ui = uiIn;
+    this._ui = this.filter(uiIn);
     this.calc();
     this.mount();
   }
@@ -416,7 +452,7 @@ const _AbstractItem = class extends _AbstractComponent__WEBPACK_IMPORTED_MODULE_
       const fromX = prevX - rect.left;
       const fromY = prevY - rect.top;
       const prevValue = this.state.value;
-      this.handlePointerDown({ x: fromX, y: fromY, originalEvent: e });
+      this.handleMouseOrTouchDown({ pointerId: -1, x: fromX, y: fromY, originalEvent: e });
       const handleTouchMove = (e2) => {
         e2.preventDefault();
         const clientX = e2.changedTouches[0].clientX;
@@ -427,13 +463,13 @@ const _AbstractItem = class extends _AbstractComponent__WEBPACK_IMPORTED_MODULE_
         prevY = clientY;
         const x = clientX - rect.left;
         const y = clientY - rect.top;
-        this.handlePointerDrag({ prevValue, x, y, fromX, fromY, movementX, movementY, originalEvent: e2 });
+        this.handleMouseOrTouchMove({ pointerId: -1, prevValue, x, y, fromX, fromY, movementX, movementY, originalEvent: e2 });
       };
       const handleTouchEnd = (e2) => {
         e2.preventDefault();
         const x = e2.changedTouches[0].clientX - rect.left;
         const y = e2.changedTouches[0].clientY - rect.top;
-        this.handlePointerUp({ x, y, originalEvent: e2 });
+        this.handleMouseOrTouchUp({ pointerId: -1, x, y, originalEvent: e2 });
         document.removeEventListener("touchmove", handleTouchMove);
         document.removeEventListener("touchend", handleTouchEnd);
       };
@@ -451,18 +487,18 @@ const _AbstractItem = class extends _AbstractComponent__WEBPACK_IMPORTED_MODULE_
       const fromX = e.clientX - rect.left;
       const fromY = e.clientY - rect.top;
       const prevValue = this.state.value;
-      this.handlePointerDown({ x: fromX, y: fromY, originalEvent: e });
+      this.handleMouseOrTouchDown({ pointerId: -1, x: fromX, y: fromY, originalEvent: e });
       const handleMouseMove = (e2) => {
         e2.preventDefault();
         const x = e2.clientX - rect.left;
         const y = e2.clientY - rect.top;
-        this.handlePointerDrag({ prevValue, x, y, fromX, fromY, movementX: e2.movementX, movementY: e2.movementY, originalEvent: e2 });
+        this.handleMouseOrTouchMove({ pointerId: -1, prevValue, x, y, fromX, fromY, movementX: e2.movementX, movementY: e2.movementY, originalEvent: e2 });
       };
       const handleMouseUp = (e2) => {
         e2.preventDefault();
         const x = e2.clientX - rect.left;
         const y = e2.clientY - rect.top;
-        this.handlePointerUp({ x, y, originalEvent: e2 });
+        this.handleMouseOrTouchUp({ pointerId: -1, x, y, originalEvent: e2 });
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
       };
@@ -476,10 +512,40 @@ const _AbstractItem = class extends _AbstractComponent__WEBPACK_IMPORTED_MODULE_
     this.handleContextMenu = (e) => {
     };
     this.handlePointerDown = (e) => {
+      e.preventDefault();
+      e.currentTarget.focus();
+      const { pointerId } = e;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const fromX = e.clientX - rect.left;
+      const fromY = e.clientY - rect.top;
+      const prevValue = this.state.value;
+      this.handleMouseOrTouchDown({ pointerId, x: fromX, y: fromY, originalEvent: e });
+      const handlePointerMove = (e2) => {
+        if (e2.pointerId !== pointerId)
+          return;
+        e2.preventDefault();
+        const x = e2.clientX - rect.left;
+        const y = e2.clientY - rect.top;
+        this.handleMouseOrTouchMove({ pointerId, prevValue, x, y, fromX, fromY, movementX: e2.movementX, movementY: e2.movementY, originalEvent: e2 });
+      };
+      const handlePointerUp = (e2) => {
+        if (e2.pointerId !== pointerId)
+          return;
+        e2.preventDefault();
+        const x = e2.clientX - rect.left;
+        const y = e2.clientY - rect.top;
+        this.handleMouseOrTouchUp({ pointerId, x, y, originalEvent: e2 });
+        document.removeEventListener("pointermove", handlePointerMove);
+        document.removeEventListener("pointerup", handlePointerUp);
+      };
+      document.addEventListener("pointermove", handlePointerMove);
+      document.addEventListener("pointerup", handlePointerUp);
     };
-    this.handlePointerDrag = (e) => {
+    this.handleMouseOrTouchDown = (e) => {
     };
-    this.handlePointerUp = (e) => {
+    this.handleMouseOrTouchMove = (e) => {
+    };
+    this.handleMouseOrTouchUp = (e) => {
     };
     this.handleFocusIn = (e) => this.setState({ focus: true });
     this.handleFocusOut = (e) => this.setState({ focus: false });
@@ -717,10 +783,13 @@ class Button extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
       this.btn.style.fontFamily = `${fontname}, sans-serif`;
       this.btn.style.fontStyle = fontface;
     };
-    this.handlePointerDown = () => {
+    this.handleContextMenu = (e) => {
+      e.preventDefault();
+    };
+    this.handleMouseOrTouchDown = () => {
       this.setValue(1);
     };
-    this.handlePointerUp = () => {
+    this.handleMouseOrTouchUp = () => {
       this.setValue(0);
     };
   }
@@ -755,8 +824,8 @@ class Button extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
   componentDidMount() {
     super.componentDidMount();
-    this.btn.addEventListener("mousedown", this.handleMouseDown);
-    this.btn.addEventListener("touchstart", this.handleTouchStart);
+    this.btn.addEventListener("pointerdown", this.handlePointerDown);
+    this.btn.addEventListener("contextmenu", this.handleContextMenu);
     this.on("style", () => this.schedule(this.setStyle));
     const labelChange = () => this.span.innerText = this.state.label;
     this.on("label", () => this.schedule(labelChange));
@@ -786,10 +855,10 @@ class Checkbox extends _Button__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor() {
     super(...arguments);
     this.className = "checkbox";
-    this.handlePointerDown = () => {
+    this.handleMouseOrTouchDown = () => {
       this.setValue(1 - this.state.value);
     };
-    this.handlePointerUp = () => {
+    this.handleMouseOrTouchUp = () => {
     };
   }
 }
@@ -1072,6 +1141,7 @@ class Group extends _AbstractComponent__WEBPACK_IMPORTED_MODULE_0__["default"] {
     return this;
   }
   componentDidMount() {
+    var _a;
     const handleResize = () => {
       const { grid, left, top, width, height } = this.state.style;
       if (!this.state.isRoot)
@@ -1106,7 +1176,7 @@ class Group extends _AbstractComponent__WEBPACK_IMPORTED_MODULE_0__["default"] {
     };
     this.on("label", () => this.schedule(labelChange));
     this.paintLabel();
-    if (this.tabs && this.tabs.children.length)
+    if ((_a = this.tabs) == null ? void 0 : _a.children.length)
       this.tabs.children[0].click();
     this.children.forEach((item) => item.componentDidMount());
     return this;
@@ -1338,7 +1408,7 @@ class Knob extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.handleChange = (e) => {
       const value = parseFloat(e.currentTarget.value);
       if (isFinite(value)) {
-        const changed = this.setValue(+this.inputNumber.value);
+        const changed = this.setValue(+value);
         if (changed)
           return;
       }
@@ -1393,7 +1463,7 @@ class Knob extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
       ctx.lineTo(valuePosX, valuePosY);
       ctx.stroke();
     };
-    this.handlePointerDrag = (e) => {
+    this.handleMouseOrTouchMove = (e) => {
       const newValue = this.getValueFromDelta(e);
       if (newValue !== this.state.value)
         this.setValue(newValue);
@@ -1438,8 +1508,7 @@ class Knob extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
   componentDidMount() {
     super.componentDidMount();
     this.input.addEventListener("change", this.handleChange);
-    this.canvas.addEventListener("mousedown", this.handleMouseDown);
-    this.canvas.addEventListener("touchstart", this.handleTouchStart, { passive: false });
+    this.canvas.addEventListener("pointerdown", this.handlePointerDown);
     this.on("style", () => {
       this.schedule(this.setStyle);
       this.schedule(this.paint);
@@ -1627,8 +1696,7 @@ class Led extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
   componentDidMount() {
     super.componentDidMount();
-    this.canvas.addEventListener("mousedown", this.handleMouseDown);
-    this.canvas.addEventListener("touchstart", this.handleTouchStart, { passive: false });
+    this.canvas.addEventListener("pointerdown", this.handlePointerDown);
     this.on("style", () => this.schedule(this.setStyle));
     this.on("label", () => this.schedule(this.paintLabel));
     this.on("value", () => this.schedule(this.paint));
@@ -2109,9 +2177,9 @@ class Soundfile extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
       this.btn.style.fontFamily = `${fontname}, sans-serif`;
       this.btn.style.fontStyle = fontface;
     };
-    this.handlePointerDown = () => {
+    this.handleMouseOrTouchDown = () => {
     };
-    this.handlePointerUp = () => {
+    this.handleMouseOrTouchUp = () => {
     };
   }
   static get defaultProps() {
@@ -2145,8 +2213,7 @@ class Soundfile extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
   componentDidMount() {
     super.componentDidMount();
-    this.btn.addEventListener("mousedown", this.handleMouseDown);
-    this.btn.addEventListener("touchstart", this.handleTouchStart);
+    this.btn.addEventListener("pointerdown", this.handlePointerDown);
     this.on("style", () => this.schedule(this.setStyle));
     const labelChange = () => this.span.innerText = this.state.label;
     this.on("label", () => this.schedule(labelChange));
@@ -2324,8 +2391,7 @@ class VBargraph extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
   componentDidMount() {
     super.componentDidMount();
-    this.canvas.addEventListener("mousedown", this.handleMouseDown);
-    this.canvas.addEventListener("touchstart", this.handleTouchStart, { passive: false });
+    this.canvas.addEventListener("pointerdown", this.handlePointerDown);
     this.on("style", () => {
       this.schedule(this.setStyle);
       this.schedule(this.paint);
@@ -2440,7 +2506,7 @@ class VSlider extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
       ctx.fillStyle = slidercolor;
       (0,_utils__WEBPACK_IMPORTED_MODULE_1__.fillRoundedRect)(ctx, left - drawWidth, top + drawHeight * (1 - distance) - drawWidth, drawWidth * 3, drawWidth * 2, borderRadius);
     };
-    this.handlePointerDown = (e) => {
+    this.handleMouseOrTouchDown = (e) => {
       const { value } = this.state;
       if (e.x < this.interactionRect[0] || e.x > this.interactionRect[0] + this.interactionRect[2] || e.y < this.interactionRect[1] || e.y > this.interactionRect[1] + this.interactionRect[3])
         return;
@@ -2448,7 +2514,7 @@ class VSlider extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
       if (newValue !== value)
         this.setValue(this.getValueFromPos(e));
     };
-    this.handlePointerDrag = (e) => {
+    this.handleMouseOrTouchMove = (e) => {
       const newValue = this.getValueFromPos(e);
       if (newValue !== this.state.value)
         this.setValue(newValue);
@@ -2497,8 +2563,7 @@ class VSlider extends _AbstractItem__WEBPACK_IMPORTED_MODULE_0__["default"] {
   componentDidMount() {
     super.componentDidMount();
     this.input.addEventListener("change", this.handleChange);
-    this.canvas.addEventListener("mousedown", this.handleMouseDown);
-    this.canvas.addEventListener("touchstart", this.handleTouchStart, { passive: false });
+    this.canvas.addEventListener("pointerdown", this.handlePointerDown);
     this.on("style", () => {
       this.schedule(this.setStyle);
       this.schedule(this.paint);
@@ -3083,21 +3148,35 @@ class Layout {
    * Get the rendering type of an item by parsing its metadata
    */
   static predictType(item) {
-    if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup" || item.type === "button" || item.type === "checkbox" || item.type === "soundfile")
-      return item.type;
+    var _a, _b, _c, _d, _e;
     if (item.type === "hbargraph" || item.type === "vbargraph") {
-      if (item.meta && item.meta.find((meta) => meta.style && meta.style.startsWith("led")))
+      if ((_a = item.meta) == null ? void 0 : _a.find((meta) => {
+        var _a2;
+        return (_a2 = meta.style) == null ? void 0 : _a2.startsWith("led");
+      }))
         return "led";
-      if (item.meta && item.meta.find((meta) => meta.style && meta.style.startsWith("numerical")))
+      if ((_b = item.meta) == null ? void 0 : _b.find((meta) => {
+        var _a2;
+        return (_a2 = meta.style) == null ? void 0 : _a2.startsWith("numerical");
+      }))
         return "numerical";
       return item.type;
     }
     if (item.type === "hslider" || item.type === "nentry" || item.type === "vslider") {
-      if (item.meta && item.meta.find((meta) => meta.style && meta.style.startsWith("knob")))
+      if ((_c = item.meta) == null ? void 0 : _c.find((meta) => {
+        var _a2;
+        return (_a2 = meta.style) == null ? void 0 : _a2.startsWith("knob");
+      }))
         return "knob";
-      if (item.meta && item.meta.find((meta) => meta.style && meta.style.startsWith("menu")))
+      if ((_d = item.meta) == null ? void 0 : _d.find((meta) => {
+        var _a2;
+        return (_a2 = meta.style) == null ? void 0 : _a2.startsWith("menu");
+      }))
         return "menu";
-      if (item.meta && item.meta.find((meta) => meta.style && meta.style.startsWith("radio")))
+      if ((_e = item.meta) == null ? void 0 : _e.find((meta) => {
+        var _a2;
+        return (_a2 = meta.style) == null ? void 0 : _a2.startsWith("radio");
+      }))
         return "radio";
     }
     return item.type;
