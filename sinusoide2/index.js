@@ -31,9 +31,9 @@ audioContext.suspend();
 
 (async () => {
 
+    const { createFaustNode } = await import("./create-node.js");
     // To test the ScriptProcessorNode mode
     // const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true);
-    const { createFaustNode } = await import("./create-node.js");
     const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
     if (!faustNode) throw new Error("Faust DSP not compiled");
 
@@ -50,8 +50,8 @@ audioContext.suspend();
         await connectToAudioInput(audioContext, null, faustNode, null);
     }
 
-    // Function to initialize MIDI
-    function initMIDI() {
+    // Function to start MIDI
+    function startMIDI() {
         // Check if the browser supports the Web MIDI API
         if (navigator.requestMIDIAccess) {
             navigator.requestMIDIAccess().then(
@@ -69,6 +69,28 @@ audioContext.suspend();
         }
     }
 
+    // Function to stop MIDI
+    function stopMIDI() {
+        // Check if the browser supports the Web MIDI API
+        if (navigator.requestMIDIAccess) {
+            navigator.requestMIDIAccess().then(
+                midiAccess => {
+                    console.log("MIDI Access obtained.");
+                    for (let input of midiAccess.inputs.values()) {
+                        input.onmidimessage = null;
+                        console.log(`Disconnected from input: ${input.name}`);
+                    }
+                },
+                () => console.error("Failed to access MIDI devices.")
+            );
+        } else {
+            console.log("Web MIDI API is not supported in this browser.");
+        }
+    }
+
+    let sensorHandlersBound = false;
+    let midiHandlersBound = false;
+
     // Function to resume AudioContext, activate MIDI and Sensors on user interaction
     function activateAudioMIDISensors() {
 
@@ -78,16 +100,47 @@ audioContext.suspend();
         }
 
         // Activate sensor listeners
-        faustNode.listenSensors();
+        if (!sensorHandlersBound) {
+            faustNode.startSensors();
+            sensorHandlersBound = true;
+        }
 
         // Initialize the MIDI setup
-        if (FAUST_DSP_VOICES > 0) {
-            initMIDI();
+        if (!midiHandlersBound && FAUST_DSP_VOICES > 0) {
+            startMIDI();
+            midiHandlersBound = true;
+        }
+    }
+
+    // Function to suspend AudioContext, deactivate MIDI and Sensors on user interaction
+    function deactivateAudioMIDISensors() {
+
+        // Suspend the AudioContext
+        if (audioContext.state === 'running') {
+            audioContext.suspend();
+        }
+
+        // Deactivate sensor listeners
+        if (sensorHandlersBound) {
+            faustNode.stopSensors();
+            sensorHandlersBound = false;
+        }
+
+        // Deactivate the MIDI setup
+        if (midiHandlersBound && FAUST_DSP_VOICES > 0) {
+            stopMIDI();
+            midiHandlersBound = false;
         }
     }
 
     // Add event listeners for user interactions
     window.addEventListener('click', activateAudioMIDISensors);
     window.addEventListener('touchstart', activateAudioMIDISensors);
+
+    // Remove event listeners when the app is in the background
+    window.addEventListener('blur', () => {
+        console.log('App is in the background or window is blurred');
+        deactivateAudioMIDISensors();
+    });
 
 })();

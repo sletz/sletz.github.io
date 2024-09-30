@@ -29,105 +29,118 @@ const audioContext = new AudioCtx({ latencyHint: 0.00001 });
 audioContext.destination.channelInterpretation = "discrete";
 audioContext.suspend();
 
-/**
- * @param {FaustAudioWorkletNode} faustNode 
- */
-const createFaustUI = async (faustNode) => {
-    const { FaustUI } = await import("./faust-ui/index.js");
-    const $container = document.createElement("div");
-    $container.style.margin = "0";
-    $container.style.position = "absolute";
-    $container.style.overflow = "auto";
-    $container.style.display = "flex";
-    $container.style.flexDirection = "column";
-    $container.style.width = "100%";
-    $container.style.height = "100%";
-    $divFaustUI.appendChild($container);
-    const faustUI = new FaustUI({
-        ui: faustNode.getUI(),
-        root: $container,
-        listenWindowMessage: false,
-        listenWindowResize: true,
-    });
-    faustUI.paramChangeByUI = (path, value) => faustNode.setParamValue(path, value);
-    faustNode.setOutputParamHandler((path, value) => faustUI.paramChangeByDSP(path, value));
-    $container.style.minWidth = `${faustUI.minWidth}px`;
-    $container.style.minHeight = `${faustUI.minHeight}px`;
-    faustUI.resize();
-};
-
 (async () => {
 
-    const { default: createFaustNode } = await import("./create-node.js");
-
+    const { createFaustNode } = await import("./create-node.js");
     // To test the ScriptProcessorNode mode
     // const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true);
     const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
     if (!faustNode) throw new Error("Faust DSP not compiled");
 
     // Create the Faust UI
-    await createFaustUI(faustNode);
+    const { createFaustUI } = await import("./create-node.js");
+    await createFaustUI($divFaustUI, faustNode);
 
-    // Connect the Faust node to the audio context
+    // Connect the Faust node to the audio output
     faustNode.connect(audioContext.destination);
 
-    // Activate sensor listeners
-    await faustNode.listenSensors();
+    // Connect the Faust node to the audio input
+    if (faustNode.numberOfInputs > 0) {
+        const { connectToAudioInput } = await import("./create-node.js");
+        await connectToAudioInput(audioContext, null, faustNode, null);
+    }
 
-    // Function to initialize MIDI
-    function initMIDI() {
+    // Function to start MIDI
+    function startMIDI() {
         // Check if the browser supports the Web MIDI API
         if (navigator.requestMIDIAccess) {
-            navigator.requestMIDIAccess()
-                .then(onMIDISuccess, onMIDIFailure);
+            navigator.requestMIDIAccess().then(
+                midiAccess => {
+                    console.log("MIDI Access obtained.");
+                    for (let input of midiAccess.inputs.values()) {
+                        input.onmidimessage = (event) => faustNode.midiMessage(event.data);
+                        console.log(`Connected to input: ${input.name}`);
+                    }
+                },
+                () => console.error("Failed to access MIDI devices.")
+            );
         } else {
             console.log("Web MIDI API is not supported in this browser.");
         }
     }
 
-    // Success callback for requesting MIDI access
-    function onMIDISuccess(midiAccess) {
-        console.log("MIDI Access obtained.");
-        // Iterate through all available MIDI inputs
-        for (let input of midiAccess.inputs.values()) {
-            // Attach the event listener to each input
-            input.onmidimessage = handleMIDIMessage;
-            console.log(`Connected to input: ${input.name}`);
+    // Function to stop MIDI
+    function stopMIDI() {
+        // Check if the browser supports the Web MIDI API
+        if (navigator.requestMIDIAccess) {
+            navigator.requestMIDIAccess().then(
+                midiAccess => {
+                    console.log("MIDI Access obtained.");
+                    for (let input of midiAccess.inputs.values()) {
+                        input.onmidimessage = null;
+                        console.log(`Disconnected from input: ${input.name}`);
+                    }
+                },
+                () => console.error("Failed to access MIDI devices.")
+            );
+        } else {
+            console.log("Web MIDI API is not supported in this browser.");
         }
     }
 
-    // Failure callback for requesting MIDI access
-    function onMIDIFailure() {
-        console.error("Failed to access MIDI devices.");
+    let sensorHandlersBound = false;
+    let midiHandlersBound = false;
+
+    // Function to resume AudioContext, activate MIDI and Sensors on user interaction
+    function activateAudioMIDISensors() {
+
+        // Resume the AudioContext
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
+        // Activate sensor listeners
+        if (!sensorHandlersBound) {
+            faustNode.startSensors();
+            sensorHandlersBound = true;
+        }
+
+        // Initialize the MIDI setup
+        if (!midiHandlersBound && FAUST_DSP_VOICES > 0) {
+            startMIDI();
+            midiHandlersBound = true;
+        }
     }
 
-    // Dummy event handler for MIDI messages
-    function handleMIDIMessage(event) {
-        faustNode.midiMessage(event.data);
+    // Function to suspend AudioContext, deactivate MIDI and Sensors on user interaction
+    function deactivateAudioMIDISensors() {
+
+        // Suspend the AudioContext
+        if (audioContext.state === 'running') {
+            audioContext.suspend();
+        }
+
+        // Deactivate sensor listeners
+        if (sensorHandlersBound) {
+            faustNode.stopSensors();
+            sensorHandlersBound = false;
+        }
+
+        // Deactivate the MIDI setup
+        if (midiHandlersBound && FAUST_DSP_VOICES > 0) {
+            stopMIDI();
+            midiHandlersBound = false;
+        }
     }
 
-    // Initialize the MIDI setup
-    if (FAUST_DSP_VOICES > 0) {
-        initMIDI();
-    }
+    // Add event listeners for user interactions
+    window.addEventListener('click', activateAudioMIDISensors);
+    window.addEventListener('touchstart', activateAudioMIDISensors);
+
+    // Remove event listeners when the app is in the background
+    window.addEventListener('blur', () => {
+        console.log('App is in the background or window is blurred');
+        deactivateAudioMIDISensors();
+    });
 
 })();
-
-// Function to resume AudioContext on user interaction
-function resumeAudioContext() {
-    if (audioContext.state === 'suspended') {
-        audioContext.resume();
-    }
-}
-
-// Add event listeners for user interactions
-window.addEventListener('click', resumeAudioContext);
-window.addEventListener('touchstart', resumeAudioContext);
-
-// Optional: Remove event listeners once the context is resumed
-audioContext.onstatechange = function () {
-    if (audioContext.state === 'running') {
-        window.removeEventListener('click', resumeAudioContext);
-        window.removeEventListener('touchstart', resumeAudioContext);
-    }
-};
