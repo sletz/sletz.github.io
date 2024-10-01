@@ -138,17 +138,19 @@ audioContext.suspend();
     window.addEventListener('touchstart', activateAudioMIDISensors);
 
     // Remove event listeners when the app is in the background
+    /*
     window.addEventListener('blur', () => {
         console.log('App is in the background or window is blurred');
         deactivateAudioMIDISensors();
     });
+    */
 
-    /*
+
     window.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'hidden') {
             deactivateAudioMIDISensors();
         }
     });
-    */
+
 
 })();
