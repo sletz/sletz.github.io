@@ -96,7 +96,7 @@ audioContext.suspend();
 
         // Resume the AudioContext
         if (audioContext.state === 'suspended') {
-            audioContext.resume();
+            await audioContext.resume();
         }
 
         // Activate sensor listeners
@@ -113,11 +113,11 @@ audioContext.suspend();
     }
 
     // Function to suspend AudioContext, deactivate MIDI and Sensors on user interaction
-    function deactivateAudioMIDISensors() {
+    async function deactivateAudioMIDISensors() {
 
         // Suspend the AudioContext
         if (audioContext.state === 'running') {
-            audioContext.suspend();
+            await audioContext.suspend();
         }
 
         // Deactivate sensor listeners
