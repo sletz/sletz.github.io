@@ -134,23 +134,31 @@ audioContext.suspend();
     }
 
     // Add event listeners for user interactions
+
+    // Activate AudioContext, MIDI and Sensors on user interaction
     window.addEventListener('click', activateAudioMIDISensors);
     window.addEventListener('touchstart', activateAudioMIDISensors);
 
-    // Remove event listeners when the app is in the background
-    /*
-    window.addEventListener('blur', () => {
-        console.log('App is in the background or window is blurred');
-        deactivateAudioMIDISensors();
-    });
-    */
+    // To activate audio on iOS
+    window.addEventListener('touchstart', function () {
+        // create empty buffer
+        var buffer = audio_context.createBuffer(1, 1, 22050);
+        var source = audio_context.createBufferSource();
+        source.buffer = buffer;
 
+        // connect to output (your speakers)
+        source.connect(audio_context.destination);
 
+        // play the file
+        source.start();
+
+    }, false);
+
+    // Deactivate AudioContext, MIDI and Sensors on user interaction
     window.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'hidden') {
             deactivateAudioMIDISensors();
         }
     });
-
 
 })();
