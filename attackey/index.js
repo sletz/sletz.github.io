@@ -92,7 +92,7 @@ audioContext.suspend();
     let midiHandlersBound = false;
 
     // Function to resume AudioContext, activate MIDI and Sensors on user interaction
-    function activateAudioMIDISensors() {
+    async function activateAudioMIDISensors() {
 
         // Resume the AudioContext
         if (audioContext.state === 'suspended') {
@@ -101,7 +101,7 @@ audioContext.suspend();
 
         // Activate sensor listeners
         if (!sensorHandlersBound) {
-            faustNode.startSensors();
+            await faustNode.startSensors();
             sensorHandlersBound = true;
         }
 
@@ -138,21 +138,6 @@ audioContext.suspend();
     // Activate AudioContext, MIDI and Sensors on user interaction
     window.addEventListener('click', activateAudioMIDISensors);
     window.addEventListener('touchstart', activateAudioMIDISensors);
-
-    // To activate audio on iOS
-    window.addEventListener('touchstart', function () {
-        // create empty buffer
-        var buffer = audio_context.createBuffer(1, 1, 22050);
-        var source = audio_context.createBufferSource();
-        source.buffer = buffer;
-
-        // connect to output (your speakers)
-        source.connect(audio_context.destination);
-
-        // play the file
-        source.start();
-
-    }, false);
 
     // Deactivate AudioContext, MIDI and Sensors on user interaction
     window.addEventListener('visibilitychange', function () {
