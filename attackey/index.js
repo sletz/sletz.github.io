@@ -143,10 +143,12 @@ audioContext.suspend();
         deactivateAudioMIDISensors();
     });
 
+    /*
     window.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'hidden') {
             deactivateAudioMIDISensors();
         }
     });
+    */
 
 })();
