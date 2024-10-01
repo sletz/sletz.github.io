@@ -141,10 +141,10 @@ audioContext.suspend();
 
     // Activate/Deactivate AudioContext, MIDI and Sensors on user interaction
     window.addEventListener('visibilitychange', function () {
-        if (document.visibilityState === 'visible') {
-            activateAudioMIDISensors();
-        } else if (document.visibilityState === 'hidden') {
+        if (window.visibilityState === 'hidden') {
             deactivateAudioMIDISensors();
+        } else if (window.visibilityState === 'visible') {
+            activateAudioMIDISensors();
         }
     });
 
