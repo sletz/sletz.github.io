@@ -3771,7 +3771,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
               window.addEventListener("deviceorientation", this.handleDeviceOrientation, true);
             } else if (response === "denied") {
               alert("You have denied access to motion and orientation data. To enable it, go to Settings > Safari > Motion & Orientation Access.");
-              throw new Error("Unable to access the accelerometer.");
+              throw new Error("Unable to access the gyroscope.");
             }
           } catch (error) {
             console.error(error);

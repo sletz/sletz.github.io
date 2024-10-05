@@ -139,12 +139,10 @@ audioContext.suspend();
     window.addEventListener('click', activateAudioMIDISensors);
     window.addEventListener('touchstart', activateAudioMIDISensors);
 
-    // Activate/Deactivate AudioContext, MIDI and Sensors on user interaction
+    // Deactivate AudioContext, MIDI and Sensors on user interaction
     window.addEventListener('visibilitychange', function () {
         if (window.visibilityState === 'hidden') {
             deactivateAudioMIDISensors();
-        } else if (window.visibilityState === 'visible') {
-            activateAudioMIDISensors();
         }
     });
 
