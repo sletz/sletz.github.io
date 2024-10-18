@@ -4003,6 +4003,8 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     this.fDSPCode = instance;
     this.fInputs = new Array(this.fDSPCode.getNumInputs());
     this.fOutputs = new Array(this.fDSPCode.getNumOutputs());
+    this.handleDeviceMotion = this.handleDeviceMotion.bind(this);
+    this.handleDeviceOrientation = this.handleDeviceOrientation.bind(this);
     this.onaudioprocess = (e) => {
       for (let chan = 0; chan < this.fDSPCode.getNumInputs(); chan++) {
         this.fInputs[chan] = e.inputBuffer.getChannelData(chan);
