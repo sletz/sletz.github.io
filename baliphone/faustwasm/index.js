@@ -4034,7 +4034,11 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
           }
         } else {
           alert("addEventListener devicemotion OK");
-          window.addEventListener("devicemotion", this.handleDeviceMotion.bind(this), true);
+          window.addEventListener("devicemotion", (event) => {
+            alert("SP: handler 0 " + event);
+            alert("SP: handler 1 " + this.handleDeviceMotion);
+            this.handleDeviceMotion(event);
+          }, true);
         }
       } else {
         console.log("Cannot set the accelerometer handler.");
