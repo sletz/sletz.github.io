@@ -3993,7 +3993,6 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     this.fInputs = new Array(this.fDSPCode.getNumInputs());
     this.fOutputs = new Array(this.fDSPCode.getNumOutputs());
     this.handleDeviceMotion = ({ accelerationIncludingGravity }) => {
-      alert("SP handleDeviceMotion");
       const isAndroid = /Android/i.test(navigator.userAgent);
       if (!accelerationIncludingGravity)
         return;
@@ -4050,8 +4049,6 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
         } else {
           alert("addEventListener devicemotion OK");
           window.addEventListener("devicemotion", (event) => {
-            alert("SP: handler 0 " + event);
-            alert("SP: handler 1 " + this.handleDeviceMotion);
             this.handleDeviceMotion(event);
           }, true);
         }
