@@ -4019,6 +4019,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
           try {
             const response = await window.DeviceMotionEvent.requestPermission();
             if (response === "granted") {
+              alert("addEventListener devicemotion OK");
               window.addEventListener("devicemotion", this.handleDeviceMotion, true);
             } else if (response === "denied") {
               alert("You have denied access to motion and orientation data. To enable it, go to Settings > Safari > Motion & Orientation Access.");
@@ -4028,6 +4029,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
             console.error(error);
           }
         } else {
+          alert("addEventListener devicemotion OK");
           window.addEventListener("devicemotion", this.handleDeviceMotion, true);
         }
       } else {
@@ -4136,6 +4138,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     return this.fDSPCode.hasAccInput;
   }
   propagateAcc(accelerationIncludingGravity, invert = false) {
+    alert("propagateAcc " + accelerationIncludingGravity);
     this.fDSPCode.propagateAcc(accelerationIncludingGravity, invert);
   }
   get hasGyrInput() {
