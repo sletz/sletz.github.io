@@ -4158,7 +4158,6 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     return this.fDSPCode.hasAccInput;
   }
   propagateAcc(accelerationIncludingGravity, invert = false) {
-    alert("propagateAcc " + accelerationIncludingGravity);
     this.fDSPCode.propagateAcc(accelerationIncludingGravity, invert);
   }
   get hasGyrInput() {
