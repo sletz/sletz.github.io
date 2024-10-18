@@ -4013,6 +4013,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
   }
   /** Setup accelerometer and gyroscope handlers */
   async startSensors() {
+    alert("SP: startSensors");
     if (this.hasAccInput) {
       if (window.DeviceMotionEvent) {
         if (typeof window.DeviceMotionEvent.requestPermission === "function") {
