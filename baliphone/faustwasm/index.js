@@ -3985,8 +3985,13 @@ var FaustPolyAudioWorkletNode = class extends FaustAudioWorkletNode {
 var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || null) {
   constructor() {
     super(...arguments);
-    // Public API
-    // Accelerometer and gyroscope handlers
+    this.handleDeviceMotion = void 0;
+    this.handleDeviceOrientation = void 0;
+  }
+  init(instance) {
+    this.fDSPCode = instance;
+    this.fInputs = new Array(this.fDSPCode.getNumInputs());
+    this.fOutputs = new Array(this.fDSPCode.getNumOutputs());
     this.handleDeviceMotion = ({ accelerationIncludingGravity }) => {
       alert("SP handleDeviceMotion");
       const isAndroid = /Android/i.test(navigator.userAgent);
@@ -3998,13 +4003,6 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     this.handleDeviceOrientation = ({ alpha, beta, gamma }) => {
       this.propagateGyr({ alpha, beta, gamma });
     };
-  }
-  init(instance) {
-    this.fDSPCode = instance;
-    this.fInputs = new Array(this.fDSPCode.getNumInputs());
-    this.fOutputs = new Array(this.fDSPCode.getNumOutputs());
-    this.handleDeviceMotion = this.handleDeviceMotion.bind(this);
-    this.handleDeviceOrientation = this.handleDeviceOrientation.bind(this);
     this.onaudioprocess = (e) => {
       for (let chan = 0; chan < this.fDSPCode.getNumInputs(); chan++) {
         this.fInputs[chan] = e.inputBuffer.getChannelData(chan);
@@ -4016,6 +4014,21 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     };
     this.start();
   }
+  // Public API
+  /*
+      // Accelerometer and gyroscope handlers
+      private handleDeviceMotion = ({ accelerationIncludingGravity }: DeviceMotionEvent) => {
+          alert('SP handleDeviceMotion');
+          const isAndroid: boolean = /Android/i.test(navigator.userAgent);
+          if (!accelerationIncludingGravity) return;
+          const { x, y, z } = accelerationIncludingGravity;
+          this.propagateAcc({ x, y, z }, isAndroid);
+      };
+  
+      private handleDeviceOrientation = ({ alpha, beta, gamma }: DeviceOrientationEvent) => {
+          this.propagateGyr({ alpha, beta, gamma });
+      };
+      */
   /** Setup accelerometer and gyroscope handlers */
   async startSensors() {
     alert("SP: startSensors");
