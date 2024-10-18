@@ -10,7 +10,7 @@
         "."
     ],
     "size": 844636,
-    "code": "oPs0AZQTHw==",
+    "code": "uPw0AZQTHw==",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -66,7 +66,7 @@
             "filters_lib_allpass_comb_license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_lowpass0_highpass1": "MIT-style STK-4.3 license"
+            "filters_lib_lowpass0_highpass1": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
             "filters_lib_lowpass0_highpass1_author": "Julius O. Smith III"

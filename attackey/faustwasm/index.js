@@ -3986,6 +3986,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     // Public API
     // Accelerometer and gyroscope handlers
     this.handleDeviceMotion = ({ accelerationIncludingGravity }) => {
+      alert("handleDeviceMotion");
       const isAndroid = /Android/i.test(navigator.userAgent);
       if (!accelerationIncludingGravity)
         return;
