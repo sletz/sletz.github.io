@@ -33,8 +33,8 @@ audioContext.suspend();
 
     const { createFaustNode } = await import("./create-node.js");
     // To test the ScriptProcessorNode mode
-    // const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true);
-    const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
+    const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
+    //const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
     if (!faustNode) throw new Error("Faust DSP not compiled");
 
     // Create the Faust UI

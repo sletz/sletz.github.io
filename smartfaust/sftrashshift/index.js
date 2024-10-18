@@ -33,8 +33,8 @@ audioContext.suspend();
 
     const { createFaustNode } = await import("./create-node.js");
     // To test the ScriptProcessorNode mode
-    // const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true);
-    const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
+    const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
+    //const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
     if (!faustNode) throw new Error("Faust DSP not compiled");
 
     // Create the Faust UI
@@ -92,17 +92,16 @@ audioContext.suspend();
     let midiHandlersBound = false;
 
     // Function to resume AudioContext, activate MIDI and Sensors on user interaction
-    function activateAudioMIDISensors() {
+    async function activateAudioMIDISensors() {
 
         // Resume the AudioContext
         if (audioContext.state === 'suspended') {
-            audioContext.resume();
+            await audioContext.resume();
         }
 
         // Activate sensor listeners
         if (!sensorHandlersBound) {
-            //faustNode.listenSensors();
-            faustNode.startSensors();
+            await faustNode.startSensors();
             sensorHandlersBound = true;
         }
 
@@ -114,11 +113,11 @@ audioContext.suspend();
     }
 
     // Function to suspend AudioContext, deactivate MIDI and Sensors on user interaction
-    function deactivateAudioMIDISensors() {
+    async function deactivateAudioMIDISensors() {
 
         // Suspend the AudioContext
         if (audioContext.state === 'running') {
-            audioContext.suspend();
+            await audioContext.suspend();
         }
 
         // Deactivate sensor listeners
@@ -135,12 +134,16 @@ audioContext.suspend();
     }
 
     // Add event listeners for user interactions
+
+    // Activate AudioContext, MIDI and Sensors on user interaction
     window.addEventListener('click', activateAudioMIDISensors);
     window.addEventListener('touchstart', activateAudioMIDISensors);
 
-    window.addEventListener('blur', () => {
-        console.log('App is in the background or window is blurred');
-        deactivateAudioMIDISensors();
+    // Deactivate AudioContext, MIDI and Sensors on user interaction
+    window.addEventListener('visibilitychange', function () {
+        if (window.visibilityState === 'hidden') {
+            deactivateAudioMIDISensors();
+        }
     });
 
 })();

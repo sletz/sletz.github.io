@@ -10,7 +10,7 @@
         "."
     ],
     "size": 336,
-    "code": "QO3i",
+    "code": "yO7i",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -84,7 +84,7 @@
             "soundfiles": "https://raw.githubusercontent.com/grame-cncm/GameLAN/master/sequenceur"
         },
         {
-            "version": "2.75.10"
+            "version": "2.75.9"
         }
     ],
     "ui": [

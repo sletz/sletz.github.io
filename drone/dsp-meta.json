@@ -10,6 +10,7 @@
         "."
     ],
     "size": 256,
+    "code": "gBLT",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -128,7 +129,7 @@
             "soundfiles_lib_version": "1.7.0"
         },
         {
-            "version": "2.75.10"
+            "version": "2.75.9"
         }
     ],
     "ui": [

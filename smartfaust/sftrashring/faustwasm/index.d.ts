@@ -621,11 +621,11 @@ export interface IFaustBaseWebAudioDsp {
 	 */
 	getJSON(): string;
 	/**
-	 * Start the DSP.
+	 * Start the DSP audio processing.
 	 */
 	start(): void;
 	/**
-	 * Stop the DSP.
+	 * Stop the DSP audio processing.
 	 */
 	stop(): void;
 	/**
@@ -1289,7 +1289,6 @@ export declare class FaustAudioWorkletNode<Poly extends boolean = false> extends
 	protected fUICallback: UIHandler;
 	protected fDescriptor: FaustUIInputItem[];
 	constructor(context: BaseAudioContext, name: string, factory: LooseFaustDspFactory, options?: Partial<FaustAudioWorkletNodeOptions<Poly>>);
-	/** Setup accelerometer and gyroscope handlers */
 	private handleDeviceMotion;
 	private handleDeviceOrientation;
 	/** Setup accelerometer and gyroscope handlers */

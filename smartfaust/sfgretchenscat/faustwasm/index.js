@@ -3697,7 +3697,6 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     __privateAdd(this, _hasAccInput, false);
     __privateAdd(this, _hasGyrInput, false);
     // Public API
-    /** Setup accelerometer and gyroscope handlers */
     // Accelerometer and gyroscope handlers
     this.handleDeviceMotion = ({ accelerationIncludingGravity }) => {
       const isAndroid = /Android/i.test(navigator.userAgent);
@@ -3747,9 +3746,12 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
         if (typeof window.DeviceMotionEvent.requestPermission === "function") {
           try {
             const response = await window.DeviceMotionEvent.requestPermission();
-            if (response !== "granted")
+            if (response === "granted") {
+              window.addEventListener("devicemotion", this.handleDeviceMotion, true);
+            } else if (response === "denied") {
+              alert("You have denied access to motion and orientation data. To enable it, go to Settings > Safari > Motion & Orientation Access.");
               throw new Error("Unable to access the accelerometer.");
-            window.addEventListener("devicemotion", this.handleDeviceMotion, true);
+            }
           } catch (error) {
             console.error(error);
           }
@@ -3765,9 +3767,12 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
         if (typeof window.DeviceOrientationEvent.requestPermission === "function") {
           try {
             const response = await window.DeviceOrientationEvent.requestPermission();
-            if (response !== "granted")
+            if (response === "granted") {
+              window.addEventListener("deviceorientation", this.handleDeviceOrientation, true);
+            } else if (response === "denied") {
+              alert("You have denied access to motion and orientation data. To enable it, go to Settings > Safari > Motion & Orientation Access.");
               throw new Error("Unable to access the gyroscope.");
-            window.addEventListener("deviceorientation", this.handleDeviceOrientation, true);
+            }
           } catch (error) {
             console.error(error);
           }
