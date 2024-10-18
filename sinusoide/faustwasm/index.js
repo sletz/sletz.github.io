@@ -3699,6 +3699,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     // Public API
     // Accelerometer and gyroscope handlers
     this.handleDeviceMotion = ({ accelerationIncludingGravity }) => {
+      alert("AW handleDeviceMotion");
       const isAndroid = /Android/i.test(navigator.userAgent);
       if (!accelerationIncludingGravity)
         return;
@@ -3747,6 +3748,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
           try {
             const response = await window.DeviceMotionEvent.requestPermission();
             if (response === "granted") {
+              alert("addEventListener AW devicemotion OK");
               window.addEventListener("devicemotion", this.handleDeviceMotion, true);
             } else if (response === "denied") {
               alert("You have denied access to motion and orientation data. To enable it, go to Settings > Safari > Motion & Orientation Access.");
