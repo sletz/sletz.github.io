@@ -3988,7 +3988,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     // Public API
     // Accelerometer and gyroscope handlers
     this.handleDeviceMotion = ({ accelerationIncludingGravity }) => {
-      alert("handleDeviceMotion");
+      alert("SP handleDeviceMotion");
       const isAndroid = /Android/i.test(navigator.userAgent);
       if (!accelerationIncludingGravity)
         return;
@@ -4024,7 +4024,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
             const response = await window.DeviceMotionEvent.requestPermission();
             if (response === "granted") {
               alert("addEventListener devicemotion OK");
-              window.addEventListener("devicemotion", this.handleDeviceMotion, true);
+              window.addEventListener("devicemotion", (event) => this.handleDeviceMotion(event), true);
             } else if (response === "denied") {
               alert("You have denied access to motion and orientation data. To enable it, go to Settings > Safari > Motion & Orientation Access.");
               throw new Error("Unable to access the accelerometer.");
@@ -4034,7 +4034,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
           }
         } else {
           alert("addEventListener devicemotion OK");
-          window.addEventListener("devicemotion", this.handleDeviceMotion, true);
+          window.addEventListener("devicemotion", (event) => this.handleDeviceMotion(event), true);
         }
       } else {
         console.log("Cannot set the accelerometer handler.");
@@ -4046,7 +4046,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
           try {
             const response = await window.DeviceOrientationEvent.requestPermission();
             if (response === "granted") {
-              window.addEventListener("deviceorientation", this.handleDeviceOrientation, true);
+              window.addEventListener("deviceorientation", (event) => this.handleDeviceOrientation(event), true);
             } else if (response === "denied") {
               alert("You have denied access to motion and orientation data. To enable it, go to Settings > Safari > Motion & Orientation Access.");
               throw new Error("Unable to access the gyroscope.");
@@ -4055,7 +4055,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
             console.error(error);
           }
         } else {
-          window.addEventListener("deviceorientation", this.handleDeviceOrientation, true);
+          window.addEventListener("deviceorientation", (event) => this.handleDeviceOrientation(event), true);
         }
       } else {
         console.log("Cannot set the gyroscope handler.");
