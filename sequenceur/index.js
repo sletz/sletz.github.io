@@ -101,6 +101,7 @@ audioContext.suspend();
 
         // Activate sensor listeners
         if (!sensorHandlersBound) {
+            alert('startSensors');
             await faustNode.startSensors();
             sensorHandlersBound = true;
         }
