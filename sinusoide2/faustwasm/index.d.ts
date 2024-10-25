@@ -621,11 +621,11 @@ export interface IFaustBaseWebAudioDsp {
 	 */
 	getJSON(): string;
 	/**
-	 * Start the DSP.
+	 * Start the DSP audio processing.
 	 */
 	start(): void;
 	/**
-	 * Stop the DSP.
+	 * Stop the DSP audio processing.
 	 */
 	stop(): void;
 	/**
@@ -1355,9 +1355,9 @@ export declare class FaustScriptProcessorNode<Poly extends boolean = false> exte
 	protected fDSPCode: Poly extends true ? FaustPolyWebAudioDsp : FaustMonoWebAudioDsp;
 	protected fInputs: Float32Array[];
 	protected fOutputs: Float32Array[];
+	protected handleDeviceMotion: any;
+	protected handleDeviceOrientation: any;
 	init(instance: Poly extends true ? FaustPolyWebAudioDsp : FaustMonoWebAudioDsp): void;
-	private handleDeviceMotion;
-	private handleDeviceOrientation;
 	/** Setup accelerometer and gyroscope handlers */
 	startSensors(): Promise<void>;
 	stopSensors(): void;

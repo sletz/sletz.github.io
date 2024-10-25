@@ -1,312 +1,270 @@
 {
     "name": "sinusoide2",
-    "filename": "sinusoide2.dsp",
-    "version": "2.75.7",
-    "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
+    "filename": "sinusoide2",
+    "version": "2.75.9",
+    "compile_options": "-lang wasm-i -ct 1 -es 1 -mcl 4 -mcd 9 -mfs 1024 -irt 4 -fls 4 -udd 1 -mdd 1024 -mdy 33 -ss 0 -single -ftz 2",
+    "library_list": [
+        "/usr/share/faust/stdfaust.lib",
+        "/usr/share/faust/basics.lib",
+        "/usr/share/faust/signals.lib",
+        "/usr/share/faust/maths.lib",
+        "/usr/share/faust/platform.lib",
+        "/usr/share/faust/oscillators.lib",
+        "/usr/share/faust/filters.lib",
+        "/usr/share/faust/noises.lib",
+        "/usr/share/faust/physmodels.lib",
+        "/usr/share/faust/reverbs.lib",
+        "/usr/share/faust/delays.lib",
+        "/usr/share/faust/routes.lib",
+        "/usr/share/faust/envelopes.lib"
+    ],
     "include_pathnames": [
         "/share/faust",
         "/usr/local/share/faust",
         "/usr/share/faust",
         "."
     ],
-    "size": 1196740,
-    "code": "iLYgBZQTHw==",
+    "size": 1741328,
+    "code": "KCvCBxRuHw==",
     "inputs": 0,
-    "outputs": 1,
+    "outputs": 2,
     "meta": [
         {
-            "basics_lib_name": "Faust Basic Element Library"
+            "basics.lib/name": "Faust Basic Element Library"
         },
         {
-            "basics_lib_tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
+            "basics.lib/tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
         },
         {
-            "basics_lib_version": "1.19.1"
+            "basics.lib/version": "1.19.1"
         },
         {
-            "compile_options": "-single -scal -e ../sinusoide2.dsp -o sinusoide2.dsp"
+            "compile_options": "-lang wasm-i -ct 1 -es 1 -mcl 4 -mcd 9 -mfs 1024 -irt 4 -fls 4 -udd 1 -mdd 1024 -mdy 33 -ss 0 -single -ftz 2"
         },
         {
-            "delays_lib_fdelay4_author": "Julius O. Smith III"
+            "delays.lib/fdelay4:author": "Julius O. Smith III"
         },
         {
-            "delays_lib_fdelayltv_author": "Julius O. Smith III"
+            "delays.lib/fdelayltv:author": "Julius O. Smith III"
         },
         {
-            "delays_lib_name": "Faust Delay Library"
+            "delays.lib/name": "Faust Delay Library"
         },
         {
-            "delays_lib_version": "1.1.0"
+            "delays.lib/version": "1.1.0"
         },
         {
-            "envelopes_lib_ar_author": "Yann Orlarey, Stéphane Letz"
+            "envelopes.lib/ar:author": "Yann Orlarey, Stéphane Letz"
         },
         {
-            "envelopes_lib_author": "GRAME"
+            "envelopes.lib/author": "GRAME"
         },
         {
-            "envelopes_lib_copyright": "GRAME"
+            "envelopes.lib/copyright": "GRAME"
         },
         {
-            "envelopes_lib_license": "LGPL with exception"
+            "envelopes.lib/license": "LGPL with exception"
         },
         {
-            "envelopes_lib_name": "Faust Envelope Library"
+            "envelopes.lib/name": "Faust Envelope Library"
         },
         {
-            "envelopes_lib_version": "1.3.0"
+            "envelopes.lib/version": "1.3.0"
         },
         {
-            "filename": "sinusoide2.dsp"
+            "filename": "sinusoide2"
         },
         {
-            "filters_lib_allpass_comb_author": "Julius O. Smith III"
+            "filters.lib/allpass_comb:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_allpass_comb_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/allpass_comb:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_allpass_comb_license": "MIT-style STK-4.3 license"
+            "filters.lib/allpass_comb:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_fir_author": "Julius O. Smith III"
+            "filters.lib/fir:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_fir_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/fir:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_fir_license": "MIT-style STK-4.3 license"
+            "filters.lib/fir:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_highpass_author": "Julius O. Smith III"
+            "filters.lib/highpass:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_highpass_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/highpass:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_iir_author": "Julius O. Smith III"
+            "filters.lib/iir:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_iir_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/iir:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_iir_license": "MIT-style STK-4.3 license"
+            "filters.lib/iir:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_lowpass0_highpass1": "MIT-style STK-4.3 license"
+            "filters.lib/lowpass0_highpass1": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_lowpass0_highpass1_author": "Julius O. Smith III"
+            "filters.lib/lowpass0_highpass1:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_lowpass_author": "Julius O. Smith III"
+            "filters.lib/lowpass:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_lowpass_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/lowpass:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_lowpass_license": "MIT-style STK-4.3 license"
+            "filters.lib/lowpass:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_name": "Faust Filters Library"
+            "filters.lib/name": "Faust Filters Library"
         },
         {
-            "filters_lib_pole_author": "Julius O. Smith III"
+            "filters.lib/pole:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_pole_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/pole:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_pole_license": "MIT-style STK-4.3 license"
+            "filters.lib/pole:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_resonbp_author": "Julius O. Smith III"
+            "filters.lib/resonbp:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_resonbp_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/resonbp:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_resonbp_license": "MIT-style STK-4.3 license"
+            "filters.lib/resonbp:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_resonlp_author": "Julius O. Smith III"
+            "filters.lib/resonlp:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_resonlp_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/resonlp:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_resonlp_license": "MIT-style STK-4.3 license"
+            "filters.lib/resonlp:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_tf1_author": "Julius O. Smith III"
+            "filters.lib/tf1:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_tf1_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/tf1:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_tf1_license": "MIT-style STK-4.3 license"
+            "filters.lib/tf1:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_tf1s_author": "Julius O. Smith III"
+            "filters.lib/tf1s:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_tf1s_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/tf1s:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_tf1s_license": "MIT-style STK-4.3 license"
+            "filters.lib/tf1s:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_tf2_author": "Julius O. Smith III"
+            "filters.lib/tf2:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_tf2_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/tf2:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_tf2_license": "MIT-style STK-4.3 license"
+            "filters.lib/tf2:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_tf2s_author": "Julius O. Smith III"
+            "filters.lib/tf2s:author": "Julius O. Smith III"
         },
         {
-            "filters_lib_tf2s_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+            "filters.lib/tf2s:copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
-            "filters_lib_tf2s_license": "MIT-style STK-4.3 license"
+            "filters.lib/tf2s:license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_version": "1.3.0"
+            "filters.lib/version": "1.3.0"
         },
         {
-            "library_path0": "/usr/local/share/faust/stdfaust.lib"
+            "maths.lib/author": "GRAME"
         },
         {
-            "library_path1": "/usr/local/share/faust/basics.lib"
+            "maths.lib/copyright": "GRAME"
         },
         {
-            "library_path10": "/usr/local/share/faust/delays.lib"
+            "maths.lib/license": "LGPL with exception"
         },
         {
-            "library_path11": "/usr/local/share/faust/routes.lib"
+            "maths.lib/name": "Faust Math Library"
         },
         {
-            "library_path12": "/usr/local/share/faust/misceffects.lib"
-        },
-        {
-            "library_path13": "/usr/local/share/faust/envelopes.lib"
-        },
-        {
-            "library_path2": "/usr/local/share/faust/signals.lib"
-        },
-        {
-            "library_path3": "/usr/local/share/faust/maths.lib"
-        },
-        {
-            "library_path4": "/usr/local/share/faust/platform.lib"
-        },
-        {
-            "library_path5": "/usr/local/share/faust/oscillators.lib"
-        },
-        {
-            "library_path6": "/usr/local/share/faust/filters.lib"
-        },
-        {
-            "library_path7": "/usr/local/share/faust/noises.lib"
-        },
-        {
-            "library_path8": "/usr/local/share/faust/physmodels.lib"
-        },
-        {
-            "library_path9": "/usr/local/share/faust/reverbs.lib"
-        },
-        {
-            "maths_lib_author": "GRAME"
-        },
-        {
-            "maths_lib_copyright": "GRAME"
-        },
-        {
-            "maths_lib_license": "LGPL with exception"
-        },
-        {
-            "maths_lib_name": "Faust Math Library"
-        },
-        {
-            "maths_lib_version": "2.8.0"
-        },
-        {
-            "misceffects_lib_cubicnl_author": "Julius O. Smith III"
-        },
-        {
-            "misceffects_lib_cubicnl_license": "STK-4.3"
-        },
-        {
-            "misceffects_lib_name": "Misc Effects Library"
-        },
-        {
-            "misceffects_lib_version": "2.5.0"
+            "maths.lib/version": "2.8.0"
         },
         {
             "name": "sinusoide2"
         },
         {
-            "noises_lib_name": "Faust Noise Generator Library"
+            "noises.lib/name": "Faust Noise Generator Library"
         },
         {
-            "noises_lib_version": "1.4.1"
+            "noises.lib/version": "1.4.1"
         },
         {
-            "oscillators_lib_lf_sawpos_author": "Bart Brouns, revised by Stéphane Letz"
+            "oscillators.lib/lf_sawpos:author": "Bart Brouns, revised by Stéphane Letz"
         },
         {
-            "oscillators_lib_lf_sawpos_licence": "STK-4.3"
+            "oscillators.lib/lf_sawpos:licence": "STK-4.3"
         },
         {
-            "oscillators_lib_name": "Faust Oscillator Library"
+            "oscillators.lib/name": "Faust Oscillator Library"
         },
         {
-            "oscillators_lib_sawN_author": "Julius O. Smith III"
+            "oscillators.lib/sawN:author": "Julius O. Smith III"
         },
         {
-            "oscillators_lib_sawN_license": "STK-4.3"
+            "oscillators.lib/sawN:license": "STK-4.3"
         },
         {
-            "oscillators_lib_version": "1.5.1"
+            "oscillators.lib/version": "1.5.1"
         },
         {
-            "physmodels_lib_name": "Faust Physical Models Library"
+            "physmodels.lib/name": "Faust Physical Models Library"
         },
         {
-            "physmodels_lib_version": "1.1.0"
+            "physmodels.lib/version": "1.1.0"
         },
         {
-            "platform_lib_name": "Generic Platform Library"
+            "platform.lib/name": "Generic Platform Library"
         },
         {
-            "platform_lib_version": "1.3.0"
+            "platform.lib/version": "1.3.0"
         },
         {
-            "reverbs_lib_name": "Faust Reverb Library"
+            "reverbs.lib/name": "Faust Reverb Library"
         },
         {
-            "reverbs_lib_version": "1.3.0"
+            "reverbs.lib/version": "1.3.0"
         },
         {
-            "routes_lib_hadamard_author": "Remy Muller, revised by Romain Michon"
+            "routes.lib/hadamard:author": "Remy Muller, revised by Romain Michon"
         },
         {
-            "routes_lib_name": "Faust Signal Routing Library"
+            "routes.lib/name": "Faust Signal Routing Library"
         },
         {
-            "routes_lib_version": "1.2.0"
+            "routes.lib/version": "1.2.0"
         },
         {
-            "signals_lib_name": "Faust Signal Routing Library"
+            "signals.lib/name": "Faust Signal Routing Library"
         },
         {
-            "signals_lib_version": "1.6.0"
-        },
-        {
-            "version": "2.75.10"
+            "signals.lib/version": "1.6.0"
         }
     ],
     "ui": [
@@ -315,30 +273,11 @@
             "label": "sinusoide2",
             "items": [
                 {
-                    "type": "hslider",
-                    "label": "Volume",
-                    "shortname": "Volume",
-                    "address": "/sinusoide2/Volume",
-                    "index": 264628,
-                    "meta": [
-                        {
-                            "acc": "1 0 -9 0 10"
-                        },
-                        {
-                            "hidden": "1"
-                        }
-                    ],
-                    "init": 0.35,
-                    "min": 0,
-                    "max": 0.7,
-                    "step": 0.001
-                },
-                {
                     "type": "checkbox",
                     "label": "SLIDE",
                     "shortname": "SLIDE",
                     "address": "/sinusoide2/SLIDE",
-                    "index": 264592,
+                    "index": 920024,
                     "meta": [
                         {
                             "0": ""
@@ -346,33 +285,11 @@
                     ]
                 },
                 {
-                    "type": "vslider",
-                    "label": "Dry/Wet Mix",
-                    "shortname": "Wet_Mix",
-                    "address": "/sinusoide2/Dry/Wet_Mix",
-                    "index": 264652,
-                    "meta": [
-                        {
-                            "1": ""
-                        },
-                        {
-                            "hidden": "1"
-                        },
-                        {
-                            "style": "knob"
-                        }
-                    ],
-                    "init": 1,
-                    "min": 0,
-                    "max": 1,
-                    "step": 0.01
-                },
-                {
                     "type": "hslider",
                     "label": "bouger",
                     "shortname": "bouger",
                     "address": "/sinusoide2/bouger",
-                    "index": 264680,
+                    "index": 920092,
                     "meta": [
                         {
                             "acc": "0 0 -10 0 10"
@@ -402,9 +319,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "do",
-                                    "shortname": "P4_sinusoide2_gamme___do",
+                                    "shortname": "P2_sinusoide2_gamme___do",
                                     "address": "/sinusoide2/gamme/./do",
-                                    "index": 264544,
+                                    "index": 920028,
                                     "meta": [
                                         {
                                             "0": ""
@@ -414,9 +331,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "do#",
-                                    "shortname": "P5_sinusoide2_gamme___do",
+                                    "shortname": "P3_sinusoide2_gamme___do",
                                     "address": "/sinusoide2/gamme/./do_",
-                                    "index": 264548,
+                                    "index": 920032,
                                     "meta": [
                                         {
                                             "1": ""
@@ -426,9 +343,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "ré",
-                                    "shortname": "P6_sinusoide2_gamme___r",
+                                    "shortname": "P4_sinusoide2_gamme___r",
                                     "address": "/sinusoide2/gamme/./ré",
-                                    "index": 264552,
+                                    "index": 920036,
                                     "meta": [
                                         {
                                             "2": ""
@@ -449,9 +366,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "ré#",
-                                    "shortname": "P7_sinusoide2_gamme___r",
+                                    "shortname": "P5_sinusoide2_gamme___r",
                                     "address": "/sinusoide2/gamme/./ré_",
-                                    "index": 264556,
+                                    "index": 920040,
                                     "meta": [
                                         {
                                             "0": ""
@@ -463,7 +380,7 @@
                                     "label": "mi",
                                     "shortname": "mi",
                                     "address": "/sinusoide2/gamme/./mi",
-                                    "index": 264560,
+                                    "index": 920044,
                                     "meta": [
                                         {
                                             "1": ""
@@ -473,9 +390,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "fa",
-                                    "shortname": "P9_sinusoide2_gamme___fa",
+                                    "shortname": "P7_sinusoide2_gamme___fa",
                                     "address": "/sinusoide2/gamme/./fa",
-                                    "index": 264564,
+                                    "index": 920048,
                                     "meta": [
                                         {
                                             "2": ""
@@ -496,9 +413,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "fa#",
-                                    "shortname": "P10_sinusoide2_gamme___fa",
+                                    "shortname": "P8_sinusoide2_gamme___fa",
                                     "address": "/sinusoide2/gamme/./fa_",
-                                    "index": 264568,
+                                    "index": 920052,
                                     "meta": [
                                         {
                                             "0": ""
@@ -508,9 +425,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "sol",
-                                    "shortname": "P11_sinusoide2_gamme___sol",
+                                    "shortname": "P9_sinusoide2_gamme___sol",
                                     "address": "/sinusoide2/gamme/./sol",
-                                    "index": 264572,
+                                    "index": 920056,
                                     "meta": [
                                         {
                                             "1": ""
@@ -520,9 +437,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "sol#",
-                                    "shortname": "P12_sinusoide2_gamme___sol",
+                                    "shortname": "P10_sinusoide2_gamme___sol",
                                     "address": "/sinusoide2/gamme/./sol_",
-                                    "index": 264576,
+                                    "index": 920060,
                                     "meta": [
                                         {
                                             "2": ""
@@ -543,9 +460,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "la",
-                                    "shortname": "P13_sinusoide2_gamme___la",
+                                    "shortname": "P11_sinusoide2_gamme___la",
                                     "address": "/sinusoide2/gamme/./la",
-                                    "index": 264580,
+                                    "index": 920064,
                                     "meta": [
                                         {
                                             "0": ""
@@ -555,9 +472,9 @@
                                 {
                                     "type": "checkbox",
                                     "label": "la#",
-                                    "shortname": "P14_sinusoide2_gamme___la",
+                                    "shortname": "P12_sinusoide2_gamme___la",
                                     "address": "/sinusoide2/gamme/./la_",
-                                    "index": 264584,
+                                    "index": 920068,
                                     "meta": [
                                         {
                                             "1": ""
@@ -569,7 +486,7 @@
                                     "label": "si",
                                     "shortname": "si",
                                     "address": "/sinusoide2/gamme/./si",
-                                    "index": 264588,
+                                    "index": 920072,
                                     "meta": [
                                         {
                                             "2": ""
@@ -585,7 +502,7 @@
                     "label": "son",
                     "shortname": "son",
                     "address": "/sinusoide2/son",
-                    "index": 264672,
+                    "index": 920088,
                     "init": 0,
                     "min": 0,
                     "max": 4,
