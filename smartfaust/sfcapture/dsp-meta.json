@@ -1,7 +1,7 @@
 {
     "name": "Capture",
     "filename": "sfCapture.dsp",
-    "version": "2.75.7",
+    "version": "2.75.16",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 5958504,
-    "code": "EO/F",
+    "code": "sArG",
     "inputs": 1,
     "outputs": 1,
     "meta": [
