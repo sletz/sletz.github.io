@@ -41,17 +41,6 @@ audioContext.suspend();
     const { createFaustUI } = await import("./create-node.js");
     await createFaustUI($divFaustUI, faustNode);
 
-    // Connect the Faust node to the audio output
-    faustNode.connect(audioContext.destination);
-
-    /*
-    // Connect the Faust node to the audio input
-    if (faustNode.numberOfInputs > 0) {
-        const { connectToAudioInput } = await import("./create-node.js");
-        await connectToAudioInput(audioContext, null, faustNode, null);
-    }
-    */
-
     // Function to start MIDI
     function startMIDI() {
         // Check if the browser supports the Web MIDI API
@@ -112,6 +101,9 @@ audioContext.suspend();
             startMIDI();
             midiHandlersBound = true;
         }
+
+        // Connect the Faust node to the audio output
+        faustNode.connect(audioContext.destination);
 
         // Connect the Faust node to the audio input
         if (faustNode.numberOfInputs > 0) {
