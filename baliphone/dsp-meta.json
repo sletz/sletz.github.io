@@ -1,7 +1,7 @@
 {
     "name": "baliphone",
     "filename": "baliphone.dsp",
-    "version": "2.75.7",
+    "version": "2.75.16",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 844728,
-    "code": "lBMf",
+    "code": "JBYf",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -201,8 +201,8 @@
                 {
                     "type": "checkbox",
                     "label": "ON / OFF",
-                    "shortname": "_OFF",
-                    "address": "/baliphone/ON_/_OFF",
+                    "shortname": "ON_OFF",
+                    "address": "/baliphone/ON___OFF",
                     "index": 16,
                     "meta": [
                         {

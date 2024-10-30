@@ -1,7 +1,7 @@
 {
     "name": "sinusoide",
     "filename": "sinusoide.dsp",
-    "version": "2.75.7",
+    "version": "2.75.16",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 1106788,
-    "code": "mOw0AZQTHw==",
+    "code": "2O40ASQWHw==",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -48,7 +48,7 @@
             "filters_lib_allpass_comb_license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_lowpass0_highpass1": "MIT-style STK-4.3 license"
+            "filters_lib_lowpass0_highpass1": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
             "filters_lib_lowpass0_highpass1_author": "Julius O. Smith III"
@@ -242,8 +242,8 @@
                 {
                     "type": "checkbox",
                     "label": "SLIDE / SCALE",
-                    "shortname": "_SCALE",
-                    "address": "/sinusoide/SLIDE_/_SCALE",
+                    "shortname": "SLIDE_SCALE",
+                    "address": "/sinusoide/SLIDE___SCALE",
                     "index": 262200,
                     "meta": [
                         {
@@ -254,8 +254,8 @@
                 {
                     "type": "vslider",
                     "label": "Dry/Wet Mix",
-                    "shortname": "Wet_Mix",
-                    "address": "/sinusoide/Dry/Wet_Mix",
+                    "shortname": "Dry_Wet_Mix",
+                    "address": "/sinusoide/Dry_Wet_Mix",
                     "index": 262180,
                     "meta": [
                         {
@@ -276,8 +276,8 @@
                 {
                     "type": "checkbox",
                     "label": "ON / OFF",
-                    "shortname": "_OFF",
-                    "address": "/sinusoide/ON_/_OFF",
+                    "shortname": "ON_OFF",
+                    "address": "/sinusoide/ON___OFF",
                     "index": 262144,
                     "meta": [
                         {
