@@ -1,7 +1,7 @@
 {
     "name": "sfIter",
     "filename": "sfIter.dsp",
-    "version": "2.75.7",
+    "version": "2.75.16",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 779364,
-    "code": "6KEoAZQTHw==",
+    "code": "2PUqASQWHw==",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -261,8 +261,8 @@
                         {
                             "type": "checkbox",
                             "label": "ON/OFF",
-                            "shortname": "OFF",
-                            "address": "/sfIter/sfIter/ON/OFF",
+                            "shortname": "ON_OFF",
+                            "address": "/sfIter/sfIter/ON_OFF",
                             "index": 262148
                         }
                     ]
@@ -274,8 +274,8 @@
                         {
                             "type": "hslider",
                             "label": "Dry/Wet Mix",
-                            "shortname": "Wet_Mix",
-                            "address": "/sfIter/sfIter_parameter_s_/Dry/Wet_Mix",
+                            "shortname": "Dry_Wet_Mix",
+                            "address": "/sfIter/sfIter_parameter_s_/Dry_Wet_Mix",
                             "index": 262812,
                             "meta": [
                                 {

@@ -1,7 +1,7 @@
 {
     "name": "sfTrumpet",
     "filename": "sfTrumpet.dsp",
-    "version": "2.75.7",
+    "version": "2.75.16",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 549524,
-    "code": "4ElgAZQTHw==",
+    "code": "sNZhASQWHw==",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -105,7 +105,7 @@
             "filters_lib_iir_license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_lowpass0_highpass1": "MIT-style STK-4.3 license"
+            "filters_lib_lowpass0_highpass1": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
         },
         {
             "filters_lib_lowpass0_highpass1_author": "Julius O. Smith III"
@@ -318,8 +318,8 @@
                         {
                             "type": "checkbox",
                             "label": "ON/OFF",
-                            "shortname": "OFF",
-                            "address": "/sfTrumpet/sfTrumpet/ON/OFF",
+                            "shortname": "ON_OFF",
+                            "address": "/sfTrumpet/sfTrumpet/ON_OFF",
                             "index": 64
                         }
                     ]
@@ -331,8 +331,8 @@
                         {
                             "type": "hslider",
                             "label": "Dry/Wet Mix",
-                            "shortname": "Wet_Mix",
-                            "address": "/sfTrumpet/sfTrumpet_parameter_s_/Dry/Wet_Mix",
+                            "shortname": "Dry_Wet_Mix",
+                            "address": "/sfTrumpet/sfTrumpet_parameter_s_/Dry_Wet_Mix",
                             "index": 98532,
                             "meta": [
                                 {

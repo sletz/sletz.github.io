@@ -1,7 +1,7 @@
 {
     "name": "sfTrashShift",
     "filename": "sfTrashShift.dsp",
-    "version": "2.75.7",
+    "version": "2.75.16",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 524404,
-    "code": "IEe6",
+    "code": "qEe6",
     "inputs": 1,
     "outputs": 1,
     "meta": [
@@ -138,8 +138,8 @@
                         {
                             "type": "checkbox",
                             "label": "ON/OFF",
-                            "shortname": "OFF",
-                            "address": "/sfTrashShift/sfTrashShift/ON/OFF",
+                            "shortname": "ON_OFF",
+                            "address": "/sfTrashShift/sfTrashShift/ON_OFF",
                             "index": 0
                         },
                         {
