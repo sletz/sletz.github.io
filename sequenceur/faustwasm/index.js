@@ -3759,6 +3759,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
             console.error(error);
           }
         } else {
+          alert(`Permission OK`);
           window.addEventListener("devicemotion", this.handleDeviceMotion, true);
         }
       } else {
