@@ -3764,6 +3764,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
         }
       } else {
         console.log("Cannot set the accelerometer handler.");
+        alert(`Cannot set the accelerometer handler`);
       }
     }
     if (this.hasGyrInput) {
