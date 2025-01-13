@@ -3743,9 +3743,11 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   async startSensors() {
     if (this.hasAccInput) {
       if (window.DeviceMotionEvent) {
+        alert("window.DeviceMotionEvent");
         if (typeof window.DeviceMotionEvent.requestPermission === "function") {
           try {
             const response = await window.DeviceMotionEvent.requestPermission();
+            alert(`Permission response: ${response}`);
             if (response === "granted") {
               window.addEventListener("devicemotion", this.handleDeviceMotion, true);
             } else if (response === "denied") {
@@ -3753,6 +3755,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
               throw new Error("Unable to access the accelerometer.");
             }
           } catch (error) {
+            alert(`Permission error: ${error}`);
             console.error(error);
           }
         } else {
