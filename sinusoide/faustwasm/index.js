@@ -3724,6 +3724,7 @@ var FaustAudioWorkletCommunicator = class {
     this.supportSharedArrayBuffer = !!globalThis.SharedArrayBuffer;
     this.byteLength = 4 * Uint8Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
     console.log("supportSharedArrayBuffer", this.supportSharedArrayBuffer);
+    alert("supportSharedArrayBuffer: " + this.supportSharedArrayBuffer);
   }
   initializeBuffer(ab) {
     let ptr = 0;
