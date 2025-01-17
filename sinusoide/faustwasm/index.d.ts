@@ -1333,7 +1333,7 @@ export declare class FaustAudioWorkletNode<Poly extends boolean = false> extends
 	protected fPlotHandler: PlotHandler | null;
 	protected fUICallback: UIHandler;
 	protected fDescriptor: FaustUIInputItem[];
-	protected communicator: FaustAudioWorkletNodeCommunicator;
+	protected fCommunicator: FaustAudioWorkletNodeCommunicator;
 	constructor(context: BaseAudioContext, name: string, factory: LooseFaustDspFactory, options?: Partial<FaustAudioWorkletNodeOptions<Poly>>);
 	protected handleMessageAux: (e: MessageEvent) => void;
 	private handleDeviceMotion;

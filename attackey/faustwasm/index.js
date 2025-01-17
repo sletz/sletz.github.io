@@ -107,7 +107,7 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
     constructor(options) {
       super(options);
       this.paramValuesCache = {};
-      this.communicator = new FaustAudioWorkletProcessorCommunicator2(this.port);
+      this.fCommunicator = new FaustAudioWorkletProcessorCommunicator2(this.port);
       const { parameterDescriptors } = this.constructor;
       parameterDescriptors.forEach((pd) => {
         this.paramValuesCache[pd.name] = pd.defaultValue || 0;
@@ -154,18 +154,18 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
           this.paramValuesCache[path] = paramValue;
         }
       }
-      if (this.communicator.getNewAccDataAvailable()) {
-        const acc = this.communicator.getAcc();
+      if (this.fCommunicator.getNewAccDataAvailable()) {
+        const acc = this.fCommunicator.getAcc();
         if (acc) {
-          this.communicator.setNewAccDataAvailable(false);
+          this.fCommunicator.setNewAccDataAvailable(false);
           const { invert, ...data } = acc;
           this.propagateAcc(data, invert);
         }
       }
-      if (this.communicator.getNewGyrDataAvailable()) {
-        const gyr = this.communicator.getGyr();
+      if (this.fCommunicator.getNewGyrDataAvailable()) {
+        const gyr = this.fCommunicator.getGyr();
         if (gyr) {
-          this.communicator.setNewGyrDataAvailable(false);
+          this.fCommunicator.setNewGyrDataAvailable(false);
           this.propagateGyr(gyr);
         }
       }
@@ -3723,10 +3723,6 @@ var FaustAudioWorkletCommunicator = class {
     this.port = port;
     this.supportSharedArrayBuffer = !!globalThis.SharedArrayBuffer;
     this.byteLength = 4 * Uint8Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
-    console.log("supportSharedArrayBuffer", this.supportSharedArrayBuffer);
-    if (typeof window !== "undefined" && typeof window.alert === "function") {
-      alert("supportSharedArrayBuffer: " + this.supportSharedArrayBuffer);
-    }
   }
   initializeBuffer(ab) {
     let ptr = 0;
@@ -3764,6 +3760,7 @@ var FaustAudioWorkletCommunicator = class {
   setAcc({ x, y, z }, invert = false) {
     if (!this.supportSharedArrayBuffer) {
       const e = { type: "acc", data: { x, y, z }, invert };
+      this.port.postMessage(e);
     }
     if (!this.uin8NewAccData)
       return;
@@ -3783,6 +3780,7 @@ var FaustAudioWorkletCommunicator = class {
   setGyr({ alpha, beta, gamma }) {
     if (!this.supportSharedArrayBuffer) {
       const e = { type: "gyr", data: { alpha, beta, gamma } };
+      this.port.postMessage(e);
     }
     if (!this.uin8NewGyrData)
       return;
@@ -3902,7 +3900,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
       }
     };
     FaustBaseWebAudioDsp.parseUI(this.fJSONDsp.ui, this.fUICallback);
-    this.communicator = new FaustAudioWorkletNodeCommunicator(this.port);
+    this.fCommunicator = new FaustAudioWorkletNodeCommunicator(this.port);
     this.port.addEventListener("message", this.handleMessageAux);
     this.port.start();
   }
@@ -4027,7 +4025,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     if (!accelerationIncludingGravity)
       return;
     const { x, y, z } = accelerationIncludingGravity;
-    this.communicator.setAcc({ x, y, z }, invert);
+    this.fCommunicator.setAcc({ x, y, z }, invert);
   }
   get hasGyrInput() {
     return __privateGet(this, _hasGyrInput);
@@ -4036,7 +4034,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     if (!event)
       return;
     const { alpha, beta, gamma } = event;
-    this.communicator.setGyr({ alpha, beta, gamma });
+    this.fCommunicator.setGyr({ alpha, beta, gamma });
   }
   setParamValue(path, value) {
     const e = { type: "param", data: { path, value } };

@@ -5,7 +5,7 @@ const FAUST_DSP_VOICES = 0;
 // Set to true if the DSP has an effect
 const FAUST_DSP_HAS_EFFECT = false;
 
-const CACHE_NAME = "sinusoide-static"; // Cache name without versioning
+const CACHE_NAME = "attackey-static"; // Cache name without versioning
 
 const MONO_RESOURCES = [
     "./index.html",
@@ -36,6 +36,7 @@ const serviceWorkerGlobalScope = self;
  * Install the service worker and cache the resources
  */
 serviceWorkerGlobalScope.addEventListener("install", (event) => {
+    console.log("Service worker installed");
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_NAME);
         const resources = (FAUST_DSP_VOICES && FAUST_DSP_HAS_EFFECT) ? POLY_EFFECT_RESOURCES : FAUST_DSP_VOICES ? POLY_RESOURCES : MONO_RESOURCES;
@@ -61,8 +62,6 @@ serviceWorkerGlobalScope.addEventListener("activate", (event) => {
     );
 });
 
-
-//serviceWorkerGlobalScope.addEventListener("activate", () => console.log("Service worker activated"));
 
 
 /** @type {(response: Response) => Response} */
