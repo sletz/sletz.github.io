@@ -110,4 +110,8 @@ if (typeof crossOriginIsolated !== "undefined" && !crossOriginIsolated) {
     if (typeof window !== "undefined" && typeof window.alert === "function") {
         alert("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
     }
+} else {
+    if (typeof window !== "undefined" && typeof window.alert === "function") {
+        alert("SharedArrayBuffer is available. COOP & COEP headers are set correctly.");
+    }
 }
