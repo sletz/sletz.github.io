@@ -3764,7 +3764,6 @@ var FaustAudioWorkletCommunicator = class {
   setAcc({ x, y, z }, invert = false) {
     if (!this.supportSharedArrayBuffer) {
       const e = { type: "acc", data: { x, y, z }, invert };
-      this.port.postMessage(e);
     }
     if (!this.uin8NewAccData)
       return;
@@ -3784,7 +3783,6 @@ var FaustAudioWorkletCommunicator = class {
   setGyr({ alpha, beta, gamma }) {
     if (!this.supportSharedArrayBuffer) {
       const e = { type: "gyr", data: { alpha, beta, gamma } };
-      this.port.postMessage(e);
     }
     if (!this.uin8NewGyrData)
       return;
