@@ -65,6 +65,9 @@ serviceWorkerGlobalScope.addEventListener("activate", (event) => {
  * Intercept fetch requests to enforce COOP and COEP headers.
  */
 serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
+
+    console.log("Service worker fetch");
+
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
@@ -72,6 +75,7 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
         if (cachedResponse) {
             if (typeof window !== "undefined" && typeof window.alert === "function") {
                 alert("Return cachedResponse.");
+                console.log("Service worker fetch : return cachedResponse");
             }
             return cachedResponse;
         } else {
@@ -98,6 +102,8 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
                         alert("Cache and Return modifiedResponse.");
                     }
 
+                    console.log("Service worker fetch : return modifiedResponse");
+
                     // Return the modified response to the browser
                     return modifiedResponse;
                 }
@@ -105,6 +111,8 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
                 if (typeof window !== "undefined" && typeof window.alert === "function") {
                     alert("Return fetchResponse.");
                 }
+
+                console.log("Service worker fetch : return fetchResponse");
 
                 return fetchResponse;
             } catch (error) {
@@ -117,11 +125,12 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
 
 // Check if the environment is cross-origin isolated (necessary for SharedArrayBuffer)
 if (typeof crossOriginIsolated !== "undefined" && !crossOriginIsolated) {
-    console.warn("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
+    console.log("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
     if (typeof window !== "undefined" && typeof window.alert === "function") {
         alert("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
     }
 } else {
+    console.log("SharedArrayBuffer is available. COOP & COEP headers are set correctly.");
     if (typeof window !== "undefined" && typeof window.alert === "function") {
         alert("SharedArrayBuffer is available. COOP & COEP headers are set correctly.");
     }
