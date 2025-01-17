@@ -3721,7 +3721,7 @@ var SoundfileReader_default = SoundfileReader;
 var FaustAudioWorkletCommunicator = class {
   constructor(port) {
     this.port = port;
-    this.supportSharedArrayBuffer = !!globalThis.SharedArrayBuffer;
+    this.supportSharedArrayBuffer = true;
     this.byteLength = 4 * Uint8Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
     console.log("supportSharedArrayBuffer", this.supportSharedArrayBuffer);
     if (typeof window !== "undefined" && typeof window.alert === "function") {
