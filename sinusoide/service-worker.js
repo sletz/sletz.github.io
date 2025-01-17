@@ -66,7 +66,7 @@ serviceWorkerGlobalScope.addEventListener("activate", (event) => {
  */
 serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
 
-    console.log("Service worker fetch");
+    console.log("Service worker fetch", event.request);
 
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
