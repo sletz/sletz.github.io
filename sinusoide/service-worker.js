@@ -74,20 +74,28 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
         } else {
             try {
                 const fetchResponse = await fetch(event.request);
+
                 if (event.request.method === "GET" && fetchResponse && fetchResponse.status === 200 && fetchResponse.type === "basic") {
-                    cache.put(event.request, fetchResponse.clone());
+                    // Modify headers to include COOP & COEP
+                    const newHeaders = new Headers(fetchResponse.headers);
+                    newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
+                    newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
+
+                    // Create a new response with the modified headers
+                    const modifiedResponse = new Response(fetchResponse.body, {
+                        status: fetchResponse.status,
+                        statusText: fetchResponse.statusText,
+                        headers: newHeaders
+                    });
+
+                    // Store the modified response in the cache
+                    await cache.put(event.request, modifiedResponse.clone());
+
+                    // Return the modified response to the browser
+                    return modifiedResponse;
                 }
 
-                // Modify headers to enable SharedArrayBuffer support
-                const newHeaders = new Headers(fetchResponse.headers);
-                newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
-                newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
-
-                return new Response(fetchResponse.body, {
-                    status: fetchResponse.status,
-                    statusText: fetchResponse.statusText,
-                    headers: newHeaders
-                });
+                return fetchResponse;
             } catch (error) {
                 console.error("Network access error", error);
                 return new Response("Network error", { status: 503, statusText: "Service Unavailable" });
@@ -99,4 +107,7 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
 // Check if the environment is cross-origin isolated (necessary for SharedArrayBuffer)
 if (typeof crossOriginIsolated !== "undefined" && !crossOriginIsolated) {
     console.warn("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
+    if (typeof window !== "undefined" && typeof window.alert === "function") {
+        alert("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
+    }
 }
