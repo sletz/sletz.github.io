@@ -70,6 +70,9 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
         const cachedResponse = await cache.match(event.request);
 
         if (cachedResponse) {
+            if (typeof window !== "undefined" && typeof window.alert === "function") {
+                alert("Return cachedResponse.");
+            }
             return cachedResponse;
         } else {
             try {
@@ -91,8 +94,16 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
                     // Store the modified response in the cache
                     await cache.put(event.request, modifiedResponse.clone());
 
+                    if (typeof window !== "undefined" && typeof window.alert === "function") {
+                        alert("Cache and ReturnmodifiedResponse.");
+                    }
+
                     // Return the modified response to the browser
                     return modifiedResponse;
+                }
+
+                if (typeof window !== "undefined" && typeof window.alert === "function") {
+                    alert("Return fetchResponse.");
                 }
 
                 return fetchResponse;
