@@ -95,7 +95,7 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
                     await cache.put(event.request, modifiedResponse.clone());
 
                     if (typeof window !== "undefined" && typeof window.alert === "function") {
-                        alert("Cache and ReturnmodifiedResponse.");
+                        alert("Cache and Return modifiedResponse.");
                     }
 
                     // Return the modified response to the browser
