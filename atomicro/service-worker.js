@@ -47,7 +47,7 @@ serviceWorkerGlobalScope.addEventListener("install", (event) => {
     })());
 });
 
-/*
+
 serviceWorkerGlobalScope.addEventListener("activate", (event) => {
     console.log("Service worker activated");
     event.waitUntil(
@@ -60,9 +60,9 @@ serviceWorkerGlobalScope.addEventListener("activate", (event) => {
         })
     );
 });
-*/
 
-serviceWorkerGlobalScope.addEventListener("activate", () => console.log("Service worker activated"));
+
+//serviceWorkerGlobalScope.addEventListener("activate", () => console.log("Service worker activated"));
 
 
 /** @type {(response: Response) => Response} */
