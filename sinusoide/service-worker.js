@@ -36,7 +36,6 @@ const serviceWorkerGlobalScope = self;
  * Install the service worker and cache the resources
  */
 serviceWorkerGlobalScope.addEventListener("install", (event) => {
-    console.log("Service worker installed");
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_NAME);
         const resources = (FAUST_DSP_VOICES && FAUST_DSP_HAS_EFFECT) ? POLY_EFFECT_RESOURCES : FAUST_DSP_VOICES ? POLY_RESOURCES : MONO_RESOURCES;
@@ -48,6 +47,7 @@ serviceWorkerGlobalScope.addEventListener("install", (event) => {
     })());
 });
 
+/*
 serviceWorkerGlobalScope.addEventListener("activate", (event) => {
     console.log("Service worker activated");
     event.waitUntil(
@@ -60,6 +60,10 @@ serviceWorkerGlobalScope.addEventListener("activate", (event) => {
         })
     );
 });
+*/
+
+serviceWorkerGlobalScope.addEventListener("activate", () => console.log("Service worker activated"));
+
 
 /** @type {(response: Response) => Response} */
 const getCrossOriginIsolatedResponse = (response) => {
@@ -83,45 +87,23 @@ const getCrossOriginIsolatedResponse = (response) => {
  */
 serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
 
-    console.log("Service worker fetch", event.request);
-
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
 
         if (cachedResponse) {
-            if (typeof window !== "undefined" && typeof window.alert === "function") {
-                alert("Return cachedResponse.");
-                console.log("Service worker fetch : return cachedResponse");
-            }
-            console.log("Service worker fetch cachedResponse", cachedResponse);
             return getCrossOriginIsolatedResponse(cachedResponse);
         } else {
             try {
                 const fetchResponse = await fetch(event.request);
 
                 if (event.request.method === "GET" && fetchResponse && fetchResponse.status === 200 && fetchResponse.type === "basic") {
-
                     const modifiedResponse = getCrossOriginIsolatedResponse(fetchResponse);
-
                     // Store the modified response in the cache
                     await cache.put(event.request, modifiedResponse.clone());
-
-                    if (typeof window !== "undefined" && typeof window.alert === "function") {
-                        alert("Cache and Return modifiedResponse.");
-                    }
-
-                    console.log("Service worker fetch : return modifiedResponse");
-
                     // Return the modified response to the browser
                     return modifiedResponse;
                 }
-
-                if (typeof window !== "undefined" && typeof window.alert === "function") {
-                    alert("Return fetchResponse.");
-                }
-
-                console.log("Service worker fetch : return fetchResponse");
 
                 return fetchResponse;
             } catch (error) {
@@ -132,15 +114,3 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
     })());
 });
 
-// Check if the environment is cross-origin isolated (necessary for SharedArrayBuffer)
-if (typeof crossOriginIsolated !== "undefined" && !crossOriginIsolated) {
-    console.log("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
-    if (typeof window !== "undefined" && typeof window.alert === "function") {
-        alert("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
-    }
-} else {
-    console.log("SharedArrayBuffer is available. COOP & COEP headers are set correctly.");
-    if (typeof window !== "undefined" && typeof window.alert === "function") {
-        alert("SharedArrayBuffer is available. COOP & COEP headers are set correctly.");
-    }
-}

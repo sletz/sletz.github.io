@@ -5,7 +5,7 @@ const FAUST_DSP_VOICES = 0;
 // Set to true if the DSP has an effect
 const FAUST_DSP_HAS_EFFECT = false;
 
-const CACHE_NAME = "baliphone-static"; // Cache name without versioning
+const CACHE_NAME = "sinusoide-static"; // Cache name without versioning
 
 const MONO_RESOURCES = [
     "./index.html",
@@ -29,14 +29,13 @@ const POLY_EFFECT_RESOURCES = [
     "./effect-meta.json",
 ];
 
-/**@type {ServiceWorkerGlobalScope} */
+/** @type {ServiceWorkerGlobalScope} */
 const serviceWorkerGlobalScope = self;
 
 /**
  * Install the service worker and cache the resources
  */
 serviceWorkerGlobalScope.addEventListener("install", (event) => {
-    console.log("Service worker installed");
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_NAME);
         const resources = (FAUST_DSP_VOICES && FAUST_DSP_HAS_EFFECT) ? POLY_EFFECT_RESOURCES : FAUST_DSP_VOICES ? POLY_RESOURCES : MONO_RESOURCES;
@@ -48,26 +47,70 @@ serviceWorkerGlobalScope.addEventListener("install", (event) => {
     })());
 });
 
+/*
+serviceWorkerGlobalScope.addEventListener("activate", (event) => {
+    console.log("Service worker activated");
+    event.waitUntil(
+        clients.claim().then(() => {
+            return clients.matchAll({ type: "window" }).then((clients) => {
+                clients.forEach((client) => {
+                    client.navigate(client.url);
+                });
+            });
+        })
+    );
+});
+*/
+
 serviceWorkerGlobalScope.addEventListener("activate", () => console.log("Service worker activated"));
 
+
+/** @type {(response: Response) => Response} */
+const getCrossOriginIsolatedResponse = (response) => {
+    // Modify headers to include COOP & COEP
+    const headers = new Headers(response.headers);
+    headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+
+    // Create a new response with the modified headers
+    const modifiedResponse = new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers
+    });
+
+    return modifiedResponse;
+};
+
+/**
+ * Intercept fetch requests to enforce COOP and COEP headers.
+ */
 serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
+
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
+
         if (cachedResponse) {
-            return cachedResponse;
+            return getCrossOriginIsolatedResponse(cachedResponse);
         } else {
             try {
                 const fetchResponse = await fetch(event.request);
-                // Ensure the response is valid before caching it
+
                 if (event.request.method === "GET" && fetchResponse && fetchResponse.status === 200 && fetchResponse.type === "basic") {
-                    cache.put(event.request, fetchResponse.clone());
+                    const modifiedResponse = getCrossOriginIsolatedResponse(fetchResponse);
+                    // Store the modified response in the cache
+                    await cache.put(event.request, modifiedResponse.clone());
+                    // Return the modified response to the browser
+                    return modifiedResponse;
                 }
+
                 return fetchResponse;
-            } catch (e) {
-                // Network access failure
-                console.log("Network access error", e);
+            } catch (error) {
+                console.error("Network access error", error);
+                return new Response("Network error", { status: 503, statusText: "Service Unavailable" });
             }
         }
     })());
 });
+

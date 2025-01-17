@@ -10,7 +10,7 @@
         "."
     ],
     "size": 132,
-    "code": "mEO5",
+    "code": "sD25",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -19,9 +19,6 @@
         },
         {
             "basics_lib_name": "Faust Basic Element Library"
-        },
-        {
-            "basics_lib_tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
         },
         {
             "basics_lib_version": "1.21.0"
@@ -120,7 +117,7 @@
             "soundfiles_lib_version": "1.7.0"
         },
         {
-            "version": "2.78.1"
+            "version": "2.78.3"
         }
     ],
     "ui": [

@@ -10,7 +10,7 @@
         "."
     ],
     "size": 336,
-    "code": "+B3j",
+    "code": "EBjj",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -22,9 +22,6 @@
         },
         {
             "basics_lib_pulse_countup_loop_author": "Vince"
-        },
-        {
-            "basics_lib_tabulateNd": "Copyright (C) 2023 Bart Brouns <bart@magnetophon.nl>"
         },
         {
             "basics_lib_version": "1.21.0"
@@ -84,7 +81,7 @@
             "soundfiles": "https://raw.githubusercontent.com/grame-cncm/GameLAN/master/sequenceur"
         },
         {
-            "version": "2.78.1"
+            "version": "2.78.3"
         }
     ],
     "ui": [
