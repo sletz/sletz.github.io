@@ -29,7 +29,7 @@ const POLY_EFFECT_RESOURCES = [
     "./effect-meta.json",
 ];
 
-/**@type {ServiceWorkerGlobalScope} */
+/** @type {ServiceWorkerGlobalScope} */
 const serviceWorkerGlobalScope = self;
 
 /**
@@ -61,6 +61,23 @@ serviceWorkerGlobalScope.addEventListener("activate", (event) => {
     );
 });
 
+/** @type {(response: Response) => Response} */
+const getCrossOriginIsolatedResponse = (response) => {
+    // Modify headers to include COOP & COEP
+    const headers = new Headers(response.headers);
+    headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+
+    // Create a new response with the modified headers
+    const modifiedResponse = new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers
+    });
+
+    return modifiedResponse;
+};
+
 /**
  * Intercept fetch requests to enforce COOP and COEP headers.
  */
@@ -78,23 +95,14 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
                 console.log("Service worker fetch : return cachedResponse");
             }
             console.log("Service worker fetch cachedResponse", cachedResponse);
-            return cachedResponse;
+            return getCrossOriginIsolatedResponse(cachedResponse);
         } else {
             try {
                 const fetchResponse = await fetch(event.request);
 
                 if (event.request.method === "GET" && fetchResponse && fetchResponse.status === 200 && fetchResponse.type === "basic") {
-                    // Modify headers to include COOP & COEP
-                    const newHeaders = new Headers(fetchResponse.headers);
-                    newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
-                    newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
 
-                    // Create a new response with the modified headers
-                    const modifiedResponse = new Response(fetchResponse.body, {
-                        status: fetchResponse.status,
-                        statusText: fetchResponse.statusText,
-                        headers: newHeaders
-                    });
+                    const modifiedResponse = getCrossOriginIsolatedResponse(fetchResponse);
 
                     // Store the modified response in the cache
                     await cache.put(event.request, modifiedResponse.clone());
