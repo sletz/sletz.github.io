@@ -72,6 +72,8 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
 
+        console.log("Service worker fetch cachedResponse", cachedResponse);
+
         if (cachedResponse) {
             if (typeof window !== "undefined" && typeof window.alert === "function") {
                 alert("Return cachedResponse.");
