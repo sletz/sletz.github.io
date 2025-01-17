@@ -48,26 +48,81 @@ serviceWorkerGlobalScope.addEventListener("install", (event) => {
     })());
 });
 
-serviceWorkerGlobalScope.addEventListener("activate", () => console.log("Service worker activated"));
+serviceWorkerGlobalScope.addEventListener("activate", (event) => {
+    console.log("Service worker activated");
+    event.waitUntil(
+        clients.claim().then(() => {
+            return clients.matchAll({ type: "window" }).then((clients) => {
+                clients.forEach((client) => {
+                    client.navigate(client.url);
+                });
+            });
+        })
+    );
+});
 
+/**
+ * Intercept fetch requests to enforce COOP and COEP headers.
+ */
 serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
+
         if (cachedResponse) {
+            if (typeof window !== "undefined" && typeof window.alert === "function") {
+                alert("Return cachedResponse.");
+            }
             return cachedResponse;
         } else {
             try {
                 const fetchResponse = await fetch(event.request);
-                // Ensure the response is valid before caching it
+
                 if (event.request.method === "GET" && fetchResponse && fetchResponse.status === 200 && fetchResponse.type === "basic") {
-                    cache.put(event.request, fetchResponse.clone());
+                    // Modify headers to include COOP & COEP
+                    const newHeaders = new Headers(fetchResponse.headers);
+                    newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
+                    newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
+
+                    // Create a new response with the modified headers
+                    const modifiedResponse = new Response(fetchResponse.body, {
+                        status: fetchResponse.status,
+                        statusText: fetchResponse.statusText,
+                        headers: newHeaders
+                    });
+
+                    // Store the modified response in the cache
+                    await cache.put(event.request, modifiedResponse.clone());
+
+                    if (typeof window !== "undefined" && typeof window.alert === "function") {
+                        alert("Cache and ReturnmodifiedResponse.");
+                    }
+
+                    // Return the modified response to the browser
+                    return modifiedResponse;
                 }
+
+                if (typeof window !== "undefined" && typeof window.alert === "function") {
+                    alert("Return fetchResponse.");
+                }
+
                 return fetchResponse;
-            } catch (e) {
-                // Network access failure
-                console.log("Network access error", e);
+            } catch (error) {
+                console.error("Network access error", error);
+                return new Response("Network error", { status: 503, statusText: "Service Unavailable" });
             }
         }
     })());
 });
+
+// Check if the environment is cross-origin isolated (necessary for SharedArrayBuffer)
+if (typeof crossOriginIsolated !== "undefined" && !crossOriginIsolated) {
+    console.warn("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
+    if (typeof window !== "undefined" && typeof window.alert === "function") {
+        alert("SharedArrayBuffer may not be available. Ensure COOP & COEP headers are set correctly.");
+    }
+} else {
+    if (typeof window !== "undefined" && typeof window.alert === "function") {
+        alert("SharedArrayBuffer is available. COOP & COEP headers are set correctly.");
+    }
+}

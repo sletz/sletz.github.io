@@ -81,7 +81,8 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
   const { registerProcessor, AudioWorkletProcessor, sampleRate } = globalThis;
   const {
     FaustBaseWebAudioDsp: FaustBaseWebAudioDsp2,
-    FaustWasmInstantiator: FaustWasmInstantiator2
+    FaustWasmInstantiator: FaustWasmInstantiator2,
+    FaustAudioWorkletProcessorCommunicator: FaustAudioWorkletProcessorCommunicator2
   } = dependencies;
   const {
     processorName,
@@ -106,7 +107,7 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
     constructor(options) {
       super(options);
       this.paramValuesCache = {};
-      this.port.onmessage = (e) => this.handleMessageAux(e);
+      this.communicator = new FaustAudioWorkletProcessorCommunicator2(this.port);
       const { parameterDescriptors } = this.constructor;
       parameterDescriptors.forEach((pd) => {
         this.paramValuesCache[pd.name] = pd.defaultValue || 0;
@@ -153,19 +154,26 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
           this.paramValuesCache[path] = paramValue;
         }
       }
+      if (this.communicator.getNewAccDataAvailable()) {
+        const acc = this.communicator.getAcc();
+        if (acc) {
+          this.communicator.setNewAccDataAvailable(false);
+          const { invert, ...data } = acc;
+          this.propagateAcc(data, invert);
+        }
+      }
+      if (this.communicator.getNewGyrDataAvailable()) {
+        const gyr = this.communicator.getGyr();
+        if (gyr) {
+          this.communicator.setNewGyrDataAvailable(false);
+          this.propagateGyr(gyr);
+        }
+      }
       return this.fDSPCode.compute(inputs[0], outputs[0]);
     }
     handleMessageAux(e) {
       const msg = e.data;
       switch (msg.type) {
-        case "acc": {
-          this.propagateAcc(msg.data, msg.invert);
-          break;
-        }
-        case "gyr": {
-          this.propagateGyr(msg.data);
-          break;
-        }
         case "midi": {
           this.midiMessage(msg.data);
           break;
@@ -234,10 +242,15 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
   class FaustMonoAudioWorkletProcessor extends FaustAudioWorkletProcessor {
     constructor(options) {
       super(options);
+      this.handleMessageAux = (e) => {
+        super.handleMessageAux(e);
+      };
       const { FaustMonoWebAudioDsp: FaustMonoWebAudioDsp2 } = dependencies;
       const { factory, sampleSize } = options.processorOptions;
       const instance = FaustWasmInstantiator2.createSyncMonoDSPInstance(factory);
       this.fDSPCode = new FaustMonoWebAudioDsp2(instance, sampleRate, sampleSize, 128, factory.soundfiles);
+      this.port.addEventListener("message", this.handleMessageAux);
+      this.port.start();
       this.fDSPCode.setOutputParamHandler((path, value) => this.port.postMessage({ path, value, type: "param" }));
       this.fDSPCode.start();
     }
@@ -264,7 +277,8 @@ var getFaustAudioWorkletProcessor = (dependencies, faustData, register = true) =
       const instance = FaustWasmInstantiator2.createSyncPolyDSPInstance(voiceFactory, mixerModule, voices, effectFactory);
       const soundfiles = { ...effectFactory == null ? void 0 : effectFactory.soundfiles, ...voiceFactory.soundfiles };
       this.fDSPCode = new FaustPolyWebAudioDsp3(instance, sampleRate, sampleSize, 128, soundfiles);
-      this.port.onmessage = (e) => this.handleMessageAux(e);
+      this.port.addEventListener("message", this.handleMessageAux);
+      this.port.start();
       this.fDSPCode.setOutputParamHandler((path, value) => this.port.postMessage({ path, value, type: "param" }));
       this.fDSPCode.start();
     }
@@ -310,6 +324,7 @@ var getFaustFFTAudioWorkletProcessor = (dependencies, faustData, register = true
     FaustBaseWebAudioDsp: FaustBaseWebAudioDsp2,
     FaustWasmInstantiator: FaustWasmInstantiator2,
     FaustMonoWebAudioDsp: FaustMonoWebAudioDsp2,
+    FaustAudioWorkletProcessorCommunicator: FaustAudioWorkletProcessorCommunicator2,
     FFTUtils
   } = dependencies;
   const {
@@ -393,7 +408,58 @@ var getFaustFFTAudioWorkletProcessor = (dependencies, faustData, register = true
       this.fBufferNum = 0;
       this.soundfiles = {};
       this.windowFunction = null;
-      this.port.onmessage = (e) => this.handleMessageAux(e);
+      this.handleMessageAux = (e) => {
+        var _a, _b, _c;
+        const msg = e.data;
+        switch (msg.type) {
+          case "midi":
+            this.midiMessage(msg.data);
+            break;
+          case "ctrlChange":
+            this.ctrlChange(msg.data[0], msg.data[1], msg.data[2]);
+            break;
+          case "pitchWheel":
+            this.pitchWheel(msg.data[0], msg.data[1]);
+            break;
+          case "param":
+            this.setParamValue(msg.data.path, msg.data.value);
+            break;
+          case "setPlotHandler": {
+            if (msg.data) {
+              this.fPlotHandler = (output, index, events) => {
+                if (events)
+                  this.fCachedEvents.push(...events);
+              };
+            } else {
+              this.fPlotHandler = null;
+            }
+            (_a = this.fDSPCode) == null ? void 0 : _a.setPlotHandler(this.fPlotHandler);
+            break;
+          }
+          case "setupWamEventHandler": {
+            this.setupWamEventHandler();
+            break;
+          }
+          case "start": {
+            (_b = this.fDSPCode) == null ? void 0 : _b.start();
+            break;
+          }
+          case "stop": {
+            (_c = this.fDSPCode) == null ? void 0 : _c.stop();
+            break;
+          }
+          case "destroy": {
+            this.port.close();
+            this.destroy();
+            break;
+          }
+          default:
+            break;
+        }
+      };
+      this.port.addEventListener("message", this.handleMessageAux);
+      this.port.start();
+      this.communicator = new FaustAudioWorkletProcessorCommunicator2(this.port);
       const { parameterDescriptors } = this.constructor;
       parameterDescriptors.forEach((pd) => {
         this.paramValuesCache[pd.name] = pd.defaultValue || 0;
@@ -549,6 +615,21 @@ var getFaustFFTAudioWorkletProcessor = (dependencies, faustData, register = true
           this.paramValuesCache[path] = paramValue;
         }
       }
+      if (this.communicator.getNewAccDataAvailable()) {
+        const acc = this.communicator.getAcc();
+        if (acc) {
+          this.communicator.setNewAccDataAvailable(false);
+          const { invert, ...data } = acc;
+          this.propagateAcc(data, invert);
+        }
+      }
+      if (this.communicator.getNewGyrDataAvailable()) {
+        const gyr = this.communicator.getGyr();
+        if (gyr) {
+          this.communicator.setNewGyrDataAvailable(false);
+          this.propagateGyr(gyr);
+        }
+      }
       if (input == null ? void 0 : input.length) {
         let $inputWrite = 0;
         for (let i = 0; i < input.length; i++) {
@@ -578,55 +659,6 @@ var getFaustFFTAudioWorkletProcessor = (dependencies, faustData, register = true
       }
       return true;
     }
-    handleMessageAux(e) {
-      var _a, _b, _c;
-      const msg = e.data;
-      switch (msg.type) {
-        case "midi":
-          this.midiMessage(msg.data);
-          break;
-        case "ctrlChange":
-          this.ctrlChange(msg.data[0], msg.data[1], msg.data[2]);
-          break;
-        case "pitchWheel":
-          this.pitchWheel(msg.data[0], msg.data[1]);
-          break;
-        case "param":
-          this.setParamValue(msg.data.path, msg.data.value);
-          break;
-        case "setPlotHandler": {
-          if (msg.data) {
-            this.fPlotHandler = (output, index, events) => {
-              if (events)
-                this.fCachedEvents.push(...events);
-            };
-          } else {
-            this.fPlotHandler = null;
-          }
-          (_a = this.fDSPCode) == null ? void 0 : _a.setPlotHandler(this.fPlotHandler);
-          break;
-        }
-        case "setupWamEventHandler": {
-          this.setupWamEventHandler();
-          break;
-        }
-        case "start": {
-          (_b = this.fDSPCode) == null ? void 0 : _b.start();
-          break;
-        }
-        case "stop": {
-          (_c = this.fDSPCode) == null ? void 0 : _c.stop();
-          break;
-        }
-        case "destroy": {
-          this.port.close();
-          this.destroy();
-          break;
-        }
-        default:
-          break;
-      }
-    }
     setParamValue(path, value) {
       var _a;
       (_a = this.fDSPCode) == null ? void 0 : _a.setParamValue(path, value);
@@ -643,6 +675,12 @@ var getFaustFFTAudioWorkletProcessor = (dependencies, faustData, register = true
     pitchWheel(channel, wheel) {
       var _a;
       (_a = this.fDSPCode) == null ? void 0 : _a.pitchWheel(channel, wheel);
+    }
+    propagateAcc(accelerationIncludingGravity, invert = false) {
+      this.fDSPCode.propagateAcc(accelerationIncludingGravity, invert);
+    }
+    propagateGyr(event) {
+      this.fDSPCode.propagateGyr(event);
     }
     resetFFT(sizeIn, overlapIn, windowFunctionIn, inputChannels, outputChannels, bufferSize) {
       var _a, _b;
@@ -3679,6 +3717,132 @@ var SoundfileReader = class {
 };
 var SoundfileReader_default = SoundfileReader;
 
+// src/FaustAudioWorkletCommunicator.ts
+var FaustAudioWorkletCommunicator = class {
+  constructor(port) {
+    this.port = port;
+    this.supportSharedArrayBuffer = !!globalThis.SharedArrayBuffer;
+    this.byteLength = 4 * Uint8Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT + 3 * Float32Array.BYTES_PER_ELEMENT;
+    console.log("supportSharedArrayBuffer", this.supportSharedArrayBuffer);
+    if (typeof window !== "undefined" && typeof window.alert === "function") {
+      alert("supportSharedArrayBuffer: " + this.supportSharedArrayBuffer);
+    }
+  }
+  initializeBuffer(ab) {
+    let ptr = 0;
+    this.uin8Invert = new Uint8ClampedArray(ab, ptr, 1);
+    ptr += Uint8ClampedArray.BYTES_PER_ELEMENT;
+    this.uin8NewAccData = new Uint8ClampedArray(ab, ptr, 1);
+    ptr += Uint8ClampedArray.BYTES_PER_ELEMENT;
+    this.uin8NewGyrData = new Uint8ClampedArray(ab, ptr, 1);
+    ptr += Uint8ClampedArray.BYTES_PER_ELEMENT;
+    ptr += Uint8ClampedArray.BYTES_PER_ELEMENT;
+    ;
+    this.f32Acc = new Float32Array(ab, ptr, 3);
+    ptr += 3 * Float32Array.BYTES_PER_ELEMENT;
+    this.f32Gyr = new Float32Array(ab, ptr, 3);
+    ptr += 3 * Float32Array.BYTES_PER_ELEMENT;
+  }
+  setNewAccDataAvailable(value) {
+    if (!this.uin8NewAccData)
+      return;
+    this.uin8NewAccData[0] = +value;
+  }
+  getNewAccDataAvailable() {
+    var _a;
+    return !!((_a = this.uin8NewAccData) == null ? void 0 : _a[0]);
+  }
+  setNewGyrDataAvailable(value) {
+    if (!this.uin8NewGyrData)
+      return;
+    this.uin8NewGyrData[0] = +value;
+  }
+  getNewGyrDataAvailable() {
+    var _a;
+    return !!((_a = this.uin8NewGyrData) == null ? void 0 : _a[0]);
+  }
+  setAcc({ x, y, z }, invert = false) {
+    if (!this.supportSharedArrayBuffer) {
+      const e = { type: "acc", data: { x, y, z }, invert };
+    }
+    if (!this.uin8NewAccData)
+      return;
+    this.uin8Invert[0] = +invert;
+    this.f32Acc[0] = x;
+    this.f32Acc[1] = y;
+    this.f32Acc[2] = z;
+    this.uin8NewAccData[0] = 1;
+  }
+  getAcc() {
+    if (!this.uin8NewAccData)
+      return;
+    const invert = !!this.uin8Invert[0];
+    const [x, y, z] = this.f32Acc;
+    return { x, y, z, invert };
+  }
+  setGyr({ alpha, beta, gamma }) {
+    if (!this.supportSharedArrayBuffer) {
+      const e = { type: "gyr", data: { alpha, beta, gamma } };
+    }
+    if (!this.uin8NewGyrData)
+      return;
+    this.f32Gyr[0] = alpha;
+    this.f32Gyr[1] = beta;
+    this.f32Gyr[2] = gamma;
+    this.uin8NewGyrData[0] = 1;
+  }
+  getGyr() {
+    if (!this.uin8NewGyrData)
+      return;
+    const [alpha, beta, gamma] = this.f32Gyr;
+    return { alpha, beta, gamma };
+  }
+};
+var FaustAudioWorkletNodeCommunicator = class extends FaustAudioWorkletCommunicator {
+  constructor(port) {
+    super(port);
+    if (this.supportSharedArrayBuffer) {
+      const sab = new SharedArrayBuffer(this.byteLength);
+      this.initializeBuffer(sab);
+      this.port.postMessage({ type: "initSab", sab });
+    } else {
+      const ab = new ArrayBuffer(this.byteLength);
+      this.initializeBuffer(ab);
+    }
+  }
+};
+var FaustAudioWorkletProcessorCommunicator = class extends FaustAudioWorkletCommunicator {
+  constructor(port) {
+    super(port);
+    if (this.supportSharedArrayBuffer) {
+      this.port.addEventListener("message", (event) => {
+        const { data } = event;
+        if (data.type === "initSab") {
+          this.initializeBuffer(data.sab);
+        }
+      });
+    } else {
+      const ab = new ArrayBuffer(this.byteLength);
+      this.initializeBuffer(ab);
+      this.port.addEventListener("message", (event) => {
+        const msg = event.data;
+        switch (msg.type) {
+          case "acc": {
+            this.setAcc(msg.data, msg.invert);
+            break;
+          }
+          case "gyr": {
+            this.setGyr(msg.data);
+            break;
+          }
+          default:
+            break;
+        }
+      });
+    }
+  }
+};
+
 // src/FaustAudioWorkletNode.ts
 var _hasAccInput, _hasGyrInput;
 var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) {
@@ -3696,6 +3860,13 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     });
     __privateAdd(this, _hasAccInput, false);
     __privateAdd(this, _hasGyrInput, false);
+    this.handleMessageAux = (e) => {
+      if (e.data.type === "param" && this.fOutputHandler) {
+        this.fOutputHandler(e.data.path, e.data.value);
+      } else if (e.data.type === "plot" && this.fPlotHandler) {
+        this.fPlotHandler(e.data.value, e.data.index, e.data.events);
+      }
+    };
     // Public API
     // Accelerometer and gyroscope handlers
     this.handleDeviceMotion = ({ accelerationIncludingGravity }) => {
@@ -3731,23 +3902,17 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
       }
     };
     FaustBaseWebAudioDsp.parseUI(this.fJSONDsp.ui, this.fUICallback);
-    this.port.onmessage = (e) => {
-      if (e.data.type === "param" && this.fOutputHandler) {
-        this.fOutputHandler(e.data.path, e.data.value);
-      } else if (e.data.type === "plot" && this.fPlotHandler) {
-        this.fPlotHandler(e.data.value, e.data.index, e.data.events);
-      }
-    };
+    this.communicator = new FaustAudioWorkletNodeCommunicator(this.port);
+    this.port.addEventListener("message", this.handleMessageAux);
+    this.port.start();
   }
   /** Setup accelerometer and gyroscope handlers */
   async startSensors() {
     if (this.hasAccInput) {
       if (window.DeviceMotionEvent) {
-        alert("window.DeviceMotionEvent");
         if (typeof window.DeviceMotionEvent.requestPermission === "function") {
           try {
             const response = await window.DeviceMotionEvent.requestPermission();
-            alert(`Permission response: ${response}`);
             if (response === "granted") {
               window.addEventListener("devicemotion", this.handleDeviceMotion, true);
             } else if (response === "denied") {
@@ -3755,16 +3920,13 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
               throw new Error("Unable to access the accelerometer.");
             }
           } catch (error) {
-            alert(`Permission error: ${error}`);
             console.error(error);
           }
         } else {
-          alert(`Permission OK`);
           window.addEventListener("devicemotion", this.handleDeviceMotion, true);
         }
       } else {
         console.log("Cannot set the accelerometer handler.");
-        alert(`Cannot set the accelerometer handler`);
       }
     }
     if (this.hasGyrInput) {
@@ -3864,8 +4026,8 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   propagateAcc(accelerationIncludingGravity, invert = false) {
     if (!accelerationIncludingGravity)
       return;
-    const e = { type: "acc", data: accelerationIncludingGravity, invert };
-    this.port.postMessage(e);
+    const { x, y, z } = accelerationIncludingGravity;
+    this.communicator.setAcc({ x, y, z }, invert);
   }
   get hasGyrInput() {
     return __privateGet(this, _hasGyrInput);
@@ -3873,8 +4035,8 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   propagateGyr(event) {
     if (!event)
       return;
-    const e = { type: "gyr", data: event };
-    this.port.postMessage(e);
+    const { alpha, beta, gamma } = event;
+    this.communicator.setGyr({ alpha, beta, gamma });
   }
   setParamValue(path, value) {
     const e = { type: "param", data: { path, value } };
@@ -4235,11 +4397,16 @@ var ${WasmAllocator.name} = ${WasmAllocator.toString()}
 var WasmAllocator = ${WasmAllocator.name};
 var ${FaustSensors.name} = ${FaustSensors.toString()}
 var FaustSensors = ${FaustSensors.name};
+var ${FaustAudioWorkletCommunicator.name} = ${FaustAudioWorkletCommunicator.toString()}
+var FaustAudioWorkletCommunicator = ${FaustAudioWorkletCommunicator.name};
+var ${FaustAudioWorkletProcessorCommunicator.name} = ${FaustAudioWorkletProcessorCommunicator.toString()}
+var FaustAudioWorkletProcessorCommunicator = ${FaustAudioWorkletProcessorCommunicator.name};
 // Put them in dependencies
 const dependencies = {
     FaustBaseWebAudioDsp,
     FaustMonoWebAudioDsp,
-    FaustWasmInstantiator
+    FaustWasmInstantiator,
+    FaustAudioWorkletProcessorCommunicator
 };
 // Generate the actual AudioWorkletProcessor code
 (${FaustAudioWorkletProcessor_default.toString()})(dependencies, faustData);
@@ -4289,12 +4456,17 @@ var ${WasmAllocator.name} = ${WasmAllocator.toString()}
 var WasmAllocator = ${WasmAllocator.name};
 var ${FaustSensors.name} = ${FaustSensors.toString()}
 var FaustSensors = ${FaustSensors.name};
+var ${FaustAudioWorkletCommunicator.name} = ${FaustAudioWorkletCommunicator.toString()}
+var FaustAudioWorkletCommunicator = ${FaustAudioWorkletCommunicator.name};
+var ${FaustAudioWorkletProcessorCommunicator.name} = ${FaustAudioWorkletProcessorCommunicator.toString()}
+var FaustAudioWorkletProcessorCommunicator = ${FaustAudioWorkletProcessorCommunicator.name};
 var FFTUtils = ${fftUtils.toString()}
 // Put them in dependencies
 const dependencies = {
     FaustBaseWebAudioDsp,
     FaustMonoWebAudioDsp,
     FaustWasmInstantiator,
+    FaustAudioWorkletProcessorCommunicator,
     FFTUtils
 };
 // Generate the actual AudioWorkletProcessor code
@@ -4338,6 +4510,7 @@ const dependencies = {
       FaustBaseWebAudioDsp,
       FaustMonoWebAudioDsp,
       FaustWasmInstantiator: FaustWasmInstantiator_default,
+      FaustAudioWorkletProcessorCommunicator,
       FaustPolyWebAudioDsp: void 0,
       FaustWebAudioDspVoice: void 0
     };
@@ -4518,11 +4691,16 @@ var ${WasmAllocator.name} = ${WasmAllocator.toString()}
 var WasmAllocator = ${WasmAllocator.name};
 var ${FaustSensors.name} = ${FaustSensors.toString()}
 var FaustSensors = ${FaustSensors.name};
+var ${FaustAudioWorkletCommunicator.name} = ${FaustAudioWorkletCommunicator.toString()}
+var FaustAudioWorkletCommunicator = ${FaustAudioWorkletCommunicator.name};
+var ${FaustAudioWorkletProcessorCommunicator.name} = ${FaustAudioWorkletProcessorCommunicator.toString()}
+var FaustAudioWorkletProcessorCommunicator = ${FaustAudioWorkletProcessorCommunicator.name};
 // Put them in dependencies
 const dependencies = {
     FaustBaseWebAudioDsp,
     FaustPolyWebAudioDsp,
-    FaustWasmInstantiator
+    FaustWasmInstantiator,
+    FaustAudioWorkletProcessorCommunicator
 };
 // Generate the actual AudioWorkletProcessor code
 (${FaustAudioWorkletProcessor_default.toString()})(dependencies, faustData);
@@ -4550,7 +4728,8 @@ const dependencies = {
         FaustMonoWebAudioDsp: void 0,
         FaustWasmInstantiator: FaustWasmInstantiator_default,
         FaustPolyWebAudioDsp,
-        FaustWebAudioDspVoice
+        FaustWebAudioDspVoice,
+        FaustAudioWorkletProcessorCommunicator
       };
       const faustData = {
         processorName,
