@@ -32,6 +32,7 @@ audioContext.suspend();
 (async () => {
 
     const { createFaustNode, createFaustUI, connectToAudioInput } = await import("./create-node.js");
+
     // To test the ScriptProcessorNode mode
     //const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
     const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
@@ -108,7 +109,6 @@ audioContext.suspend();
         if (audioContext.state === 'suspended') {
             await audioContext.resume();
         }
-
     }
 
     // Function to suspend AudioContext, deactivate MIDI and Sensors on user interaction
