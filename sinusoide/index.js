@@ -31,14 +31,14 @@ audioContext.suspend();
 
 (async () => {
 
-    const { createFaustNode } = await import("./create-node.js");
+    const { createFaustNode, createFaustUI, connectToAudioInput } = await import("./create-node.js");
     // To test the ScriptProcessorNode mode
     //const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
     const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
     if (!faustNode) throw new Error("Faust DSP not compiled");
 
     // Create the Faust UI
-    const { createFaustUI } = await import("./create-node.js");
+    //const { createFaustUI } = await import("./create-node.js");
     await createFaustUI($divFaustUI, faustNode);
 
     // Function to start MIDI
@@ -107,7 +107,7 @@ audioContext.suspend();
 
         // Connect the Faust node to the audio input
         if (faustNode.numberOfInputs > 0) {
-            const { connectToAudioInput } = await import("./create-node.js");
+            //const { connectToAudioInput } = await import("./create-node.js");
             await connectToAudioInput(audioContext, null, faustNode, null);
         }
     }
