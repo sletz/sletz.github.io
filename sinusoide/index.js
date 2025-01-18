@@ -38,7 +38,6 @@ audioContext.suspend();
     if (!faustNode) throw new Error("Faust DSP not compiled");
 
     // Create the Faust UI
-    //const { createFaustUI } = await import("./create-node.js");
     await createFaustUI($divFaustUI, faustNode);
 
     // Function to start MIDI
@@ -85,11 +84,6 @@ audioContext.suspend();
     // Function to resume AudioContext, activate MIDI and Sensors on user interaction
     async function activateAudioMIDISensors() {
 
-        // Resume the AudioContext
-        if (audioContext.state === 'suspended') {
-            await audioContext.resume();
-        }
-
         // Activate sensor listeners
         if (!sensorHandlersBound) {
             await faustNode.startSensors();
@@ -107,9 +101,14 @@ audioContext.suspend();
 
         // Connect the Faust node to the audio input
         if (faustNode.numberOfInputs > 0) {
-            //const { connectToAudioInput } = await import("./create-node.js");
             await connectToAudioInput(audioContext, null, faustNode, null);
         }
+
+        // Resume the AudioContext
+        if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+        }
+
     }
 
     // Function to suspend AudioContext, deactivate MIDI and Sensors on user interaction
