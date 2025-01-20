@@ -664,6 +664,29 @@ export interface IFaustBaseWebAudioDsp {
 	 */
 	getJSON(): string;
 	/**
+	* Start accelerometer and gyroscope handlers.
+	*/
+	startSensors(): void;
+	/**
+	 * Stop accelerometer and gyroscope handlers.
+	 */
+	stopSensors(): void;
+	/** Indicating if the DSP handles the accelerometer */
+	readonly hasAccInput: boolean;
+	/**
+	 * Accelerometer handling.
+	 * accelerationIncludingGravity: DeviceMotionEvent["accelerationIncludingGravity"]
+	 * invert: boolean
+	 */
+	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>, invert: boolean): void;
+	/** Indicating if the DSP handles the gyroscope */
+	readonly hasGyrInput: boolean;
+	/**
+	 * Gyroscope handling.
+	 * event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">
+	 */
+	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
+	/**
 	 * Start the DSP audio processing.
 	 */
 	start(): void;
@@ -675,14 +698,6 @@ export interface IFaustBaseWebAudioDsp {
 	 * Destroy the DSP.
 	 */
 	destroy(): void;
-	/** Indicating if the DSP handles the accelerometer */
-	readonly hasAccInput: boolean;
-	/** Accelerometer handling */
-	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>, invert: boolean): void;
-	/** Indicating if the DSP handles the gyroscope */
-	readonly hasGyrInput: boolean;
-	/** Gyroscope handling */
-	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
 }
 export interface IFaustMonoWebAudioDsp extends IFaustBaseWebAudioDsp {
 }
@@ -823,6 +838,8 @@ export declare class FaustBaseWebAudioDsp implements IFaustBaseWebAudioDsp {
 	start(): void;
 	stop(): void;
 	destroy(): void;
+	startSensors(): void;
+	stopSensors(): void;
 }
 export declare class FaustMonoWebAudioDsp extends FaustBaseWebAudioDsp implements IFaustMonoWebAudioDsp {
 	private fInstance;
@@ -1177,6 +1194,8 @@ export declare class FaustOfflineProcessor<Poly extends boolean = false> {
 	propagateAcc(accelerationIncludingGravity: NonNullable<DeviceMotionEvent["accelerationIncludingGravity"]>, invert?: boolean): void;
 	get hasGyrInput(): boolean;
 	propagateGyr(event: Pick<DeviceOrientationEvent, "alpha" | "beta" | "gamma">): void;
+	startSensors(): void;
+	stopSensors(): void;
 	/**
 	 * Render frames in an array.
 	 *
@@ -1405,8 +1424,9 @@ export declare class FaustScriptProcessorNode<Poly extends boolean = false> exte
 	protected handleDeviceMotion: any;
 	protected handleDeviceOrientation: any;
 	init(instance: Poly extends true ? FaustPolyWebAudioDsp : FaustMonoWebAudioDsp): void;
-	/** Setup accelerometer and gyroscope handlers */
+	/** Start accelerometer and gyroscope handlers */
 	startSensors(): Promise<void>;
+	/** Stop accelerometer and gyroscope handlers */
 	stopSensors(): void;
 	compute(input: Float32Array[], output: Float32Array[]): boolean;
 	setOutputParamHandler(handler: OutputParamHandler): void;

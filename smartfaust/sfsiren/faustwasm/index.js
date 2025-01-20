@@ -2464,6 +2464,12 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
     this.fComputeHandler = null;
     this.fPlotHandler = null;
   }
+  startSensors() {
+    this.startSensors();
+  }
+  stopSensors() {
+    this.stopSensors();
+  }
 };
 var FaustMonoWebAudioDsp = class extends FaustBaseWebAudioDsp {
   constructor(instance, sampleRate, sampleSize, bufferSize, soundfiles) {
@@ -3088,6 +3094,10 @@ var FaustOfflineProcessor = class {
   }
   propagateGyr(event) {
     this.fDSPCode.propagateGyr(event);
+  }
+  startSensors() {
+  }
+  stopSensors() {
   }
   /**
    * Render frames in an array.
@@ -3865,7 +3875,6 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
         this.fPlotHandler(e.data.value, e.data.index, e.data.events);
       }
     };
-    // Public API
     // Accelerometer and gyroscope handlers
     this.handleDeviceMotion = ({ accelerationIncludingGravity }) => {
       const isAndroid = /Android/i.test(navigator.userAgent);
@@ -3904,6 +3913,7 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
     this.port.addEventListener("message", this.handleMessageAux);
     this.port.start();
   }
+  // Public API
   /** Setup accelerometer and gyroscope handlers */
   async startSensors() {
     if (this.hasAccInput) {
@@ -4177,7 +4187,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
     this.start();
   }
   // Public API
-  /** Setup accelerometer and gyroscope handlers */
+  /** Start accelerometer and gyroscope handlers */
   async startSensors() {
     if (this.hasAccInput) {
       if (window.DeviceMotionEvent) {
@@ -4222,6 +4232,7 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
       }
     }
   }
+  /** Stop accelerometer and gyroscope handlers */
   stopSensors() {
     if (this.hasAccInput) {
       window.removeEventListener("devicemotion", this.handleDeviceMotion, true);
