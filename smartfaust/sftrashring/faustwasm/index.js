@@ -2452,6 +2452,12 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
   hasSoundfiles() {
     return this.fSoundfiles.length > 0;
   }
+  startSensors() {
+    this.startSensors();
+  }
+  stopSensors() {
+    this.stopSensors();
+  }
   start() {
     this.fProcessing = true;
   }
@@ -2463,12 +2469,6 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
     this.fOutputHandler = null;
     this.fComputeHandler = null;
     this.fPlotHandler = null;
-  }
-  startSensors() {
-    this.startSensors();
-  }
-  stopSensors() {
-    this.stopSensors();
   }
 };
 var FaustMonoWebAudioDsp = class extends FaustBaseWebAudioDsp {

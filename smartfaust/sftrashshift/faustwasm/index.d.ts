@@ -835,11 +835,11 @@ export declare class FaustBaseWebAudioDsp implements IFaustBaseWebAudioDsp {
 	getUI(): FaustUIDescriptor;
 	getDescriptors(): FaustUIInputItem[];
 	hasSoundfiles(): boolean;
+	startSensors(): void;
+	stopSensors(): void;
 	start(): void;
 	stop(): void;
 	destroy(): void;
-	startSensors(): void;
-	stopSensors(): void;
 }
 export declare class FaustMonoWebAudioDsp extends FaustBaseWebAudioDsp implements IFaustMonoWebAudioDsp {
 	private fInstance;
