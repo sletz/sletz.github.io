@@ -35,10 +35,11 @@ let faustNode;
 // Called at load time
 (async () => {
 
-    const { createFaustNode, createFaustUI, connectToAudioInput } = await import("./create-node.js");
+    // Import the create-node module
+    const { createFaustNode, createFaustUI } = await import("./create-node.js");
 
     // To test the ScriptProcessorNode mode
-    //const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
+    // const result = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
     const result = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
     faustNode = result.faustNode;  // Assign to the global variable
     if (!faustNode) throw new Error("Faust DSP not compiled");
@@ -92,6 +93,12 @@ let midiHandlersBound = false;
 // Function to resume AudioContext, activate MIDI and Sensors on user interaction
 async function activateAudioMIDISensors() {
 
+    // Import the create-node module
+    const { connectToAudioInput, requestPermissions } = await import("./create-node.js");
+
+    // Request permission for sensors
+    await requestPermissions();
+
     // Activate sensor listeners
     if (!sensorHandlersBound) {
         await faustNode.startSensors();
@@ -138,8 +145,6 @@ async function deactivateAudioMIDISensors() {
         midiHandlersBound = false;
     }
 }
-
-// Add event listeners for user interactions
 
 // Activate AudioContext, MIDI and Sensors on user interaction
 window.addEventListener('click', activateAudioMIDISensors);
