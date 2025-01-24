@@ -155,9 +155,9 @@ async function requestPermissions() {
         try {
             const permissionState = await window.DeviceOrientationEvent.requestPermission();
             if (permissionState !== "granted") {
-                console.warn("Motion sensor permission denied.");
+                console.warn("Orientation sensor permission denied.");
             } else {
-                console.log("Motion sensor permission granted.");
+                console.log("Orientation sensor permission granted.");
             }
         } catch (error) {
             console.error("Error requesting orientation sensor permission:", error);

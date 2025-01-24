@@ -96,11 +96,10 @@ async function activateAudioMIDISensors() {
     // Import the create-node module
     const { connectToAudioInput, requestPermissions } = await import("./create-node.js");
 
-    // Request permission for sensors
-    await requestPermissions();
-
-    // Activate sensor listeners
     if (!sensorHandlersBound) {
+        // Request permission for sensors
+        await requestPermissions();
+        // Activate sensor listeners
         await faustNode.startSensors();
         sensorHandlersBound = true;
     }
