@@ -35,7 +35,8 @@ let faustNode;
 // Called at load time
 (async () => {
 
-    const { createFaustNode, createFaustUI, connectToAudioInput } = await import("./create-node.js");
+    // Import the create-node module
+    const { createFaustNode, createFaustUI } = await import("./create-node.js");
 
     // To test the ScriptProcessorNode mode
     // const result = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
@@ -92,6 +93,10 @@ let midiHandlersBound = false;
 // Function to resume AudioContext, activate MIDI and Sensors on user interaction
 async function activateAudioMIDISensors() {
 
+    // Import the create-node module
+    const { connectToAudioInput, requestPermissions } = await import("./create-node.js");
+
+    /*
     // Explicitly request permission on iOS before calling startSensors()
     if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
         try {
@@ -118,6 +123,10 @@ async function activateAudioMIDISensors() {
             console.error("Error requesting orientation sensor permission:", error);
         }
     }
+    */
+
+    // Request permission for sensors
+    await requestPermissions();
 
     // Activate sensor listeners
     if (!sensorHandlersBound) {
