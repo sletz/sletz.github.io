@@ -96,35 +96,6 @@ async function activateAudioMIDISensors() {
     // Import the create-node module
     const { connectToAudioInput, requestPermissions } = await import("./create-node.js");
 
-    /*
-    // Explicitly request permission on iOS before calling startSensors()
-    if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
-        try {
-            const permissionState = await DeviceMotionEvent.requestPermission();
-            if (permissionState !== "granted") {
-                console.warn("Motion sensor permission denied.");
-            } else {
-                console.log("Motion sensor permission granted.");
-            }
-        } catch (error) {
-            console.error("Error requesting motion sensor permission:", error);
-        }
-    }
-
-    if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-        try {
-            const permissionState = await DeviceOrientationEvent.requestPermission();
-            if (permissionState !== "granted") {
-                console.warn("Motion sensor permission denied.");
-            } else {
-                console.log("Motion sensor permission granted.");
-            }
-        } catch (error) {
-            console.error("Error requesting orientation sensor permission:", error);
-        }
-    }
-    */
-
     // Request permission for sensors
     await requestPermissions();
 
