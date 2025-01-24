@@ -38,7 +38,7 @@ let faustNode;
     const { createFaustNode, createFaustUI, connectToAudioInput } = await import("./create-node.js");
 
     // To test the ScriptProcessorNode mode
-    //const { faustNode, dspMeta: { name } } = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
+    // const result = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
     const result = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
     faustNode = result.faustNode;  // Assign to the global variable
     if (!faustNode) throw new Error("Faust DSP not compiled");
@@ -92,6 +92,33 @@ let midiHandlersBound = false;
 // Function to resume AudioContext, activate MIDI and Sensors on user interaction
 async function activateAudioMIDISensors() {
 
+    // Explicitly request permission on iOS before calling startSensors()
+    if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
+        try {
+            const permissionState = await DeviceMotionEvent.requestPermission();
+            if (permissionState !== "granted") {
+                console.warn("Motion sensor permission denied.");
+                return;
+            }
+        } catch (error) {
+            console.error("Error requesting motion sensor permission:", error);
+            return;
+        }
+    }
+
+    if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+        try {
+            const permissionState = await DeviceOrientationEvent.requestPermission();
+            if (permissionState !== "granted") {
+                console.warn("Orientation sensor permission denied.");
+                return;
+            }
+        } catch (error) {
+            console.error("Error requesting orientation sensor permission:", error);
+            return;
+        }
+    }
+
     // Activate sensor listeners
     if (!sensorHandlersBound) {
         await faustNode.startSensors();
@@ -138,8 +165,6 @@ async function deactivateAudioMIDISensors() {
         midiHandlersBound = false;
     }
 }
-
-// Add event listeners for user interactions
 
 // Activate AudioContext, MIDI and Sensors on user interaction
 window.addEventListener('click', activateAudioMIDISensors);
