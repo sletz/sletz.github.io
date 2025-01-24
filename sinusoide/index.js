@@ -98,11 +98,11 @@ async function activateAudioMIDISensors() {
             const permissionState = await DeviceMotionEvent.requestPermission();
             if (permissionState !== "granted") {
                 console.warn("Motion sensor permission denied.");
-                return;
+            } else {
+                console.log("Motion sensor permission granted.");
             }
         } catch (error) {
             console.error("Error requesting motion sensor permission:", error);
-            return;
         }
     }
 
@@ -110,12 +110,12 @@ async function activateAudioMIDISensors() {
         try {
             const permissionState = await DeviceOrientationEvent.requestPermission();
             if (permissionState !== "granted") {
-                console.warn("Orientation sensor permission denied.");
-                return;
+                console.warn("Motion sensor permission denied.");
+            } else {
+                console.log("Motion sensor permission granted.");
             }
         } catch (error) {
             console.error("Error requesting orientation sensor permission:", error);
-            return;
         }
     }
 
