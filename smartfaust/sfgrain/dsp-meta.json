@@ -10,7 +10,7 @@
         "."
     ],
     "size": 524488,
-    "code": "EJ7d",
+    "code": "mJ/d",
     "inputs": 0,
     "outputs": 1,
     "meta": [
@@ -294,7 +294,7 @@
                             "type": "soundfile",
                             "label": "sounds",
                             "varname": "fSoundfile0",
-                            "url": "{-sampleA.wav-;-sampleB.wav-;-sampleC.wav-;-sampleD.wav-;-sampleE.wav-;-sampleF.wav-;-sampleG.wav-;-sampleH.wav-}",
+                            "url": "{-sampleA.flac-;-sampleB.flac-;-sampleC.flac-;-sampleD.flac-;-sampleE.flac-;-sampleF.flac-;-sampleG.flac-;-sampleH.flac-}",
                             "address": "/sfGrain/select_your_sample_1_to_7/sounds",
                             "index": 0
                         }
