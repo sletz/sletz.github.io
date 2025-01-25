@@ -32,30 +32,7 @@ audioContext.suspend();
 // Declare faustNode as a global variable
 let faustNode;
 
-/*
-document.addEventListener("DOMContentLoaded", () => {
-    import("./create-node.js").then(module => {
-        faustNode = module.createFaustNode(audioContext);
-        module.createFaustUI($divFaustUI, faustNode);
-    }).catch(error => {
-        console.error("Error when loading Faust:", error);
-    });
-});
-*/
-
-// Synchronous function to resume AudioContext
-function resumeAudioContext() {
-    if (audioContext.state === 'suspended') {
-        audioContext.resume().then(() => {
-            console.log('AudioContext resumed successfully');
-        }).catch(error => {
-            console.error('Error when resuming audiocontext:', error);
-        });
-    }
-}
-
 // Called at load time
-
 (async () => {
 
     // Import the create-node module
@@ -72,6 +49,16 @@ function resumeAudioContext() {
 
 })();
 
+// Synchronous function to resume AudioContext, to be called first in the synchronous event listener
+function resumeAudioContext() {
+    if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+            console.log('AudioContext resumed successfully');
+        }).catch(error => {
+            console.error('Error when resuming AudioContext:', error);
+        });
+    }
+}
 
 // Function to start MIDI
 function startMIDI() {
@@ -114,8 +101,8 @@ function stopMIDI() {
 let sensorHandlersBound = false;
 let midiHandlersBound = false;
 
-// Function to resume AudioContext, activate MIDI and Sensors on user interaction
-async function activateAudioMIDISensors() {
+// Function to activate MIDI and Sensors on user interaction
+async function activateMIDISensors() {
 
     // Import the create-node module
     const { connectToAudioInput, requestPermissions } = await import("./create-node.js");
@@ -172,10 +159,12 @@ async function deactivateAudioMIDISensors() {
 
 // Event listener to handle user interaction
 function handleUserInteraction() {
-    resumeAudioContext(); // Resume AudioContext
 
-    // Lancer l'activation audio, MIDI et capteurs en tâche de fond
-    activateAudioMIDISensors().catch(error => {
+    // Resume AudioContext synchronously
+    resumeAudioContext();
+
+    // Launch the activation of MIDI and Sensors
+    activateMIDISensors().catch(error => {
         console.error('Error when activating audio, MIDI and sensors:', error);
     });
 }
