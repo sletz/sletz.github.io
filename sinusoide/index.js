@@ -32,7 +32,30 @@ audioContext.suspend();
 // Declare faustNode as a global variable
 let faustNode;
 
+/*
+document.addEventListener("DOMContentLoaded", () => {
+    import("./create-node.js").then(module => {
+        faustNode = module.createFaustNode(audioContext);
+        module.createFaustUI($divFaustUI, faustNode);
+    }).catch(error => {
+        console.error("Error when loading Faust:", error);
+    });
+});
+*/
+
+// Synchronous function to resume AudioContext
+function resumeAudioContext() {
+    if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+            console.log('AudioContext resumed successfully');
+        }).catch(error => {
+            console.error('Error when resuming audiocontext:', error);
+        });
+    }
+}
+
 // Called at load time
+
 (async () => {
 
     // Import the create-node module
@@ -48,6 +71,7 @@ let faustNode;
     await createFaustUI($divFaustUI, faustNode);
 
 })();
+
 
 // Function to start MIDI
 function startMIDI() {
@@ -146,9 +170,19 @@ async function deactivateAudioMIDISensors() {
     }
 }
 
+// Event listener to handle user interaction
+function handleUserInteraction() {
+    resumeAudioContext(); // Resume AudioContext
+
+    // Lancer l'activation audio, MIDI et capteurs en tâche de fond
+    activateAudioMIDISensors().catch(error => {
+        console.error('Error when activating audio, MIDI and sensors:', error);
+    });
+}
+
 // Activate AudioContext, MIDI and Sensors on user interaction
-window.addEventListener('click', activateAudioMIDISensors);
-window.addEventListener('touchstart', activateAudioMIDISensors);
+window.addEventListener('click', handleUserInteraction);
+window.addEventListener('touchstart', handleUserInteraction);
 
 // Deactivate AudioContext, MIDI and Sensors on user interaction
 window.addEventListener('visibilitychange', function () {
