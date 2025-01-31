@@ -5,7 +5,7 @@ const FAUST_DSP_VOICES = 0;
 // Set to true if the DSP has an effect
 const FAUST_DSP_HAS_EFFECT = false;
 
-const CACHE_NAME = "sfTrashRing-static"; // Cache name without versioning
+const CACHE_NAME = "sfTrashRing_20250131-1807"; // Cache name with versioning
 
 const MONO_RESOURCES = [
     "./index.html",
