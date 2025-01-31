@@ -5,8 +5,15 @@ const FAUST_DSP_VOICES = 0;
 // Set to true if the DSP has an effect
 const FAUST_DSP_HAS_EFFECT = false;
 
-const CACHE_NAME = "sfCapture_20250131-1807"; // Cache name with versioning
+const CACHE_NAME = "sfCapture_20250131-2053"; // Cache name with versioning
 
+/**
+ * List of essential resources required for the **Mono DSP** version of the application.
+ * 
+ * - These files are cached to enable offline functionality and improve loading speed.
+ * - Includes the main HTML, JavaScript, and CSS files required for the app.
+ * - Contains Faust-related files needed for DSP processing.
+ */
 const MONO_RESOURCES = [
     "./index.html",
     "./index.js",
@@ -18,11 +25,23 @@ const MONO_RESOURCES = [
     "./dsp-meta.json"
 ];
 
+/**
+ * List of resources for the **Polyphonic DSP** version of the application.
+ * 
+ * - Extends the mono resource list by adding a **mixer module**.
+ * - The mixer module is required to handle multiple simultaneous voices used in a polyphonic instrument.
+ */
 const POLY_RESOURCES = [
     ...MONO_RESOURCES,
     "./mixer-module.wasm",
 ];
 
+/**
+ * List of resources for the **Polyphonic DSP with Effects** version.
+ * 
+ * - Extends the polyphonic resource list by adding an **effect module**.
+ * - The effect module allows applying audio effects to the polyphonic instrument.
+ */
 const POLY_EFFECT_RESOURCES = [
     ...POLY_RESOURCES,
     "./effect-module.wasm",
@@ -33,7 +52,12 @@ const POLY_EFFECT_RESOURCES = [
 const serviceWorkerGlobalScope = self;
 
 /**
- * Install the service worker and cache the resources
+ * Install the service worker, cache essential resources, and prepare for immediate activation.
+ *
+ * - Opens the cache and stores required assets based on the app's configuration.
+ * - Ensures resources are preloaded for offline access.
+ * - Uses `self.skipWaiting()` to immediately activate the new service worker,
+ *   bypassing the default waiting phase.
  */
 serviceWorkerGlobalScope.addEventListener("install", (event) => {
     console.log("Service worker installed");
@@ -46,22 +70,62 @@ serviceWorkerGlobalScope.addEventListener("install", (event) => {
             console.error("Failed to cache resources during install:", error);
         }
     })());
+
+    // Force the new service worker to activate immediately
+    self.skipWaiting();
 });
 
+/**
+ * Service Worker Activation Handler
+ * 
+ * - Deletes old caches to free up storage and ensure the latest assets are used.
+ * - Claims control over all client pages immediately without requiring a reload.
+ * - Refreshes all open pages to apply the latest service worker changes.
+ */
 serviceWorkerGlobalScope.addEventListener("activate", (event) => {
     console.log("Service worker activated");
+
     event.waitUntil(
-        clients.claim().then(() => {
-            return clients.matchAll({ type: "window" }).then((clients) => {
-                clients.forEach((client) => {
-                    client.navigate(client.url);
-                });
+        // Clear old caches
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cache) => {
+                    console.log("Checking cache: ", cache);
+                    if (cache !== CACHE_NAME) {
+                        console.log("Deleting old cache: ", cache);
+                        return caches.delete(cache);
+                    }
+                })
+            );
+        }).then(() => {
+            // Ensure the service worker takes control of all clients
+            return clients.claim();
+        }).then(() => {
+            // Get all controlled clients (open pages using this service worker)
+            return clients.matchAll({ type: "window" });
+        }).then((clients) => {
+            // Reload each client (page) by navigating to its current URL
+            clients.forEach((client) => {
+                client.navigate(client.url);
             });
         })
     );
 });
 
-/** @type {(response: Response) => Response} */
+/**
+ * Adjusts response headers to enforce Cross-Origin Opener Policy (COOP) and Cross-Origin Embedder Policy (COEP).
+ *
+ * - Ensures that the response is served with `Cross-Origin-Opener-Policy: same-origin`
+ *   and `Cross-Origin-Embedder-Policy: require-corp`.
+ * - Required for enabling **cross-origin isolated** environments in web applications.
+ * - Necessary for features like **SharedArrayBuffer**, WebAssembly threads, and 
+ *   high-performance APIs that require isolation.
+ * - Creates a new `Response` object with the modified headers while preserving 
+ *   the original response body and status.
+ * 
+ * @param {Response} response - The original HTTP response object.
+ * @returns {Response} A new response with updated security headers.
+ */
 const getCrossOriginIsolatedResponse = (response) => {
     // Modify headers to include COOP & COEP
     const headers = new Headers(response.headers);
@@ -79,7 +143,15 @@ const getCrossOriginIsolatedResponse = (response) => {
 };
 
 /**
- * Intercept fetch requests to enforce COOP and COEP headers.
+ * Intercepts fetch requests and enforces COOP and COEP headers for security.
+ *
+ * - Checks if the requested resource is available in the cache:
+ *   - If found, returns a cached response with `Cross-Origin-Opener-Policy` and `Cross-Origin-Embedder-Policy` headers.
+ *   - If not found, fetches the resource from the network, applies COOP/COEP headers, and caches the response (for GET requests).
+ * - Ensures cross-origin isolation, required for APIs like `SharedArrayBuffer` and WebAssembly threading.
+ * - Handles network errors gracefully by returning a 503 "Service Unavailable" response when needed.
+ * 
+ * @param {FetchEvent} event - The fetch event triggered by the browser.
  */
 serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
 
