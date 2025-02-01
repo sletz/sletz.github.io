@@ -272,10 +272,10 @@
                     "items": [
                         {
                             "type": "checkbox",
-                            "label": "TOTO",
+                            "label": "ON/OFF",
                             "varname": "fCheckbox0",
-                            "shortname": "TOTO",
-                            "address": "/sfWindy/sfWindy/TOTO",
+                            "shortname": "ON_OFF",
+                            "address": "/sfWindy/sfWindy/ON_OFF",
                             "index": 0
                         }
                     ]

@@ -18,6 +18,9 @@ if ("serviceWorker" in navigator) {
             .then(reg => {
                 console.log("Service Worker registered", reg);
 
+                // Immediately check for an updated service worker file:
+                reg.update();
+
                 // Listen for updates to the existing service worker
                 reg.addEventListener("updatefound", () => {
                     const newWorker = reg.installing;
