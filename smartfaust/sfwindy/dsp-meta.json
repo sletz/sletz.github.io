@@ -272,10 +272,10 @@
                     "items": [
                         {
                             "type": "checkbox",
-                            "label": "ON/OFF",
+                            "label": "TITI",
                             "varname": "fCheckbox0",
-                            "shortname": "ON_OFF",
-                            "address": "/sfWindy/sfWindy/ON_OFF",
+                            "shortname": "TITI",
+                            "address": "/sfWindy/sfWindy/TITI",
                             "index": 0
                         }
                     ]
