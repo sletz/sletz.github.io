@@ -272,10 +272,10 @@
                     "items": [
                         {
                             "type": "checkbox",
-                            "label": "TITI",
+                            "label": "TATA",
                             "varname": "fCheckbox0",
-                            "shortname": "TITI",
-                            "address": "/sfWindy/sfWindy/TITI",
+                            "shortname": "TATA",
+                            "address": "/sfWindy/sfWindy/TATA",
                             "index": 0
                         }
                     ]
