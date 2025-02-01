@@ -15,7 +15,30 @@ const FAUST_DSP_VOICES = 0;
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
         navigator.serviceWorker.register("./service-worker.js")
-            .then(reg => console.log("Service Worker registered", reg))
+            .then(reg => {
+                console.log("Service Worker registered", reg);
+
+                // Listen for updates to the existing service worker
+                reg.addEventListener("updatefound", () => {
+                    const newWorker = reg.installing;
+                    if (newWorker) {
+                        console.log("New Service Worker found...");
+                        newWorker.addEventListener("statechange", () => {
+                            if (newWorker.state === "installed") {
+                                // A new version has finished installing
+                                if (navigator.serviceWorker.controller) {
+                                    // There's already a controlling SW, so this is an update
+                                    console.log("New version installed. Reloading...");
+                                    window.location.reload();
+                                } else {
+                                    // First installation of the service worker
+                                    console.log("Service Worker installed for the first time.");
+                                }
+                            }
+                        });
+                    }
+                });
+            })
             .catch(err => console.log("Service Worker registration failed", err));
     });
 }
@@ -159,7 +182,6 @@ async function deactivateAudioMIDISensors() {
 
 // Event listener to handle user interaction
 function handleUserInteraction() {
-
     // Resume AudioContext synchronously
     resumeAudioContext();
 
@@ -179,5 +201,3 @@ window.addEventListener('visibilitychange', function () {
         deactivateAudioMIDISensors();
     }
 });
-
-

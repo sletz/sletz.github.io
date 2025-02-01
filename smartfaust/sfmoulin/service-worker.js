@@ -5,7 +5,7 @@ const FAUST_DSP_VOICES = 0;
 // Set to true if the DSP has an effect
 const FAUST_DSP_HAS_EFFECT = false;
 
-const CACHE_NAME = "sfMoulin_20250131-2101"; // Cache name with versioning
+const CACHE_NAME = "sfMoulin_20250201-1156"; // Cache name with versioning
 
 /**
  * List of essential resources required for the **Mono DSP** version of the application.
@@ -56,59 +56,60 @@ const serviceWorkerGlobalScope = self;
  *
  * - Opens the cache and stores required assets based on the app's configuration.
  * - Ensures resources are preloaded for offline access.
- * - Uses `self.skipWaiting()` to immediately activate the new service worker,
- *   bypassing the default waiting phase.
  */
 serviceWorkerGlobalScope.addEventListener("install", (event) => {
     console.log("Service worker installed");
+
+    // Force activation of the new service worker without waiting
+    serviceWorkerGlobalScope.skipWaiting();
+
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_NAME);
-        const resources = (FAUST_DSP_VOICES && FAUST_DSP_HAS_EFFECT) ? POLY_EFFECT_RESOURCES : FAUST_DSP_VOICES ? POLY_RESOURCES : MONO_RESOURCES;
+        const resources = (FAUST_DSP_VOICES && FAUST_DSP_HAS_EFFECT)
+            ? POLY_EFFECT_RESOURCES
+            : (FAUST_DSP_VOICES ? POLY_RESOURCES : MONO_RESOURCES);
         try {
             return cache.addAll(resources);
         } catch (error) {
             console.error("Failed to cache resources during install:", error);
         }
     })());
-
-    // Force the new service worker to activate immediately
-    self.skipWaiting();
 });
 
 /**
- * Service Worker Activation Handler
+ * Handles the activation of the Service Worker.
  * 
- * - Deletes old caches to free up storage and ensure the latest assets are used.
- * - Claims control over all client pages immediately without requiring a reload.
- * - Refreshes all open pages to apply the latest service worker changes.
+ * - Claims control over all clients immediately, bypassing the default behavior that 
+ *   requires a page reload before the new service worker takes effect.
+ * - Removes old caches that do not match the current version.
+ * - Once claimed, (optionally) reloads all active window clients to ensure they are
+ *   controlled by the latest version of the service worker.
+ * - This approach ensures that updates to the service worker take effect immediately.
  */
 serviceWorkerGlobalScope.addEventListener("activate", (event) => {
     console.log("Service worker activated");
-
     event.waitUntil(
-        // Clear old caches
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cache) => {
-                    console.log("Checking cache: ", cache);
-                    if (cache !== CACHE_NAME) {
-                        console.log("Deleting old cache: ", cache);
-                        return caches.delete(cache);
+        (async () => {
+            // Clean up old caches that don't match the current CACHE_NAME
+            const cacheNames = await caches.keys();
+            await Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME && cacheName.startsWith("sfMoulin_")) {
+                        console.log("Deleting old cache:", cacheName);
+                        return caches.delete(cacheName);
                     }
                 })
             );
-        }).then(() => {
-            // Ensure the service worker takes control of all clients
-            return clients.claim();
-        }).then(() => {
-            // Get all controlled clients (open pages using this service worker)
-            return clients.matchAll({ type: "window" });
-        }).then((clients) => {
-            // Reload each client (page) by navigating to its current URL
-            clients.forEach((client) => {
+
+            // Take control of all active clients
+            await clients.claim();
+
+            // Optionally reload all open windows to ensure they're using the new SW
+            const windowClients = await clients.matchAll({ type: "window" });
+            windowClients.forEach((client) => {
                 client.navigate(client.url);
             });
-        })
+        })()
     );
 });
 
@@ -133,13 +134,11 @@ const getCrossOriginIsolatedResponse = (response) => {
     headers.set("Cross-Origin-Embedder-Policy", "require-corp");
 
     // Create a new response with the modified headers
-    const modifiedResponse = new Response(response.body, {
+    return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
         headers
     });
-
-    return modifiedResponse;
 };
 
 /**
@@ -154,7 +153,6 @@ const getCrossOriginIsolatedResponse = (response) => {
  * @param {FetchEvent} event - The fetch event triggered by the browser.
  */
 serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
-
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
@@ -181,4 +179,3 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
         }
     })());
 });
-
