@@ -162,11 +162,26 @@ async function deactivateAudioMIDISensors() {
 }
 
 // Function to deactivate the wake lock
+/*
 async function activateWakeLock() {
     if ('wakeLock' in navigator) {
         wakeLock = await navigator.wakeLock.request('screen');
     }
 }
+*/
+
+async function handleWakeLock() {
+    if ('wakeLock' in navigator) {
+        if (wakeLock === null) {
+            // Request a wake lock
+            wakeLock = await navigator.wakeLock.request('screen');
+        } else {
+            await wakeLock.release();
+            wakeLock = null;
+        }
+    }
+}
+
 
 // Event listener to handle user interaction
 function handleUserInteraction() {
