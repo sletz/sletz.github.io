@@ -171,7 +171,7 @@ async function activateWakeLock() {
 // Event listener to handle user interaction
 function handleUserInteraction() {
 
-    //activateWakeLock();
+    activateWakeLock();
 
     // Resume AudioContext synchronously
     resumeAudioContext();
