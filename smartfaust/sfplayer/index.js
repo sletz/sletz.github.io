@@ -15,33 +15,7 @@ const FAUST_DSP_VOICES = 0;
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
         navigator.serviceWorker.register("./service-worker.js")
-            .then(reg => {
-                console.log("Service Worker registered", reg);
-
-                // Immediately check for an updated service worker file:
-                reg.update();
-
-                // Listen for updates to the existing service worker
-                reg.addEventListener("updatefound", () => {
-                    const newWorker = reg.installing;
-                    if (newWorker) {
-                        console.log("New Service Worker found...");
-                        newWorker.addEventListener("statechange", () => {
-                            if (newWorker.state === "installed") {
-                                // A new version has finished installing
-                                if (navigator.serviceWorker.controller) {
-                                    // There's already a controlling SW, so this is an update
-                                    console.log("New version installed. Reloading...");
-                                    window.location.reload();
-                                } else {
-                                    // First installation of the service worker
-                                    console.log("Service Worker installed for the first time.");
-                                }
-                            }
-                        });
-                    }
-                });
-            })
+            .then(reg => console.log("Service Worker registered", reg))
             .catch(err => console.log("Service Worker registration failed", err));
     });
 }
@@ -65,8 +39,8 @@ let faustNode;
     const { createFaustNode, createFaustUI } = await import("./create-node.js");
 
     // To test the ScriptProcessorNode mode
-    // const result = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES, true, 512);
-    const result = await createFaustNode(audioContext, "osc", FAUST_DSP_VOICES);
+    // const result = await createFaustNode(audioContext, "sfPlayer", FAUST_DSP_VOICES, true, 512);
+    const result = await createFaustNode(audioContext, "sfPlayer", FAUST_DSP_VOICES);
     faustNode = result.faustNode;  // Assign to the global variable
     if (!faustNode) throw new Error("Faust DSP not compiled");
 
@@ -124,8 +98,12 @@ function stopMIDI() {
     }
 }
 
+// Flag to check if sensor handlers are bound
 let sensorHandlersBound = false;
+// Flag to check if MIDI handlers are bound
 let midiHandlersBound = false;
+// create a reference for the wake lock
+let wakeLock = null;
 
 // Function to activate MIDI and Sensors on user interaction
 async function activateMIDISensors() {
@@ -143,7 +121,7 @@ async function activateMIDISensors() {
     }
 
     // Initialize the MIDI setup
-    if (!midiHandlersBound && FAUST_DSP_VOICES > 0) {
+    if (!midiHandlersBound) {
         startMIDI();
         midiHandlersBound = true;
     }
@@ -183,8 +161,18 @@ async function deactivateAudioMIDISensors() {
     }
 }
 
+// Function to deactivate the wake lock
+async function activateWakeLock() {
+    if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+    }
+}
+
 // Event listener to handle user interaction
 function handleUserInteraction() {
+
+    //activateWakeLock();
+
     // Resume AudioContext synchronously
     resumeAudioContext();
 
@@ -198,9 +186,12 @@ function handleUserInteraction() {
 window.addEventListener('click', handleUserInteraction);
 window.addEventListener('touchstart', handleUserInteraction);
 
+/*
 // Deactivate AudioContext, MIDI and Sensors on user interaction
 window.addEventListener('visibilitychange', function () {
     if (window.visibilityState === 'hidden') {
         deactivateAudioMIDISensors();
     }
 });
+*/
+

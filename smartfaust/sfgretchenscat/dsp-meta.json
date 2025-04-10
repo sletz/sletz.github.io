@@ -1,7 +1,7 @@
 {
     "name": "sfGretchenCat",
     "filename": "sfGretchensCat.dsp",
-    "version": "2.78.3",
+    "version": "2.80.1",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 262708,
-    "code": "YMPF",
+    "code": "gAbG",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -69,7 +69,7 @@
             "filters_lib_tf1s_license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_version": "1.6.0"
+            "filters_lib_version": "1.7.1"
         },
         {
             "library_path0": "/usr/local/share/faust/stdfaust.lib"
@@ -117,7 +117,7 @@
             "oscillators_lib_name": "Faust Oscillator Library"
         },
         {
-            "oscillators_lib_version": "1.5.1"
+            "oscillators_lib_version": "1.6.0"
         },
         {
             "platform_lib_name": "Generic Platform Library"
@@ -132,7 +132,7 @@
             "signals_lib_version": "1.6.0"
         },
         {
-            "version": "2.78.6"
+            "version": "2.80.3"
         }
     ],
     "ui": [

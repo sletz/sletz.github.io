@@ -1,7 +1,7 @@
 {
     "name": "sfGrain",
     "filename": "sfGrain.dsp",
-    "version": "2.78.3",
+    "version": "2.80.1",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 524488,
-    "code": "qHDe",
+    "code": "eLTe",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -69,7 +69,7 @@
             "filters_lib_tf1s_license": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_version": "1.6.0"
+            "filters_lib_version": "1.7.1"
         },
         {
             "grain_out_v0_6_dsp_author": "Christophe Lebreton"
@@ -180,7 +180,7 @@
             "soundfiles": "https://raw.githubusercontent.com/grame-cncm/smartfaust/master/src/sfGrain"
         },
         {
-            "version": "2.78.6"
+            "version": "2.80.3"
         }
     ],
     "ui": [

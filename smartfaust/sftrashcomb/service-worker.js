@@ -5,7 +5,7 @@ const FAUST_DSP_VOICES = 0;
 // Set to true if the DSP has an effect
 const FAUST_DSP_HAS_EFFECT = false;
 
-const CACHE_NAME = "sfTrashComb_20250201-1335"; // Cache name with versioning
+const CACHE_NAME = "sfTrashComb_20250410-1041"; // Cache name with versioning
 
 /**
  * List of essential resources required for the **Mono DSP** version of the application.
@@ -59,15 +59,9 @@ const serviceWorkerGlobalScope = self;
  */
 serviceWorkerGlobalScope.addEventListener("install", (event) => {
     console.log("Service worker installed");
-
-    // Force activation of the new service worker without waiting
-    serviceWorkerGlobalScope.skipWaiting();
-
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_NAME);
-        const resources = (FAUST_DSP_VOICES && FAUST_DSP_HAS_EFFECT)
-            ? POLY_EFFECT_RESOURCES
-            : (FAUST_DSP_VOICES ? POLY_RESOURCES : MONO_RESOURCES);
+        const resources = (FAUST_DSP_VOICES && FAUST_DSP_HAS_EFFECT) ? POLY_EFFECT_RESOURCES : (FAUST_DSP_VOICES ? POLY_RESOURCES : MONO_RESOURCES);
         try {
             return cache.addAll(resources);
         } catch (error) {
@@ -81,35 +75,21 @@ serviceWorkerGlobalScope.addEventListener("install", (event) => {
  * 
  * - Claims control over all clients immediately, bypassing the default behavior that 
  *   requires a page reload before the new service worker takes effect.
- * - Removes old caches that do not match the current version.
- * - Once claimed, (optionally) reloads all active window clients to ensure they are
+ * - Once claimed, it finds all active window clients and reloads them to ensure they are
  *   controlled by the latest version of the service worker.
- * - This approach ensures that updates to the service worker take effect immediately.
+ * - This approach ensures that updates to the service worker take effect immediately
+ *   across all open pages, preventing potential inconsistencies.
  */
 serviceWorkerGlobalScope.addEventListener("activate", (event) => {
     console.log("Service worker activated");
     event.waitUntil(
-        (async () => {
-            // Clean up old caches that don't match the current CACHE_NAME
-            const cacheNames = await caches.keys();
-            await Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME && cacheName.startsWith("sfTrashComb_")) {
-                        console.log("Deleting old cache:", cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-
-            // Take control of all active clients
-            await clients.claim();
-
-            // Optionally reload all open windows to ensure they're using the new SW
-            const windowClients = await clients.matchAll({ type: "window" });
-            windowClients.forEach((client) => {
-                client.navigate(client.url);
+        clients.claim().then(() => {
+            return clients.matchAll({ type: "window" }).then((clients) => {
+                clients.forEach((client) => {
+                    client.navigate(client.url);
+                });
             });
-        })()
+        })
     );
 });
 
@@ -134,11 +114,13 @@ const getCrossOriginIsolatedResponse = (response) => {
     headers.set("Cross-Origin-Embedder-Policy", "require-corp");
 
     // Create a new response with the modified headers
-    return new Response(response.body, {
+    const modifiedResponse = new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
         headers
     });
+
+    return modifiedResponse;
 };
 
 /**
@@ -153,6 +135,7 @@ const getCrossOriginIsolatedResponse = (response) => {
  * @param {FetchEvent} event - The fetch event triggered by the browser.
  */
 serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
+
     event.respondWith((async () => {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
@@ -179,3 +162,4 @@ serviceWorkerGlobalScope.addEventListener("fetch", (event) => {
         }
     })());
 });
+
