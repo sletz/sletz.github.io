@@ -102,8 +102,70 @@ function stopMIDI() {
 let sensorHandlersBound = false;
 // Flag to check if MIDI handlers are bound
 let midiHandlersBound = false;
-// create a reference for the wake lock
-let wakeLock = null;
+
+// === Wake Lock Manager ===
+const WakeLockManager = (() => {
+    let wakeLock = null;
+    let enabled = false;
+
+    function request() {
+        if (!('wakeLock' in navigator)) return;
+        if (document.visibilityState !== 'visible') return;
+        if (wakeLock === null) {
+            navigator.wakeLock.request('screen')
+                .then(lock => {
+                    wakeLock = lock;
+                    console.log('[WakeLockManager] Wake Lock acquired');
+                    wakeLock.addEventListener('release', () => {
+                        console.log('[WakeLockManager] Wake Lock was released');
+                        wakeLock = null;
+                        if (enabled && document.visibilityState === 'visible') {
+                            request();
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error('[WakeLockManager] Failed to acquire Wake Lock:', err);
+                });
+        }
+    }
+
+    function release() {
+        if (wakeLock !== null) {
+            wakeLock.release()
+                .then(() => {
+                    console.log('[WakeLockManager] Wake Lock manually released');
+                    wakeLock = null;
+                })
+                .catch(err => {
+                    console.error('[WakeLockManager] Failed to release Wake Lock:', err);
+                });
+        }
+    }
+
+    function enable() {
+        enabled = true;
+        request();
+    }
+
+    function disable() {
+        enabled = false;
+        release();
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (enabled && document.visibilityState === 'visible') {
+            request();
+        }
+    });
+
+    return {
+        enable,
+        disable,
+        isActive: () => wakeLock !== null,
+        isEnabled: () => enabled,
+    };
+})();
 
 // Function to activate MIDI and Sensors on user interaction
 async function activateMIDISensors() {
@@ -161,62 +223,10 @@ async function deactivateAudioMIDISensors() {
     }
 }
 
-// Function to deactivate the wake lock
-/*
-async function activateWakeLock() {
-    if ('wakeLock' in navigator) {
-        wakeLock = await navigator.wakeLock.request('screen');
-    }
-}
-*/
-
-function handleWakeLock() {
-    if ('wakeLock' in navigator) {
-        if (wakeLock === null) {
-            // Request a wake lock
-            navigator.wakeLock.request('screen')
-                .then(lock => {
-                    wakeLock = lock;
-                })
-                .catch(err => {
-                    console.error('Failed to acquire Wake Lock:', err);
-                });
-        } else {
-            wakeLock.release()
-                .then(() => {
-                    wakeLock = null;
-                })
-                .catch(err => {
-                    console.error('Failed to release Wake Lock:', err);
-                });
-        }
-    }
-}
-
 // Event listener to handle user interaction
 function handleUserInteraction() {
 
-    // Handle the wake lock synchronously
-    if ('wakeLock' in navigator) {
-        if (wakeLock === null) {
-            // Request a wake lock
-            navigator.wakeLock.request('screen')
-                .then(lock => {
-                    wakeLock = lock;
-                })
-                .catch(err => {
-                    console.error('Failed to acquire Wake Lock:', err);
-                });
-        } else {
-            wakeLock.release()
-                .then(() => {
-                    wakeLock = null;
-                })
-                .catch(err => {
-                    console.error('Failed to release Wake Lock:', err);
-                });
-        }
-    }
+    WakeLockManager.enable();
 
     // Resume AudioContext synchronously
     resumeAudioContext();
@@ -231,12 +241,10 @@ function handleUserInteraction() {
 window.addEventListener('click', handleUserInteraction);
 window.addEventListener('touchstart', handleUserInteraction);
 
-/*
 // Deactivate AudioContext, MIDI and Sensors on user interaction
 window.addEventListener('visibilitychange', function () {
-    if (window.visibilityState === 'hidden') {
+    if (document.visibilityState === 'hidden') {
+        WakeLockManager.disable();
         deactivateAudioMIDISensors();
     }
 });
-*/
-
