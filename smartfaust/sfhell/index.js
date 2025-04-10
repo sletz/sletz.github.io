@@ -226,7 +226,11 @@ async function deactivateAudioMIDISensors() {
 // Event listener to handle user interaction
 function handleUserInteraction() {
 
-    WakeLockManager.enable();
+    if (WakeLockManager.isEnabled()) {
+        WakeLockManager.disable();
+    } else {
+        WakeLockManager.enable();
+    }
 
     // Resume AudioContext synchronously
     resumeAudioContext();
