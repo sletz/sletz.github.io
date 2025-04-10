@@ -170,22 +170,33 @@ async function activateWakeLock() {
 }
 */
 
-async function handleWakeLock() {
+function handleWakeLock() {
     if ('wakeLock' in navigator) {
         if (wakeLock === null) {
             // Request a wake lock
-            wakeLock = await navigator.wakeLock.request('screen');
+            navigator.wakeLock.request('screen')
+                .then(lock => {
+                    wakeLock = lock;
+                })
+                .catch(err => {
+                    console.error('Failed to acquire Wake Lock:', err);
+                });
         } else {
-            await wakeLock.release();
-            wakeLock = null;
+            wakeLock.release()
+                .then(() => {
+                    wakeLock = null;
+                })
+                .catch(err => {
+                    console.error('Failed to release Wake Lock:', err);
+                });
         }
     }
 }
 
-
 // Event listener to handle user interaction
 function handleUserInteraction() {
 
+    // Handle the wake lock synchronously
     handleWakeLock();
 
     // Resume AudioContext synchronously
