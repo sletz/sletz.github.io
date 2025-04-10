@@ -197,7 +197,26 @@ function handleWakeLock() {
 function handleUserInteraction() {
 
     // Handle the wake lock synchronously
-    handleWakeLock();
+    if ('wakeLock' in navigator) {
+        if (wakeLock === null) {
+            // Request a wake lock
+            navigator.wakeLock.request('screen')
+                .then(lock => {
+                    wakeLock = lock;
+                })
+                .catch(err => {
+                    console.error('Failed to acquire Wake Lock:', err);
+                });
+        } else {
+            wakeLock.release()
+                .then(() => {
+                    wakeLock = null;
+                })
+                .catch(err => {
+                    console.error('Failed to release Wake Lock:', err);
+                });
+        }
+    }
 
     // Resume AudioContext synchronously
     resumeAudioContext();
