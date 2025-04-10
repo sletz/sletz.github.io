@@ -100,10 +100,8 @@ function stopMIDI() {
 
 // Flag to check if sensor handlers are bound
 let sensorHandlersBound = false;
-
 // Flag to check if MIDI handlers are bound
 let midiHandlersBound = false;
-
 // create a reference for the wake lock
 let wakeLock = null;
 
@@ -163,37 +161,17 @@ async function deactivateAudioMIDISensors() {
     }
 }
 
-// Function to handle the wake lock
-async function handleWakeLock() {
-    try {
-        if ('wakeLock' in navigator) {
-            if (wakeLock === null) {
-                // Request a wake lock
-                wakeLock = await navigator.wakeLock.request('screen');
-
-                /*
-                // Optional: listen for automatic release
-                wakeLock.addEventListener('release', () => {
-                    wakeLock = null;
-                });
-                */
-
-            } else {
-                await wakeLock.release();
-                wakeLock = null;
-            }
-        } else {
-            console.warn('Wake Lock API is not supported on this device.');
-        }
-    } catch (err) {
-        console.error(`Failed to handle Wake Lock: ${err.name}, ${err.message}`);
+// Function to deactivate the wake lock
+async function activateWakeLock() {
+    if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
     }
 }
 
 // Event listener to handle user interaction
 function handleUserInteraction() {
 
-    handleWakeLock();
+    activateWakeLock();
 
     // Resume AudioContext synchronously
     resumeAudioContext();
