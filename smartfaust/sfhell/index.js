@@ -171,10 +171,12 @@ async function handleWakeLock() {
                 // Request a wake lock
                 wakeLock = await navigator.wakeLock.request('screen');
 
+                /*
                 // Optional: listen for automatic release
                 wakeLock.addEventListener('release', () => {
                     wakeLock = null;
                 });
+                */
 
             } else {
                 await wakeLock.release();
