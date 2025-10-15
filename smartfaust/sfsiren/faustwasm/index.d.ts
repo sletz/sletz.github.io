@@ -549,6 +549,13 @@ export interface IFaustBaseWebAudioDsp {
 	 */
 	getOutputParamHandler(): OutputParamHandler | null;
 	/**
+	 * Call the output parameter handler with a path and value.
+	 *
+	 * @param path - the path to the wanted parameter (retrieved using 'getParams' method)
+	 * @param value - the float value for the wanted control
+	 */
+	callOutputParamHandler(path: string, value: number): void;
+	/**
 	 * Set the compute handler, to  be called in the 'compute' method with buffer size.
 	 *
 	 * @param handler - the compute handler
@@ -841,7 +848,6 @@ export declare class FaustBaseWebAudioDsp implements IFaustBaseWebAudioDsp {
 	 * Init soundfiles memory.
 	 *
 	 * @param allocator : the wasm memory allocator
-	 * @param sfReader : the soundfile reader
 	 * @param baseDSP : the DSP struct (either a monophonic DSP of polyphonic voice) base DSP in the wasm memory
 	*/
 	protected initSoundfileMemory(allocator: WasmAllocator, baseDSP: number): void;
@@ -850,6 +856,7 @@ export declare class FaustBaseWebAudioDsp implements IFaustBaseWebAudioDsp {
 	compute(input: Float32Array[], output: Float32Array[]): boolean;
 	setOutputParamHandler(handler: OutputParamHandler | null): void;
 	getOutputParamHandler(): OutputParamHandler | null;
+	callOutputParamHandler(path: string, value: number): void;
 	setComputeHandler(handler: ComputeHandler | null): void;
 	getComputeHandler(): ComputeHandler | null;
 	setPlotHandler(handler: PlotHandler | null): void;
@@ -911,7 +918,6 @@ export declare class FaustWebAudioDspVoice {
 	fNextVel: number;
 	fDate: number;
 	fLevel: number;
-	fRelease: number;
 	constructor($dsp: number, api: IFaustDspInstance, inputItems: string[], pathTable: {
 		[address: string]: number;
 	}, sampleRate: number);
@@ -1204,6 +1210,7 @@ export declare class FaustOfflineProcessor<Poly extends boolean = false> {
 	compute(input: Float32Array[], output: Float32Array[]): boolean;
 	setOutputParamHandler(handler: OutputParamHandler): void;
 	getOutputParamHandler(): OutputParamHandler | null;
+	callOutputParamHandler(path: string, value: number): void;
 	setComputeHandler(handler: ComputeHandler): void;
 	getComputeHandler(): ComputeHandler | null;
 	setPlotHandler(handler: PlotHandler): void;
@@ -1292,7 +1299,7 @@ export interface WavEncoderOptions {
  * Code from https://github.com/mohayonao/wav-encoder
  */
 export declare class WavEncoder {
-	static encode(audioBuffer: Float32Array[], options: WavEncoderOptions): ArrayBuffer;
+	static encode(audioBuffer: Float32Array[], options: WavEncoderOptions): ArrayBuffer | SharedArrayBuffer;
 	private static writeHeader;
 	private static writeData;
 }
@@ -1398,6 +1405,7 @@ export declare class FaustAudioWorkletNode<Poly extends boolean = false> extends
 	stopSensors(): void;
 	setOutputParamHandler(handler: OutputParamHandler | null): void;
 	getOutputParamHandler(): OutputParamHandler | null;
+	callOutputParamHandler(path: string, value: number): void;
 	setComputeHandler(handler: ComputeHandler | null): void;
 	getComputeHandler(): ComputeHandler | null;
 	setPlotHandler(handler: PlotHandler | null): void;
@@ -1469,6 +1477,7 @@ export declare class FaustScriptProcessorNode<Poly extends boolean = false> exte
 	compute(input: Float32Array[], output: Float32Array[]): boolean;
 	setOutputParamHandler(handler: OutputParamHandler): void;
 	getOutputParamHandler(): OutputParamHandler | null;
+	callOutputParamHandler(path: string, value: number): void;
 	setComputeHandler(handler: ComputeHandler): void;
 	getComputeHandler(): ComputeHandler | null;
 	setPlotHandler(handler: PlotHandler): void;

@@ -1,7 +1,7 @@
 {
     "name": "sfSiren",
     "filename": "sfSiren.dsp",
-    "version": "2.80.1",
+    "version": "2.81.10",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 262328,
-    "code": "QAHD",
+    "code": "8Ju+",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -21,7 +21,7 @@
             "basics_lib_name": "Faust Basic Element Library"
         },
         {
-            "basics_lib_version": "1.21.0"
+            "basics_lib_version": "1.22.0"
         },
         {
             "compile_options": "-single -scal -e ../sfSiren.dsp -o sfSiren.dsp"
@@ -108,7 +108,7 @@
             "maths_lib_name": "Faust Math Library"
         },
         {
-            "maths_lib_version": "2.8.1"
+            "maths_lib_version": "2.9.0"
         },
         {
             "name": "sfSiren"
@@ -132,7 +132,7 @@
             "signals_lib_version": "1.6.0"
         },
         {
-            "version": "2.80.3"
+            "version": "2.81.10"
         }
     ],
     "ui": [

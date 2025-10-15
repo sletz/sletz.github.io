@@ -35,7 +35,7 @@ export default ${(_a = jsCode.match(jsCodeHead)) == null ? void 0 : _a[1]};
       jsFileMod
     )).default;
     dataBinary = await (await fetch(dataFile)).arrayBuffer();
-    wasmBinary = new Uint8Array(await (await fetch(wasmFile)).arrayBuffer());
+    wasmBinary = await (await fetch(wasmFile)).arrayBuffer();
   } else {
     const { promises: fs } = await import("fs");
     const { pathToFileURL } = await import("url");
@@ -61,8 +61,8 @@ export default ${(_b = jsCode.match(jsCodeHead)) == null ? void 0 : _b[1]};
       pathToFileURL(jsFileMod).href
     )).default;
     await fs.unlink(jsFileMod);
-    dataBinary = (await fs.readFile(dataFile)).buffer;
-    wasmBinary = (await fs.readFile(wasmFile)).buffer;
+    dataBinary = new Uint8Array(await fs.readFile(dataFile)).buffer;
+    wasmBinary = new Uint8Array(await fs.readFile(wasmFile)).buffer;
   }
   const faustModule = await FaustModule({
     wasmBinary,
@@ -1183,7 +1183,7 @@ function bufferFromSecret(secret) {
 }
 
 // src/FaustCompiler.ts
-var ab2str = (buf) => String.fromCharCode.apply(null, buf);
+var ab2str = (buf) => String.fromCharCode.apply(null, Array.from(buf));
 var str2ab = (str) => {
   const buf = new ArrayBuffer(str.length);
   const bufView = new Uint8Array(buf);
@@ -1321,7 +1321,7 @@ var _FaustCompiler = class _FaustCompiler {
     const path = isDouble ? "/usr/rsrc/mixer64.wasm" : "/usr/rsrc/mixer32.wasm";
     const mixerBuffer = this.fs().readFile(path, { encoding: "binary" });
     this[bufferKey] = mixerBuffer;
-    const mixerModule = await WebAssembly.compile(mixerBuffer);
+    const mixerModule = await WebAssembly.compile(new Uint8Array(mixerBuffer));
     this[moduleKey] = mixerModule;
     return { mixerBuffer, mixerModule };
   }
@@ -1333,7 +1333,7 @@ var _FaustCompiler = class _FaustCompiler {
     const path = isDouble ? "/usr/rsrc/mixer64.wasm" : "/usr/rsrc/mixer32.wasm";
     const mixerBuffer = this.fs().readFile(path, { encoding: "binary" });
     this[bufferKey] = mixerBuffer;
-    const mixerModule = new WebAssembly.Module(mixerBuffer);
+    const mixerModule = new WebAssembly.Module(new Uint8Array(mixerBuffer));
     this[moduleKey] = mixerModule;
     return { mixerBuffer, mixerModule };
   }
@@ -1525,7 +1525,7 @@ var FaustWasmInstantiator = class {
     try {
       let mixerBuffer = null;
       if (fs) {
-        mixerBuffer = fs.readFile(mixerPath, { encoding: "binary" });
+        mixerBuffer = new Uint8Array(fs.readFile(mixerPath, { encoding: "binary" }));
       } else {
         const mixerFile = await fetch(mixerPath);
         mixerBuffer = await mixerFile.arrayBuffer();
@@ -2372,7 +2372,6 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
    * Init soundfiles memory.
    * 
    * @param allocator : the wasm memory allocator
-   * @param sfReader : the soundfile reader
    * @param baseDSP : the DSP struct (either a monophonic DSP of polyphonic voice) base DSP in the wasm memory
   */
   initSoundfileMemory(allocator, baseDSP) {
@@ -2404,6 +2403,13 @@ var FaustBaseWebAudioDsp = class _FaustBaseWebAudioDsp {
   }
   getOutputParamHandler() {
     return this.fOutputHandler;
+  }
+  callOutputParamHandler(path, value) {
+    if (this.fOutputHandler) {
+      this.fOutputHandler(path, value);
+    } else {
+      console.warn("No OutputParamHandler set for this Faust node.");
+    }
   }
   setComputeHandler(handler) {
     this.fComputeHandler = handler;
@@ -2683,6 +2689,7 @@ var FaustMonoWebAudioDsp = class extends FaustBaseWebAudioDsp {
 };
 var FaustWebAudioDspVoice = class _FaustWebAudioDspVoice {
   constructor($dsp, api, inputItems, pathTable, sampleRate) {
+    // -90 db
     this.fFreqLabel = [];
     this.fGateLabel = [];
     this.fGainLabel = [];
@@ -2695,7 +2702,6 @@ var FaustWebAudioDspVoice = class _FaustWebAudioDspVoice {
     this.fNextVel = -1;
     this.fDate = 0;
     this.fLevel = 0;
-    this.fRelease = 0;
     this.fDSP = $dsp;
     this.fAPI = api;
     this.fAPI.init(this.fDSP, sampleRate);
@@ -2718,7 +2724,7 @@ var FaustWebAudioDspVoice = class _FaustWebAudioDspVoice {
     return -4;
   }
   static get VOICE_STOP_LEVEL() {
-    return 5e-4;
+    return 3162e-8;
   }
   static midiToFreq(note) {
     return 440 * 2 ** ((note - 69) / 12);
@@ -2760,7 +2766,6 @@ var FaustWebAudioDspVoice = class _FaustWebAudioDspVoice {
     if (hard) {
       this.fCurNote = _FaustWebAudioDspVoice.kFreeVoice;
     } else {
-      this.fRelease = this.fAPI.getSampleRate(this.fDSP) / 2;
       this.fCurNote = _FaustWebAudioDspVoice.kReleaseVoice;
     }
   }
@@ -2864,11 +2869,13 @@ var FaustPolyWebAudioDsp = class _FaustPolyWebAudioDsp extends FaustBaseWebAudio
   getPlayingVoice(pitch) {
     let voicePlaying = FaustWebAudioDspVoice.kNoVoice;
     let oldestDatePlaying = Number.MAX_VALUE;
-    for (let voice = 0; voice < this.fInstance.voices; voice++) {
-      if (this.fVoiceTable[voice].fCurNote === pitch) {
-        if (this.fVoiceTable[voice].fDate < oldestDatePlaying) {
-          oldestDatePlaying = this.fVoiceTable[voice].fDate;
-          voicePlaying = voice;
+    for (let i = 0; i < this.fInstance.voices; i++) {
+      let curNote = this.fVoiceTable[i].fCurNote;
+      let nextNote = this.fVoiceTable[i].fNextNote;
+      if (curNote === pitch || curNote === FaustWebAudioDspVoice.kLegatoVoice && nextNote === pitch) {
+        if (this.fVoiceTable[i].fDate < oldestDatePlaying) {
+          oldestDatePlaying = this.fVoiceTable[i].fDate;
+          voicePlaying = i;
         }
       }
     }
@@ -2938,8 +2945,7 @@ var FaustPolyWebAudioDsp = class _FaustPolyWebAudioDsp extends FaustBaseWebAudio
       } else if (voice.fCurNote !== FaustWebAudioDspVoice.kFreeVoice) {
         voice.compute(this.fBufferSize, this.fAudioInputs, this.fAudioMixing);
         voice.fLevel = this.fInstance.mixerAPI.mixCheckVoice(this.fBufferSize, this.getNumOutputs(), this.fAudioMixing, this.fAudioOutputs);
-        voice.fRelease -= this.fBufferSize;
-        if (voice.fCurNote == FaustWebAudioDspVoice.kReleaseVoice && (voice.fLevel < FaustWebAudioDspVoice.VOICE_STOP_LEVEL && voice.fRelease < 0)) {
+        if (voice.fCurNote == FaustWebAudioDspVoice.kReleaseVoice && voice.fLevel < FaustWebAudioDspVoice.VOICE_STOP_LEVEL) {
           voice.fCurNote = FaustWebAudioDspVoice.kFreeVoice;
         }
       }
@@ -3104,6 +3110,9 @@ var FaustOfflineProcessor = class {
   }
   getOutputParamHandler() {
     return this.fDSPCode.getOutputParamHandler();
+  }
+  callOutputParamHandler(path, value) {
+    this.fDSPCode.callOutputParamHandler(path, value);
   }
   setComputeHandler(handler) {
     this.fDSPCode.setComputeHandler(handler);
@@ -4032,6 +4041,13 @@ var FaustAudioWorkletNode = class extends (globalThis.AudioWorkletNode || null) 
   getOutputParamHandler() {
     return this.fOutputHandler;
   }
+  callOutputParamHandler(path, value) {
+    if (this.fOutputHandler) {
+      this.fOutputHandler(path, value);
+    } else {
+      console.warn("No OutputParamHandler set for this Faust node.");
+    }
+  }
   setComputeHandler(handler) {
     this.fComputeHandler = handler;
   }
@@ -4292,6 +4308,9 @@ var FaustScriptProcessorNode = class extends (globalThis.ScriptProcessorNode || 
   }
   getOutputParamHandler() {
     return this.fDSPCode.getOutputParamHandler();
+  }
+  callOutputParamHandler(path, value) {
+    this.fDSPCode.callOutputParamHandler(path, value);
   }
   setComputeHandler(handler) {
     this.fDSPCode.setComputeHandler(handler);

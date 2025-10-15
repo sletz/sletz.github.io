@@ -1,7 +1,7 @@
 {
     "name": "sfPlayer",
     "filename": "sfPlayer.dsp",
-    "version": "2.80.1",
+    "version": "2.81.10",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
         "/share/faust",
@@ -10,7 +10,7 @@
         "."
     ],
     "size": 1041244,
-    "code": "OOFKAZQ9Hw==",
+    "code": "OAc0ATQ5Hw==",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -18,7 +18,7 @@
             "analyzers_lib_name": "Faust Analyzer Library"
         },
         {
-            "analyzers_lib_version": "1.2.0"
+            "analyzers_lib_version": "1.3.0"
         },
         {
             "author": "Christophe Lebreton, Stéphane Letz"
@@ -27,7 +27,7 @@
             "basics_lib_name": "Faust Basic Element Library"
         },
         {
-            "basics_lib_version": "1.21.0"
+            "basics_lib_version": "1.22.0"
         },
         {
             "compile_options": "-single -scal -e ../sfPlayer.dsp -o sfPlayer.dsp"
@@ -39,7 +39,7 @@
             "delays_lib_name": "Faust Delay Library"
         },
         {
-            "delays_lib_version": "1.1.0"
+            "delays_lib_version": "1.2.0"
         },
         {
             "filename": "sfPlayer.dsp"
@@ -237,7 +237,7 @@
             "maths_lib_name": "Faust Math Library"
         },
         {
-            "maths_lib_version": "2.8.1"
+            "maths_lib_version": "2.9.0"
         },
         {
             "name": "sfPlayer"
@@ -348,10 +348,10 @@
             "vaeffects_lib_name": "Faust Virtual Analog Filter Effect Library"
         },
         {
-            "vaeffects_lib_version": "1.3.0"
+            "vaeffects_lib_version": "1.4.0"
         },
         {
-            "version": "2.80.3"
+            "version": "2.81.10"
         }
     ],
     "ui": [
@@ -482,6 +482,7 @@
                             "type": "soundfile",
                             "label": "sounds",
                             "varname": "fSoundfile0",
+                            "shortname": "sounds",
                             "url": "{-sampleA.flac-;-sampleB.flac-;-sampleC.flac-;-sampleD.flac-;-sampleE.flac-;-sampleF.flac-;-sampleG.flac-;-sampleH.flac-;-sampleI.flac-;-sampleJ.flac-}",
                             "address": "/sfPlayer/select_your_sample_1_to_10/sounds",
                             "index": 0
