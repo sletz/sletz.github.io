@@ -1,3 +1,29 @@
+
+/**
+ * @file index-pwa.js
+ * Entry point for initializing and managing the Faust PWA instance.
+ *
+ * ## Overview
+ * This script dynamically imports {@link createFaustPWA} from `faust-pwa.js`,
+ * creates the Faust PWA controller, and manages user-activation of the
+ * Web Audio API (click/touch) as well as visibility-based suspension.
+ *
+ * ## Responsibilities
+ * - Dynamically import `createFaustPWA` (ES module)
+ * - Create the PWA instance for the selected DSP
+ * - Resume/suspend AudioContext on user interaction or page visibility changes
+ * - Activate/deactivate MIDI and sensors
+ *
+ * ## Emitted Events (from FaustPWA)
+ * - `created` — DSP and UI successfully initialized
+ * - `started` — Audio, MIDI, and sensors activated
+ * - `stopped` — Audio, MIDI, and sensors deactivated
+ * - `destroy` — Resources released
+ * - `error` — Operational error; see event.detail.error
+ *
+ * @module index-pwa
+ */
+
 // Set to > 0 if the DSP is polyphonic
 const FAUST_DSP_VOICES = 0;
 

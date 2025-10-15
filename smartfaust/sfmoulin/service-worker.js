@@ -5,7 +5,7 @@ const FAUST_DSP_VOICES = 0;
 // Set to true if the DSP has an effect
 const FAUST_DSP_HAS_EFFECT = false;
 
-const CACHE_NAME = "sfMoulin_20251015-1701"; // Cache name with versioning
+const CACHE_NAME = "sfMoulin_20251015-2137"; // Cache name with versioning
 
 /**
  * List of essential resources required for the **Mono DSP** version of the application.

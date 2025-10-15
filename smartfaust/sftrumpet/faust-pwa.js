@@ -47,6 +47,9 @@ export class FaustPWA {
 
     constructor(options) {
 
+        /** @private internal activation flags */
+        this.fActive = { midi: false, sensors: false };
+
         /** @type {FaustPWAOptions} */
         this.fOptions = {
             voices: 0,
@@ -69,8 +72,8 @@ export class FaustPWA {
         this.fEvents = new EventTarget();
 
         // MIDI and Sensor handlers state
-        this.fSensorHandlersBound = false;
-        this.fMidiHandlersBound = false;
+        this.fActive.sensors = false;
+        this.fActive.midi = false;
 
         // Keyboard to MIDI handing
         this.fKeyboard2MIDI = null;
@@ -213,16 +216,16 @@ export class FaustPWA {
         await requestPermissions();
 
         // Activate sensor listeners
-        if (!this.fSensorHandlersBound) {
+        if (!this.fActive.sensors) {
             await this.fFaustNode.startSensors();
-            this.fSensorHandlersBound = true;
+            this.fActive.sensors = true;
         }
 
         // Initialize the MIDI setup
-        if (!this.fMidiHandlersBound) {
+        if (!this.fActive.midi) {
             this.startMIDI();
             await this.startKeyboard2MIDI();
-            this.fMidiHandlersBound = true;
+            this.fActive.midi = true;
         }
 
         // Connect the Faust node to the audio output@
@@ -238,16 +241,16 @@ export class FaustPWA {
     async deactivateMIDISensors() {
 
         // Deactivate sensor listeners
-        if (this.fSensorHandlersBound) {
+        if (this.fActive.sensors) {
             this.fFaustNode.stopSensors();
-            this.fSensorHandlersBound = false;
+            this.fActive.sensors = false;
         }
 
         // Deactivate the MIDI setup
-        if (this.fMidiHandlersBound && this.fOptions.voices > 0) {
+        if (this.fActive.midi && this.fOptions.voices > 0) {
             this.stopMIDI();
             this.stopKeyboard2MIDI();
-            this.fMidiHandlersBound = false;
+            this.fActive.midi = false;
         }
     }
 
@@ -280,7 +283,6 @@ export class FaustPWA {
                 sampleRate: result.sampleRate,
                 voices: this.fOptions.voices ?? 0,
             });
-
 
         } catch (err) {
             this.dispatch('error', { error: err });
