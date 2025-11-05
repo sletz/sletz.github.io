@@ -10,7 +10,7 @@
         "."
     ],
     "size": 336,
-    "code": "iEvd",
+    "code": "MEvd",
     "inputs": 0,
     "outputs": 2,
     "meta": [
@@ -81,7 +81,7 @@
             "soundfiles": "https://raw.githubusercontent.com/grame-cncm/GameLAN/master/sequenceur"
         },
         {
-            "version": "2.81.10"
+            "version": "2.82.0"
         }
     ],
     "ui": [

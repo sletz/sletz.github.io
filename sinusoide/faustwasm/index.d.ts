@@ -110,7 +110,7 @@ export interface LooseFaustDspFactory {
 	/** a unique identifier */
 	shaKey?: string;
 	/** a map of transferable audio buffers for the `soundfile` function */
-	soundfiles: Record<string, (AudioData$1 | null)>;
+	soundfiles?: Record<string, AudioData$1 | null>;
 }
 export interface FaustDspMeta {
 	name: string;

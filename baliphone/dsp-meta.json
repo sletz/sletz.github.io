@@ -159,7 +159,7 @@
             "soundfiles": "https://raw.githubusercontent.com/grame-cncm/GameLAN/master/baliphone"
         },
         {
-            "version": "2.81.10"
+            "version": "2.82.0"
         }
     ],
     "ui": [
