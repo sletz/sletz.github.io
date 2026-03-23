@@ -1,0 +1,327 @@
+{
+    "name": "bourdonneur",
+    "filename": "bourdonneur.dsp",
+    "version": "2.79.3",
+    "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
+    "include_pathnames": [
+        "/share/faust",
+        "/usr/local/share/faust",
+        "/usr/share/faust",
+        "."
+    ],
+    "size": 1847956,
+    "code": "uI5kAZQ9Hw==",
+    "inputs": 0,
+    "outputs": 2,
+    "meta": [
+        {
+            "author": "César Chaussinand"
+        },
+        {
+            "basics_lib_name": "Faust Basic Element Library"
+        },
+        {
+            "basics_lib_version": "1.22.0"
+        },
+        {
+            "compile_options": "-single -scal -e ../bourdonneur.dsp -o bourdonneur.dsp"
+        },
+        {
+            "delays_lib_name": "Faust Delay Library"
+        },
+        {
+            "delays_lib_version": "1.2.0"
+        },
+        {
+            "filename": "bourdonneur.dsp"
+        },
+        {
+            "filters_lib_fir_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_fir_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_fir_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_iir_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_iir_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_iir_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_lowpass0_highpass1": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_lowpass0_highpass1_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_lowpass_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_lowpass_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_lowpass_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_name": "Faust Filters Library"
+        },
+        {
+            "filters_lib_tf1_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_tf1_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_tf1_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_tf1s_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_tf1s_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_tf1s_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_tf2_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_tf2_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_tf2_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_tf2s_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_tf2s_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_tf2s_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_version": "1.7.1"
+        },
+        {
+            "library_path0": "/usr/local/share/faust/stdfaust.lib"
+        },
+        {
+            "library_path1": "/usr/local/share/faust/oscillators.lib"
+        },
+        {
+            "library_path2": "/usr/local/share/faust/basics.lib"
+        },
+        {
+            "library_path3": "/usr/local/share/faust/maths.lib"
+        },
+        {
+            "library_path4": "/usr/local/share/faust/platform.lib"
+        },
+        {
+            "library_path5": "/usr/local/share/faust/filters.lib"
+        },
+        {
+            "library_path6": "/usr/local/share/faust/reverbs.lib"
+        },
+        {
+            "library_path7": "/usr/local/share/faust/misceffects.lib"
+        },
+        {
+            "library_path8": "/usr/local/share/faust/delays.lib"
+        },
+        {
+            "library_path9": "/usr/local/share/faust/routes.lib"
+        },
+        {
+            "maths_lib_author": "GRAME"
+        },
+        {
+            "maths_lib_copyright": "GRAME"
+        },
+        {
+            "maths_lib_license": "LGPL with exception"
+        },
+        {
+            "maths_lib_name": "Faust Math Library"
+        },
+        {
+            "maths_lib_version": "2.9.0"
+        },
+        {
+            "misceffects_lib_cubicnl_author": "Julius O. Smith III"
+        },
+        {
+            "misceffects_lib_cubicnl_license": "STK-4.3"
+        },
+        {
+            "misceffects_lib_name": "Misc Effects Library"
+        },
+        {
+            "misceffects_lib_version": "2.5.2"
+        },
+        {
+            "name": "bourdonneur"
+        },
+        {
+            "oscillators_lib_name": "Faust Oscillator Library"
+        },
+        {
+            "oscillators_lib_saw2ptr_author": "Julius O. Smith III"
+        },
+        {
+            "oscillators_lib_saw2ptr_license": "STK-4.3"
+        },
+        {
+            "oscillators_lib_version": "1.7.0"
+        },
+        {
+            "platform_lib_name": "Generic Platform Library"
+        },
+        {
+            "platform_lib_version": "1.3.0"
+        },
+        {
+            "reverbs_lib_kb_rom_rev1_author": "Luca Spanedda"
+        },
+        {
+            "reverbs_lib_kb_rom_rev1_license": "GPL-3.0"
+        },
+        {
+            "reverbs_lib_name": "Faust Reverb Library"
+        },
+        {
+            "reverbs_lib_version": "1.5.1"
+        },
+        {
+            "routes_lib_name": "Faust Signal Routing Library"
+        },
+        {
+            "routes_lib_version": "1.3.0"
+        },
+        {
+            "version": "2.85.5"
+        }
+    ],
+    "ui": [
+        {
+            "type": "vgroup",
+            "label": "bourdonneur",
+            "items": [
+                {
+                    "type": "checkbox",
+                    "label": "ON",
+                    "varname": "fCheckbox0",
+                    "shortname": "ON",
+                    "address": "/bourdonneur/ON",
+                    "index": 524316
+                },
+                {
+                    "type": "hslider",
+                    "label": "freq coupure 0",
+                    "varname": "fHslider0",
+                    "shortname": "freq_coupure_0",
+                    "address": "/bourdonneur/freq_coupure_0",
+                    "index": 524344,
+                    "meta": [
+                        {
+                            "acc": "0 0 -8 0 8"
+                        },
+                        {
+                            "hidden": "1"
+                        }
+                    ],
+                    "init": 0,
+                    "min": -1,
+                    "max": 1,
+                    "step": 0.01
+                },
+                {
+                    "type": "hslider",
+                    "label": "freq coupure 1",
+                    "varname": "fHslider3",
+                    "shortname": "freq_coupure_1",
+                    "address": "/bourdonneur/freq_coupure_1",
+                    "index": 524480,
+                    "meta": [
+                        {
+                            "acc": "1 0 -8 0 8"
+                        },
+                        {
+                            "hidden": "1"
+                        }
+                    ],
+                    "init": 0,
+                    "min": -1,
+                    "max": 1,
+                    "step": 0.01
+                },
+                {
+                    "type": "hslider",
+                    "label": "note 0",
+                    "varname": "fHslider1",
+                    "shortname": "note_0",
+                    "address": "/bourdonneur/note_0",
+                    "index": 524376,
+                    "meta": [
+                        {
+                            "style": "menu{-Do-:0;-Do#-:1;-Ré-:2;-Ré#-:3;-Mi-:4;-Fa-:5;-Fa#-:6;-Sol-:7;-Sol#-:8;-La-:9;-La#-:10;-Si-:11}"
+                        }
+                    ],
+                    "init": 0,
+                    "min": 0,
+                    "max": 11,
+                    "step": 1
+                },
+                {
+                    "type": "hslider",
+                    "label": "note 1",
+                    "varname": "fHslider4",
+                    "shortname": "note_1",
+                    "address": "/bourdonneur/note_1",
+                    "index": 524508,
+                    "meta": [
+                        {
+                            "style": "menu{-Do-:0;-Do#-:1;-Ré-:2;-Ré#-:3;-Mi-:4;-Fa-:5;-Fa#-:6;-Sol-:7;-Sol#-:8;-La-:9;-La#-:10;-Si-:11}"
+                        }
+                    ],
+                    "init": 0,
+                    "min": 0,
+                    "max": 11,
+                    "step": 1
+                },
+                {
+                    "type": "hslider",
+                    "label": "octave 0",
+                    "varname": "fHslider2",
+                    "shortname": "octave_0",
+                    "address": "/bourdonneur/octave_0",
+                    "index": 524404,
+                    "init": 0,
+                    "min": 0,
+                    "max": 4,
+                    "step": 1
+                },
+                {
+                    "type": "hslider",
+                    "label": "octave 1",
+                    "varname": "fHslider5",
+                    "shortname": "octave_1",
+                    "address": "/bourdonneur/octave_1",
+                    "index": 524536,
+                    "init": 0,
+                    "min": 0,
+                    "max": 4,
+                    "step": 1
+                }
+            ]
+        }
+    ]
+}
