@@ -1,6 +1,6 @@
 {
     "name": "noise filteur",
-    "filename": "noiseFilteur.dsp",
+    "filename": "noisefilteur.dsp",
     "version": "2.79.3",
     "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
@@ -24,7 +24,7 @@
             "basics_lib_version": "1.22.0"
         },
         {
-            "compile_options": "-single -scal -e ../noiseFilteur.dsp -o noiseFilteur.dsp"
+            "compile_options": "-single -scal -e ../noisefilteur.dsp -o noisefilteur.dsp"
         },
         {
             "delays_lib_name": "Faust Delay Library"
@@ -33,7 +33,7 @@
             "delays_lib_version": "1.2.0"
         },
         {
-            "filename": "noiseFilteur.dsp"
+            "filename": "noisefilteur.dsp"
         },
         {
             "filters_lib_fir_author": "Julius O. Smith III"

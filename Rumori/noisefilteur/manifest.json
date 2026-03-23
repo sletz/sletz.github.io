@@ -1,8 +1,8 @@
 {
-  "name": "Faust noiseFilteur",
-  "short_name": "noiseFilteur",
+  "name": "Faust noisefilteur",
+  "short_name": "noisefilteur",
   "start_url": "./index.html",
-  "description": "Progressive Web App for noiseFilteur",
+  "description": "Progressive Web App for noisefilteur",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
