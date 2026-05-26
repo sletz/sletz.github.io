@@ -54,7 +54,7 @@ const FAUST_DSP_VOICES = 0;
 
         // Activate MIDI and Sensors
         pwa.activateMIDISensors();
-        
+
         /*
         // Start must be called directly from the user gesture. iOS PWA audio
         // activation is stricter than desktop browsers and may ignore delayed
@@ -64,7 +64,7 @@ const FAUST_DSP_VOICES = 0;
                 activationPending = false;
                 console.error("Error when starting Faust PWA:", error);
             });
-        
+        */
     }
 
     // Register several activation events because iOS standalone PWAs do not
