@@ -40,19 +40,41 @@ const FAUST_DSP_VOICES = 0;
     // Create PWA and UI
     await pwa.create();
 
-    // Event listener to handle user interaction
+    let activationPending = false;
+
+    // Event listener to handle user interaction. The whole start sequence is
+    // launched from the event handler rather than split across delayed tasks so
+    // iOS keeps it associated with the user activation.
     function handleUserInteraction() {
+        if (activationPending || pwa.audioContext.state === "running") return;
+        activationPending = true;
 
         // Resume AudioContext synchronously
         pwa.resumeAudioContext();
 
         // Activate MIDI and Sensors
-        pwa.activateMIDISensors()
+        pwa.activateMIDISensors();
+        
+        /*
+        // Start must be called directly from the user gesture. iOS PWA audio
+        // activation is stricter than desktop browsers and may ignore delayed
+        // resume calls even when the promise resolves.
+        pwa.start()
+            .catch(error => {
+                activationPending = false;
+                console.error("Error when starting Faust PWA:", error);
+            });
+        
     }
 
-    // Activate AudioContext, MIDI and Sensors on user interaction
+    // Register several activation events because iOS standalone PWAs do not
+    // behave identically across versions: some fire pointer events reliably,
+    // others are more consistent with touchend or click.
+    window.addEventListener('pointerdown', handleUserInteraction, { passive: true });
+    window.addEventListener('touchend', handleUserInteraction, { passive: true });
     window.addEventListener('click', handleUserInteraction);
     window.addEventListener('touchstart', handleUserInteraction);
+    window.addEventListener('keydown', handleUserInteraction);
 
     // Deactivate AudioContext, MIDI and Sensors on user interaction
     window.addEventListener('visibilitychange', function () {
@@ -63,6 +85,7 @@ const FAUST_DSP_VOICES = 0;
 
             // Deactivate MIDI and Sensors
             pwa.deactivateMIDISensors();
+            activationPending = false;
         }
     });
 
