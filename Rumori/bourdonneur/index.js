@@ -40,32 +40,17 @@ const FAUST_DSP_VOICES = 0;
     // Create PWA and UI
     await pwa.create();
 
-    let activationPending = false;
-
     // Event listener to handle user interaction. The whole start sequence is
     // launched from the event handler rather than split across delayed tasks so
     // iOS keeps it associated with the user activation.
     function handleUserInteraction() {
-        //if (activationPending || pwa.audioContext.state === "running") return;
-        //activationPending = true;
-
+     
         // Resume AudioContext synchronously
         pwa.resumeAudioContext();
 
         // Activate MIDI and Sensors
         pwa.activateMIDISensors();
-
-        /*
-        // Start must be called directly from the user gesture. iOS PWA audio
-        // activation is stricter than desktop browsers and may ignore delayed
-        // resume calls even when the promise resolves.
-        pwa.start()
-            .catch(error => {
-                activationPending = false;
-                console.error("Error when starting Faust PWA:", error);
-            });
-        */
-    }
+   }
 
     // Register several activation events because iOS standalone PWAs do not
     // behave identically across versions: some fire pointer events reliably,
