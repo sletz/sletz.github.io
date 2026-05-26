@@ -46,8 +46,8 @@ const FAUST_DSP_VOICES = 0;
     // launched from the event handler rather than split across delayed tasks so
     // iOS keeps it associated with the user activation.
     function handleUserInteraction() {
-        if (activationPending || pwa.audioContext.state === "running") return;
-        activationPending = true;
+        //if (activationPending || pwa.audioContext.state === "running") return;
+        //activationPending = true;
 
         // Resume AudioContext synchronously
         pwa.resumeAudioContext();
