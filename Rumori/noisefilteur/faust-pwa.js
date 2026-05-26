@@ -53,7 +53,7 @@ export class FaustPWA {
         /** @type {FaustPWAOptions} */
         this.fOptions = {
             voices: 0,
-            useScriptProcessor: undefined,
+            useScriptProcessor: false,
             bufferSize: 512,
             uiContainer: null,
             ...options,
@@ -74,7 +74,6 @@ export class FaustPWA {
         // MIDI and Sensor handlers state
         this.fActive.sensors = false;
         this.fActive.midi = false;
-        this.fActive.audioConnected = false;
 
         // Keyboard to MIDI handing
         this.fKeyboard2MIDI = null;
@@ -188,59 +187,15 @@ export class FaustPWA {
         return this.fFaustNode;
     }
 
-    /**
-     * Choose the default audio backend for the current runtime.
-     *
-     * AudioWorklet is always preferred. ScriptProcessor is only requested up
-     * front when the runtime has no AudioWorklet support at all. iOS/WebKit
-     * cases where an AudioWorklet graph is created but stays silent are handled
-     * at node-creation time by the AudioWorklet→ScriptProcessor retry in
-     * `createFaustNode`, so no preemptive iOS heuristic is needed here. The
-     * explicit `useScriptProcessor` option still overrides this default.
-     *
-     * @returns {boolean} True only when AudioWorklet is unavailable.
-     */
-    shouldUseScriptProcessor() {
-        return !this.fAudioContext.audioWorklet;
-    }
-
-    /**
-     * Prime iOS audio output inside the same user gesture used to resume audio.
-     *
-     * Some iOS versions report a resumed AudioContext while the hardware output
-     * path remains locked until a source node is started from the activation
-     * gesture. A one-sample silent buffer is enough to unlock that path without
-     * producing audible sound. Failure is non-fatal because this is only a
-     * compatibility assist.
-     */
-    unlockAudioOutput() {
-        try {
-            const buffer = this.fAudioContext.createBuffer(1, 1, this.fAudioContext.sampleRate);
-            const source = this.fAudioContext.createBufferSource();
-            const gain = this.fAudioContext.createGain();
-            gain.gain.value = 0;
-            source.buffer = buffer;
-            source.connect(gain).connect(this.fAudioContext.destination);
-            source.start(0);
-            source.stop(this.fAudioContext.currentTime + 0.01);
-        } catch (error) {
-            console.warn("Silent audio unlock failed.", error);
-        }
-    }
-
     // Synchronous function to resume AudioContext, to be called first in the synchronous event listener
     resumeAudioContext() {
-        this.unlockAudioOutput();
         if (this.fAudioContext.state === 'suspended') {
-            return this.fAudioContext.resume().then(() => {
+            this.fAudioContext.resume().then(() => {
                 console.log('AudioContext resumed successfully');
-                return this.fAudioContext.state;
             }).catch(error => {
                 console.error('Error when resuming AudioContext:', error);
-                throw error;
             });
         }
-        return Promise.resolve(this.fAudioContext.state);
     }
 
     // Asynchronous function to suspend AudioContext
@@ -256,13 +211,6 @@ export class FaustPWA {
 
         // Import the create-node module
         const { connectToAudioInput, requestPermissions } = await import("./create-node.js");
-
-        // Connect the Faust node to the audio output before optional permissions
-        // so a denied MIDI/sensor/input permission cannot leave a synth silent.
-        if (!this.fActive.audioConnected) {
-            this.fFaustNode.connect(this.fAudioContext.destination);
-            this.fActive.audioConnected = true;
-        }
 
         // Request permission for sensors
         await requestPermissions();
@@ -280,13 +228,12 @@ export class FaustPWA {
             this.fActive.midi = true;
         }
 
+        // Connect the Faust node to the audio output@
+        this.fFaustNode.connect(this.fAudioContext.destination);
+
         // Connect the Faust node to the audio input
         if (this.fFaustNode.numberOfInputs > 0) {
-            try {
-                await connectToAudioInput(this.fAudioContext, null, this.fFaustNode, null);
-            } catch (error) {
-                console.error("Error when connecting audio input:", error);
-            }
+            await connectToAudioInput(this.fAudioContext, null, this.fFaustNode, null);
         }
     }
 
@@ -321,7 +268,7 @@ export class FaustPWA {
                 this.fAudioContext,
                 this.fOptions.dspName,
                 this.fOptions.voices ?? 0,
-                this.fOptions.useScriptProcessor ?? this.shouldUseScriptProcessor(),
+                this.fOptions.useScriptProcessor ?? false,
                 this.fOptions.bufferSize ?? 512
             );
 
@@ -360,11 +307,12 @@ export class FaustPWA {
     */
     async start() {
         // Resume AudioContext synchronously
-        const resumePromise = this.resumeAudioContext();
+        this.resumeAudioContext();
 
         // Launch the activation of MIDI and Sensors
-        await resumePromise;
-        await this.activateMIDISensors();
+        this.activateMIDISensors().catch(error => {
+            console.error('Error when activating audio, MIDI and sensors:', error);
+        });
 
         // Dispatch the started event
         this.dispatch('started', { when: this.audioContext.currentTime });
