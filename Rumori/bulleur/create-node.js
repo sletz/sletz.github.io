@@ -11,12 +11,50 @@
  */
 
 /**
+ * Compile a standalone `.wasm` asset into a WebAssembly module.
+ *
+ * `WebAssembly.compileStreaming(fetch(url))` is preferred because it lets the
+ * browser compile while bytes are still downloading, but it is strict about the
+ * response being a real wasm response, notably `Content-Type: application/wasm`.
+ * Standalone/PWA deployments often go through static file servers or service
+ * worker caches that preserve or invent a generic MIME type such as
+ * `application/octet-stream`. Some iOS Safari/PWA versions then reject the
+ * streaming path even though the bytes are valid wasm.
+ *
+ * The ArrayBuffer fallback compiles the same bytes after download and does not
+ * depend on the HTTP MIME type, making generated PWAs more tolerant of hosting
+ * and cache configuration.
+ *
+ * @param {string} url - Relative URL of the wasm asset to compile.
+ * @returns {Promise<WebAssembly.Module>} Compiled WebAssembly module.
+ */
+const compileWasmModule = async (url) => {
+    const response = await fetch(url);
+    if (WebAssembly.compileStreaming) {
+        try {
+            return await WebAssembly.compileStreaming(Promise.resolve(response.clone()));
+        } catch (error) {
+            console.warn(`compileStreaming failed for ${url}, falling back to ArrayBuffer compilation.`, error);
+        }
+    }
+    return WebAssembly.compile(await response.arrayBuffer());
+};
+
+/**
  * Creates a Faust audio node for use in the Web Audio API.
+ *
+ * AudioWorklet is the primary backend. When it fails and the caller did not
+ * explicitly request ScriptProcessor mode, creation is retried with
+ * ScriptProcessorNode. This fallback is especially useful for iOS standalone
+ * PWAs, where the page can load and the AudioContext can resume while
+ * AudioWorklet processing still fails or stays silent on some OS/browser
+ * combinations.
  *
  * @param {AudioContext} audioContext - The Web Audio API AudioContext to which the Faust audio node will be connected.
  * @param {string} [dspName] - The name of the DSP to be loaded.
  * @param {number} [voices] - The number of voices to be used for polyphonic DSPs.
  * @param {boolean} [sp] - Whether to create a ScriptProcessorNode instead of an AudioWorkletNode.
+ * @param {number} [bufferSize] - ScriptProcessorNode buffer size, ignored by AudioWorkletNode.
  * @returns {Promise<{ faustNode: FaustNode | null; dspMeta: FaustDspMeta }>} - An object containing the Faust audio node and the DSP metadata.
  */
 const createFaustNode = async (audioContext, dspName = "template", voices = 0, sp = false, bufferSize = 512) => {
@@ -31,7 +69,7 @@ const createFaustNode = async (audioContext, dspName = "template", voices = 0, s
     const dspMeta = await (await fetch("./dsp-meta.json")).json();
 
     // Compile the DSP module from WebAssembly binary data
-    const dspModule = await WebAssembly.compileStreaming(await fetch("./dsp-module.wasm"));
+    const dspModule = await compileWasmModule("./dsp-module.wasm");
 
     // Create an object representing Faust DSP with metadata and module
     /** @type {FaustDspDistribution} */
@@ -44,35 +82,51 @@ const createFaustNode = async (audioContext, dspName = "template", voices = 0, s
     if (voices > 0) {
 
         // Try to load optional mixer and effect modules
-        faustDsp.mixerModule = await WebAssembly.compileStreaming(await fetch("./mixer-module.wasm"));
+        faustDsp.mixerModule = await compileWasmModule("./mixer-module.wasm");
 
         if (FAUST_DSP_HAS_EFFECT) {
             faustDsp.effectMeta = await (await fetch("./effect-meta.json")).json();
-            faustDsp.effectModule = await WebAssembly.compileStreaming(await fetch("./effect-module.wasm"));
+            faustDsp.effectModule = await compileWasmModule("./effect-module.wasm");
         }
 
-        // Create a polyphonic Faust audio node
+        // Keep both backends behind the same closure so fallback recreates the
+        // exact same DSP distribution with only the backend flag changed.
         const generator = new FaustPolyDspGenerator();
-        faustNode = await generator.createNode(
-            audioContext,
-            voices,
-            dspName,
-            { module: faustDsp.dspModule, json: JSON.stringify(faustDsp.dspMeta), soundfiles: {} },
-            faustDsp.mixerModule,
-            faustDsp.effectModule ? { module: faustDsp.effectModule, json: JSON.stringify(faustDsp.effectMeta), soundfiles: {} } : undefined,
-            sp,
-            bufferSize
-        );
+        const createPolyNode = (useScriptProcessor) => generator.createNode(
+                audioContext,
+                voices,
+                dspName,
+                { module: faustDsp.dspModule, json: JSON.stringify(faustDsp.dspMeta), soundfiles: {} },
+                faustDsp.mixerModule,
+                faustDsp.effectModule ? { module: faustDsp.effectModule, json: JSON.stringify(faustDsp.effectMeta), soundfiles: {} } : undefined,
+                useScriptProcessor,
+                bufferSize
+            );
+        try {
+            faustNode = await createPolyNode(sp);
+        } catch (error) {
+            if (sp) throw error;
+            console.warn("AudioWorklet creation failed, retrying with ScriptProcessorNode.", error);
+            faustNode = await createPolyNode(true);
+        }
     } else {
-        // Create a standard Faust audio node
+        // Keep both backends behind the same closure so fallback recreates the
+        // exact same DSP distribution with only the backend flag changed.
         const generator = new FaustMonoDspGenerator();
-        faustNode = await generator.createNode(
-            audioContext,
-            dspName,
-            { module: faustDsp.dspModule, json: JSON.stringify(faustDsp.dspMeta), soundfiles: {} },
-            sp,
-            bufferSize
-        );
+        const createMonoNode = (useScriptProcessor) => generator.createNode(
+                audioContext,
+                dspName,
+                { module: faustDsp.dspModule, json: JSON.stringify(faustDsp.dspMeta), soundfiles: {} },
+                useScriptProcessor,
+                bufferSize
+            );
+        try {
+            faustNode = await createMonoNode(sp);
+        } catch (error) {
+            if (sp) throw error;
+            console.warn("AudioWorklet creation failed, retrying with ScriptProcessorNode.", error);
+            faustNode = await createMonoNode(true);
+        }
     }
 
     // Return an object with the Faust audio node and the DSP metadata
@@ -134,6 +188,7 @@ async function createFaustUI(divFaustUI, faustNode) {
     });
     faustUI.paramChangeByUI = (path, value) => faustNode.setParamValue(path, value);
     faustNode.setOutputParamHandler((path, value) => faustUI.paramChangeByDSP(path, value));
+    faustNode.setInputParamHandler((path, value) => faustUI.paramChangeByDSP(path, value));
     $container.style.minWidth = `${faustUI.minWidth}px`;
     $container.style.minHeight = `${faustUI.minHeight}px`;
     faustUI.resize();
@@ -172,6 +227,81 @@ async function requestPermissions() {
     }
 }
 
+/**
+ * Key2Midi: maps keyboard input to MIDI messages.
+ */
+class Key2Midi {
+    static KEY_MAP = {
+        a: 0, w: 1, s: 2, e: 3, d: 4, f: 5, t: 6, g: 7,
+        y: 8, h: 9, u: 10, j: 11, k: 12, o: 13, l: 14, p: 15, ";": 16,
+        z: "PREV", x: "NEXT", c: "VELDOWN", v: "VELUP"
+    };
+
+    constructor({ keyMap = Key2Midi.KEY_MAP, offset = 60, velocity = 100, handler = console.log } = {}) {
+        this.keyMap = keyMap;
+        this.offset = offset;
+        this.velocity = velocity;
+        this.velMap = [20, 40, 60, 80, 100, 127];
+        this.handler = handler;
+        this.pressed = {};
+
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
+    }
+
+    start() {
+        window.addEventListener("keydown", this.onKeyDown);
+        window.addEventListener("keyup", this.onKeyUp);
+    }
+
+    stop() {
+        window.removeEventListener("keydown", this.onKeyDown);
+        window.removeEventListener("keyup", this.onKeyUp);
+    }
+
+    onKeyDown(e) {
+        const key = e.key.toLowerCase();
+        if (this.pressed[key]) return;
+        this.pressed[key] = true;
+
+        const val = this.keyMap[key];
+        if (typeof val === "number") {
+            const note = val + this.offset;
+            this.handler([0x90, note, this.velocity]);
+        } else if (val === "PREV") {
+            this.offset -= 1;
+        } else if (val === "NEXT") {
+            this.offset += 1;
+        } else if (val === "VELDOWN") {
+            const idx = Math.max(0, this.velMap.indexOf(this.velocity) - 1);
+            this.velocity = this.velMap[idx];
+        } else if (val === "VELUP") {
+            const idx = Math.min(this.velMap.length - 1, this.velMap.indexOf(this.velocity) + 1);
+            this.velocity = this.velMap[idx];
+        }
+    }
+
+    onKeyUp(e) {
+        const key = e.key.toLowerCase();
+        const val = this.keyMap[key];
+        if (typeof val === "number") {
+            const note = val + this.offset;
+            this.handler([0x80, note, this.velocity]);
+        }
+        delete this.pressed[key];
+    }
+}
+
+/**
+ * Creates a Key2Midi instance.
+ * 
+ * @param {function} handler - The function to handle MIDI messages.
+ * @returns {Key2Midi} - The Key2Midi instance.
+ */
+function createKey2MIDI(handler) {
+    return new Key2Midi({ handler: handler });
+}
+
 // Export the functions
-export { createFaustNode, createFaustUI, connectToAudioInput, requestPermissions };
+export { createFaustNode, createFaustUI, createKey2MIDI, connectToAudioInput, requestPermissions };
 
