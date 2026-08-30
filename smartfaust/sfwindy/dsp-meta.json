@@ -1,19 +1,23 @@
 {
     "name": "sfWindy",
     "filename": "sfWindy.dsp",
-    "version": "2.81.10",
-    "compile_options": "-lang wasm-i -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
+    "version": "2.87.10",
+    "compile_options": "-lang wasm-i -fpga-mem-th 4 -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 2",
     "include_pathnames": [
+        "/faust/user/inc0",
+        "/share/faust",
         "/share/faust",
         "/usr/local/share/faust",
         "/usr/share/faust",
         "."
     ],
-    "size": 216,
-    "code": "uGVLATQ5Hw==",
+    "size": 180,
     "inputs": 0,
     "outputs": 2,
     "meta": [
+        {
+            "analyzers_lib_amp_follower_ar_author": "Jonatan Liljedahl, revised by Romain Michon"
+        },
         {
             "analyzers_lib_name": "Faust Analyzer Library"
         },
@@ -78,18 +82,6 @@
             "filters_lib_lowpass0_highpass1": "MIT-style STK-4.3 license"
         },
         {
-            "filters_lib_lowpass0_highpass1_author": "Julius O. Smith III"
-        },
-        {
-            "filters_lib_lowpass_author": "Julius O. Smith III"
-        },
-        {
-            "filters_lib_lowpass_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
-        },
-        {
-            "filters_lib_lowpass_license": "MIT-style STK-4.3 license"
-        },
-        {
             "filters_lib_name": "Faust Filters Library"
         },
         {
@@ -100,24 +92,6 @@
         },
         {
             "filters_lib_pole_license": "MIT-style STK-4.3 license"
-        },
-        {
-            "filters_lib_tf1_author": "Julius O. Smith III"
-        },
-        {
-            "filters_lib_tf1_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
-        },
-        {
-            "filters_lib_tf1_license": "MIT-style STK-4.3 license"
-        },
-        {
-            "filters_lib_tf1s_author": "Julius O. Smith III"
-        },
-        {
-            "filters_lib_tf1s_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
-        },
-        {
-            "filters_lib_tf1s_license": "MIT-style STK-4.3 license"
         },
         {
             "filters_lib_tf2_author": "Julius O. Smith III"
@@ -171,19 +145,22 @@
             "library_path3": "/usr/local/share/faust/maths.lib"
         },
         {
-            "library_path4": "/usr/local/share/faust/platform.lib"
+            "library_path4": "/usr/local/share/faust/motion.lib"
         },
         {
-            "library_path5": "/usr/local/share/faust/analyzers.lib"
+            "library_path5": "/usr/local/share/faust/platform.lib"
         },
         {
-            "library_path6": "/usr/local/share/faust/signals.lib"
+            "library_path6": "/usr/local/share/faust/analyzers.lib"
         },
         {
-            "library_path7": "/usr/local/share/faust/basics.lib"
+            "library_path7": "/usr/local/share/faust/signals.lib"
         },
         {
-            "library_path8": "/usr/local/share/faust/vaeffects.lib"
+            "library_path8": "/usr/local/share/faust/basics.lib"
+        },
+        {
+            "library_path9": "/usr/local/share/faust/vaeffects.lib"
         },
         {
             "license": "BSD"
@@ -204,6 +181,18 @@
             "maths_lib_version": "2.9.0"
         },
         {
+            "motion_lib_clamp01_author": "Christophe Lebreton"
+        },
+        {
+            "motion_lib_name": "Faust Motion Library"
+        },
+        {
+            "motion_lib_totalAccel_author": "Christophe Lebreton"
+        },
+        {
+            "motion_lib_version": "0.8.0"
+        },
+        {
             "name": "sfWindy"
         },
         {
@@ -219,7 +208,13 @@
             "platform_lib_version": "1.3.0"
         },
         {
-            "signals_lib_name": "Faust Signal Routing Library"
+            "signals_lib_name": "Faust Routing Library"
+        },
+        {
+            "signals_lib_onePoleSwitching_author": "Jonatan Liljedahl, revised by Dario Sanfilippo"
+        },
+        {
+            "signals_lib_onePoleSwitching_licence": "STK-4.3"
         },
         {
             "signals_lib_version": "1.6.0"
@@ -255,10 +250,10 @@
             "vaeffects_lib_name": "Faust Virtual Analog Filter Effect Library"
         },
         {
-            "vaeffects_lib_version": "1.4.0"
+            "vaeffects_lib_version": "1.5.0"
         },
         {
-            "version": "2.81.10"
+            "version": "2.87.10"
         }
     ],
     "ui": [
@@ -290,7 +285,7 @@
                             "varname": "fHslider3",
                             "shortname": "envup",
                             "address": "/sfWindy/sfWindy_parameter_s_/envup",
-                            "index": 116,
+                            "index": 100,
                             "meta": [
                                 {
                                     "1": ""
@@ -342,7 +337,7 @@
                             "varname": "fVslider0",
                             "shortname": "acc_x",
                             "address": "/sfWindy/sfWindy_parameter_s_/acc_x",
-                            "index": 28,
+                            "index": 32,
                             "meta": [
                                 {
                                     "acc": "0 0 -10 0 10"
@@ -365,7 +360,7 @@
                             "varname": "fVslider1",
                             "shortname": "acc_y",
                             "address": "/sfWindy/sfWindy_parameter_s_/acc_y",
-                            "index": 48,
+                            "index": 52,
                             "meta": [
                                 {
                                     "acc": "1 0 -10 0 10"
@@ -388,7 +383,7 @@
                             "varname": "fVslider2",
                             "shortname": "acc_z",
                             "address": "/sfWindy/sfWindy_parameter_s_/acc_z",
-                            "index": 68,
+                            "index": 72,
                             "meta": [
                                 {
                                     "acc": "2 0 -10 0 10"
@@ -408,10 +403,10 @@
                         {
                             "type": "hslider",
                             "label": "low_cut",
-                            "varname": "fHslider0",
+                            "varname": "fHslider1",
                             "shortname": "low_cut",
                             "address": "/sfWindy/sfWindy_parameter_s_/low_cut",
-                            "index": 24,
+                            "index": 28,
                             "meta": [
                                 {
                                     "freq DC filter": ""
@@ -428,10 +423,10 @@
                         {
                             "type": "hslider",
                             "label": "threshold",
-                            "varname": "fHslider1",
+                            "varname": "fHslider0",
                             "shortname": "threshold",
                             "address": "/sfWindy/sfWindy_parameter_s_/threshold",
-                            "index": 88,
+                            "index": 12,
                             "meta": [
                                 {
                                     "hidden": "1"
