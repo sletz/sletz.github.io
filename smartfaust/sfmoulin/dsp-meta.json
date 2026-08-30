@@ -11,13 +11,10 @@
         "/usr/share/faust",
         "."
     ],
-    "size": 244,
+    "size": 260,
     "inputs": 0,
     "outputs": 2,
     "meta": [
-        {
-            "analyzers_lib_amp_follower_ar_author": "Jonatan Liljedahl, revised by Romain Michon"
-        },
         {
             "analyzers_lib_name": "Faust Analyzer Library"
         },
@@ -154,13 +151,7 @@
             "maths_lib_version": "2.9.0"
         },
         {
-            "motion_lib_clamp01_author": "Christophe Lebreton"
-        },
-        {
             "motion_lib_name": "Faust Motion Library"
-        },
-        {
-            "motion_lib_totalAccel_author": "Christophe Lebreton"
         },
         {
             "motion_lib_version": "0.8.0"
@@ -193,12 +184,6 @@
             "signals_lib_name": "Faust Routing Library"
         },
         {
-            "signals_lib_onePoleSwitching_author": "Jonatan Liljedahl, revised by Dario Sanfilippo"
-        },
-        {
-            "signals_lib_onePoleSwitching_licence": "STK-4.3"
-        },
-        {
             "signals_lib_version": "1.6.0"
         },
         {
@@ -224,7 +209,7 @@
                                     "varname": "fEntry0",
                                     "shortname": "Select_Sample",
                                     "address": "/sfMoulin/select_your_sample_1_to_8/sfMoulin/Select_Sample",
-                                    "index": 136,
+                                    "index": 152,
                                     "meta": [
                                         {
                                             "style": "menu{-1-:1;-2-:2;-3-:3;-4-:4;-5-:5;-6-:6;-7-:7;-8-:8}"
@@ -316,7 +301,7 @@
                                     "varname": "fHslider3",
                                     "shortname": "fade_out",
                                     "address": "/sfMoulin/select_your_sample_1_to_8/sfMoulin_parameter_s_/fade_out",
-                                    "index": 96,
+                                    "index": 100,
                                     "meta": [
                                         {
                                             "acc": "1 0 -10 0 10"
@@ -356,7 +341,7 @@
                             "varname": "fCheckbox0",
                             "shortname": "ON_OFF",
                             "address": "/sfMoulin/sfMoulin/ON_OFF",
-                            "index": 232
+                            "index": 248
                         }
                     ]
                 }

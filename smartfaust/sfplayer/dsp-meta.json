@@ -11,13 +11,10 @@
         "/usr/share/faust",
         "."
     ],
-    "size": 1041228,
+    "size": 1041244,
     "inputs": 0,
     "outputs": 2,
     "meta": [
-        {
-            "analyzers_lib_amp_follower_ar_author": "Jonatan Liljedahl, revised by Romain Michon"
-        },
         {
             "analyzers_lib_name": "Faust Analyzer Library"
         },
@@ -247,13 +244,7 @@
             "maths_lib_version": "2.9.0"
         },
         {
-            "motion_lib_clamp01_author": "Christophe Lebreton"
-        },
-        {
             "motion_lib_name": "Faust Motion Library"
-        },
-        {
-            "motion_lib_totalAccel_author": "Christophe Lebreton"
         },
         {
             "motion_lib_version": "0.8.0"
@@ -361,12 +352,6 @@
             "signals_lib_name": "Faust Routing Library"
         },
         {
-            "signals_lib_onePoleSwitching_author": "Jonatan Liljedahl, revised by Dario Sanfilippo"
-        },
-        {
-            "signals_lib_onePoleSwitching_licence": "STK-4.3"
-        },
-        {
             "signals_lib_version": "1.6.0"
         },
         {
@@ -467,7 +452,7 @@
                                     "varname": "fEntry0",
                                     "shortname": "Select_Sample",
                                     "address": "/sfPlayer/select_your_sample_1_to_10/sfPlayer_parameter_s_/Select_Sample",
-                                    "index": 131388,
+                                    "index": 131404,
                                     "meta": [
                                         {
                                             "style": "menu{-1-:1;-2-:2;-3-:3;-4-:4;-5-:5;-6-:6;-7-:7;-8-:8;-9-:9;-10-:10}"
@@ -484,7 +469,7 @@
                                     "varname": "fHslider6",
                                     "shortname": "fade_out",
                                     "address": "/sfPlayer/select_your_sample_1_to_10/sfPlayer_parameter_s_/fade_out",
-                                    "index": 131328,
+                                    "index": 131336,
                                     "meta": [
                                         {
                                             "acc": "1 0 -10 0 10"
@@ -518,7 +503,7 @@
                             "varname": "fHslider7",
                             "shortname": "v_sfPlayer_parameter_s_fade_in",
                             "address": "/sfPlayer/select_your_sample_1_to_10/v_:sfPlayer_parameter_s__fade_in",
-                            "index": 131352,
+                            "index": 131368,
                             "meta": [
                                 {
                                     "acc": "1 0 -10 0 10"
@@ -613,7 +598,7 @@
                             "varname": "fHslider8",
                             "shortname": "Wah_parameter",
                             "address": "/sfPlayer/sfPlayer_parameter_s_/Wah_parameter",
-                            "index": 131500,
+                            "index": 131516,
                             "meta": [
                                 {
                                     "1": ""
@@ -714,7 +699,7 @@
                             "varname": "fHslider9",
                             "shortname": "shift",
                             "address": "/sfPlayer/sfPlayer_parameter_s_/shift",
-                            "index": 655856,
+                            "index": 655872,
                             "meta": [
                                 {
                                     "acc": "0 0 -10 0 10"

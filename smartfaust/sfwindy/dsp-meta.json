@@ -11,13 +11,10 @@
         "/usr/share/faust",
         "."
     ],
-    "size": 180,
+    "size": 216,
     "inputs": 0,
     "outputs": 2,
     "meta": [
-        {
-            "analyzers_lib_amp_follower_ar_author": "Jonatan Liljedahl, revised by Romain Michon"
-        },
         {
             "analyzers_lib_name": "Faust Analyzer Library"
         },
@@ -82,6 +79,18 @@
             "filters_lib_lowpass0_highpass1": "MIT-style STK-4.3 license"
         },
         {
+            "filters_lib_lowpass0_highpass1_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_lowpass_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_lowpass_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_lowpass_license": "MIT-style STK-4.3 license"
+        },
+        {
             "filters_lib_name": "Faust Filters Library"
         },
         {
@@ -92,6 +101,24 @@
         },
         {
             "filters_lib_pole_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_tf1_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_tf1_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_tf1_license": "MIT-style STK-4.3 license"
+        },
+        {
+            "filters_lib_tf1s_author": "Julius O. Smith III"
+        },
+        {
+            "filters_lib_tf1s_copyright": "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>"
+        },
+        {
+            "filters_lib_tf1s_license": "MIT-style STK-4.3 license"
         },
         {
             "filters_lib_tf2_author": "Julius O. Smith III"
@@ -181,13 +208,7 @@
             "maths_lib_version": "2.9.0"
         },
         {
-            "motion_lib_clamp01_author": "Christophe Lebreton"
-        },
-        {
             "motion_lib_name": "Faust Motion Library"
-        },
-        {
-            "motion_lib_totalAccel_author": "Christophe Lebreton"
         },
         {
             "motion_lib_version": "0.8.0"
@@ -209,12 +230,6 @@
         },
         {
             "signals_lib_name": "Faust Routing Library"
-        },
-        {
-            "signals_lib_onePoleSwitching_author": "Jonatan Liljedahl, revised by Dario Sanfilippo"
-        },
-        {
-            "signals_lib_onePoleSwitching_licence": "STK-4.3"
         },
         {
             "signals_lib_version": "1.6.0"
@@ -285,7 +300,7 @@
                             "varname": "fHslider3",
                             "shortname": "envup",
                             "address": "/sfWindy/sfWindy_parameter_s_/envup",
-                            "index": 100,
+                            "index": 116,
                             "meta": [
                                 {
                                     "1": ""
@@ -337,7 +352,7 @@
                             "varname": "fVslider0",
                             "shortname": "acc_x",
                             "address": "/sfWindy/sfWindy_parameter_s_/acc_x",
-                            "index": 32,
+                            "index": 28,
                             "meta": [
                                 {
                                     "acc": "0 0 -10 0 10"
@@ -360,7 +375,7 @@
                             "varname": "fVslider1",
                             "shortname": "acc_y",
                             "address": "/sfWindy/sfWindy_parameter_s_/acc_y",
-                            "index": 52,
+                            "index": 48,
                             "meta": [
                                 {
                                     "acc": "1 0 -10 0 10"
@@ -383,7 +398,7 @@
                             "varname": "fVslider2",
                             "shortname": "acc_z",
                             "address": "/sfWindy/sfWindy_parameter_s_/acc_z",
-                            "index": 72,
+                            "index": 68,
                             "meta": [
                                 {
                                     "acc": "2 0 -10 0 10"
@@ -403,10 +418,10 @@
                         {
                             "type": "hslider",
                             "label": "low_cut",
-                            "varname": "fHslider1",
+                            "varname": "fHslider0",
                             "shortname": "low_cut",
                             "address": "/sfWindy/sfWindy_parameter_s_/low_cut",
-                            "index": 28,
+                            "index": 24,
                             "meta": [
                                 {
                                     "freq DC filter": ""
@@ -423,10 +438,10 @@
                         {
                             "type": "hslider",
                             "label": "threshold",
-                            "varname": "fHslider0",
+                            "varname": "fHslider1",
                             "shortname": "threshold",
                             "address": "/sfWindy/sfWindy_parameter_s_/threshold",
-                            "index": 12,
+                            "index": 88,
                             "meta": [
                                 {
                                     "hidden": "1"
